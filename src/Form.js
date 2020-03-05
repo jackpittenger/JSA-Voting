@@ -1,4 +1,6 @@
 import React from 'react';
+import {FormControl, InputLabel, Input, FormHelperText} from '@material-ui/core';
+
 
 class NameForm extends React.Component {
     constructor(props) {
@@ -25,27 +27,28 @@ class NameForm extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" value={this.state.name} onChange={this.handleChange} />
-                </label>
-                <label>
-                    Room:
-                    <select onChange={this.handleRoomSelect}>
-                        <option disabled selected>Select a room</option>
-                        <option name="100">Room 100</option>
-                        <option name="200">Room 200</option>
-                        <option name="300">Room 300</option>
-                    </select>
-                </label>
-                <label>
-                    <select id="speaker">
-                        <option disabled selected>Select a speaker</option>
-                    </select>
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
+            <FormControl>
+                <InputLabel htmlFor="name-input">Name</InputLabel>
+                <Input id="name-input" aria-describedby="name-input" />
+                <FormHelperText id="name-input">Please input first name</FormHelperText>
+                <InputLabel htmlFor="name-input">Name</InputLabel>
+                <Input id="name-input" aria-describedby="name-input" />
+                <FormHelperText id="name-input">Please input first name</FormHelperText>
+                <Select
+                    labelId="demo-customized-select-label"
+                    id="demo-customized-select"
+                    value={age}
+                    onChange={handleChange}
+                    input={<BootstrapInput />}
+                >
+                    <MenuItem value="">
+                        <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+            </FormControl>
         );
     }
 }
