@@ -1,54 +1,34 @@
 import React from 'react';
-import {FormControl, InputLabel, Input, FormHelperText} from '@material-ui/core';
+import {TextField} from '@material-ui/core';
 
 
 class NameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {name: '', room: ''};
+        this.state = {first_name:''};
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        this.setState({name: event.target.value, room: event.target.room});
-    }
-
-    handleSubmit(event) {
-        alert('A name was submitted: ' + this.state.value);
-        event.preventDefault();
-    }
-
-    handleRoomSelect(event){
-
-        console.log(event.target.value);
+        this.setState({first_name: event.target.value});
     }
 
     render() {
         return (
-            <FormControl>
-                <InputLabel htmlFor="name-input">Name</InputLabel>
-                <Input id="name-input" aria-describedby="name-input" />
-                <FormHelperText id="name-input">Please input first name</FormHelperText>
-                <InputLabel htmlFor="name-input">Name</InputLabel>
-                <Input id="name-input" aria-describedby="name-input" />
-                <FormHelperText id="name-input">Please input first name</FormHelperText>
-                <Select
-                    labelId="demo-customized-select-label"
-                    id="demo-customized-select"
-                    value={age}
-                    onChange={handleChange}
-                    input={<BootstrapInput />}
-                >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-            </FormControl>
+            <form>
+                <div>
+                    <TextField
+                    id="select-first-name"
+                    value={this.state.first_name}
+                    onChange={this.handleChange}
+                    label="First Name"
+                    helperText="Please put your first name"
+                    variant="outlined">
+                        {this.state.first_name}
+                    </TextField>
+                </div>
+            </form>
         );
     }
 }
