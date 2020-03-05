@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextField, MenuItem} from '@material-ui/core';
+import {TextField, Select, MenuItem, FormControl, InputLabel} from '@material-ui/core';
 
 
 class NameForm extends React.Component {
@@ -7,9 +7,6 @@ class NameForm extends React.Component {
         super(props);
         this.state = {first_name:'', room_number:''};
         this.rooms = {
-            "": [
-                "test"
-            ],
             "100": [
                 "George",
                 "Greg",
@@ -25,8 +22,8 @@ class NameForm extends React.Component {
 
     render() {
         return (
-            <form>
-                <div style={{paddingTop:15}}>
+            <form style={{paddingTop:15}}>
+                <FormControl style={{paddingTop:15}}>
                     <TextField
                         name="first_name"
                     id="select-first-name"
@@ -35,24 +32,29 @@ class NameForm extends React.Component {
                     label="First Name"
                     variant="outlined">
                     </TextField>
-                </div>
-                <div style={{paddingTop:15}}>
-                    <TextField
+                </FormControl>
+                <FormControl variant="outlined" style={{paddingTop:15}}>
+                    <InputLabel id="room-number-label">
+                        Room
+                    </InputLabel>
+                    <Select
+                        labelId="room-number-label"
                         name="room_number"
                         id="room-number"
-                        select
-                        children={this.state.room_number}
                         value={this.state.room_number}
                         onChange={this.handleChange}
                         label="Room Number"
-                        variant="outlined">
-                    </TextField>
-                    {this.rooms[this.state.room_number].map(option=>(
-                        <MenuItem key={option} value={option}>
-                            {option}
+                        >
+                        <MenuItem key={"Room Number"} value={""} disabled>
+                            Room Number
                         </MenuItem>
-                    ))}
-                </div>
+                        {Object.keys(this.rooms).map(option=>(
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </form>
         );
     }
