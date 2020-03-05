@@ -1,50 +1,60 @@
 import React from 'react';
+import {TextField, Select, MenuItem, FormControl, InputLabel} from '@material-ui/core';
+
 
 class NameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {name: '', room: ''};
-
+        this.state = {first_name:'', room_number:''};
+        this.rooms = {
+            "100": [
+                "George",
+                "Greg",
+                "Dan"
+            ]
+        };
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        this.setState({name: event.target.value, room: event.target.room});
-    }
-
-    handleSubmit(event) {
-        alert('A name was submitted: ' + this.state.value);
-        event.preventDefault();
-    }
-
-    handleRoomSelect(event){
-
-        console.log(event.target.value);
+        this.setState({...this.state, [event.target.name]: event.target.value});
     }
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" value={this.state.name} onChange={this.handleChange} />
-                </label>
-                <label>
-                    Room:
-                    <select onChange={this.handleRoomSelect}>
-                        <option disabled selected>Select a room</option>
-                        <option name="100">Room 100</option>
-                        <option name="200">Room 200</option>
-                        <option name="300">Room 300</option>
-                    </select>
-                </label>
-                <label>
-                    <select id="speaker">
-                        <option disabled selected>Select a speaker</option>
-                    </select>
-                </label>
-                <input type="submit" value="Submit" />
+            <form style={{paddingTop:15}}>
+                <FormControl style={{paddingTop:15}}>
+                    <TextField
+                        name="first_name"
+                    id="select-first-name"
+                    value={this.state.first_name}
+                    onChange={this.handleChange}
+                    label="First Name"
+                    variant="outlined">
+                    </TextField>
+                </FormControl>
+                <FormControl variant="outlined" style={{paddingTop:15}}>
+                    <InputLabel id="room-number-label">
+                        Room
+                    </InputLabel>
+                    <Select
+                        labelId="room-number-label"
+                        name="room_number"
+                        id="room-number"
+                        value={this.state.room_number}
+                        onChange={this.handleChange}
+                        label="Room Number"
+                        >
+                        <MenuItem key={"Room Number"} value={""} disabled>
+                            Room Number
+                        </MenuItem>
+                        {Object.keys(this.rooms).map(option=>(
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </form>
         );
     }
