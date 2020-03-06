@@ -1,17 +1,15 @@
 import React from 'react';
-import './App.css';
-import NameForm from "./Form";
-import Header from './Header';
+import {Router} from 'react-router-dom';
+
+import history from './services/history'
+import Routes from './routes';
 
 function App() {
   return (
-    <div className="App">
-        <Header/>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    <NameForm/>
-    </div>
-  );
+      <Router history={history}>
+          <Routes/>
+      </Router>
+  )
 }
 
 export default App;
