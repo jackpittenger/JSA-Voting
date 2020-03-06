@@ -1,25 +1,53 @@
 import React from 'react';
-import {TextField, Select, MenuItem, FormControl, InputLabel} from '@material-ui/core';
+import {TextField, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio} from '@material-ui/core';
 
 
 class NameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {first_name:'', room_number:''};
+        this.state = {first_name:'', room_number:'', last_name: '', speaker: ''};
         this.rooms = {
             "100": [
                 "George",
                 "Greg",
                 "Dan"
-            ]
+            ],
+            "200": [
+                "Hover",
+                "Jen",
+                "Lena"
+            ],
         };
         this.handleChange = this.handleChange.bind(this);
+        this.ShowChoices = this.ShowChoices.bind(this)
+        this.ChoicesMenu = this.ChoicesMenu.bind(this);
     }
 
     handleChange(event) {
         this.setState({...this.state, [event.target.name]: event.target.value});
     }
+//register when walk in the room
+    // elections
+    ShowChoices(){
+        return this.rooms[this.state.room_number].map(data => (
+                <FormControlLabel control={<Radio color="primary" />}
+                                  label={data} labelPlacement="start" value={data} />
+            )
+        );
+    }
 
+    ChoicesMenu(){
+        if(Object.keys(this.rooms).indexOf(this.state.room_number) !== -1)
+            return (<FormControl component="fieldset">
+                <FormLabel style={{width: 200, paddingTop:15}} component="legend">
+                    Speaker
+                </FormLabel>
+                <RadioGroup name="speaker" value={this.state.speaker} onChange={this.handleChange} row>
+                    < this.ShowChoices/>
+                </RadioGroup>
+            </FormControl>);
+        return "";
+    }
 
     render() {
 
@@ -33,7 +61,16 @@ class NameForm extends React.Component {
                             value={this.state.first_name}
                             onChange={this.handleChange}
                             label="First Name"
-                            size="medium"
+                            variant="outlined">
+                        </TextField>
+                    </FormControl>
+                    <FormControl style={{width: 200, paddingTop:15}}>
+                        <TextField
+                            name="last_name"
+                            id="select-last-name"
+                            value={this.state.last_name}
+                            onChange={this.handleChange}
+                            label="Last Name"
                             variant="outlined">
                         </TextField>
                     </FormControl>
@@ -42,7 +79,6 @@ class NameForm extends React.Component {
                     <FormControl style={{width: 200, paddingTop:15}}>
                         <TextField
                             select
-                            labelId="room-number-label"
                             name="room_number"
                             id="room-number"
                             value={this.state.room_number}
@@ -60,6 +96,9 @@ class NameForm extends React.Component {
                             ))}
                         </TextField>
                     </FormControl>
+                </div>
+                <div>
+                    <this.ChoicesMenu/>
                 </div>
             </form>
         );
