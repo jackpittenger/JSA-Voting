@@ -1,0 +1,22 @@
+{
+  "name": "jsa-voting",
+  "version": "1.0.0",
+  "description": "A voting app made for JSA",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/realSaddy/JSA-Voting.git"
+  },
+  "author": "Jack Pittenger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/realSaddy/JSA-Voting/issues"
+  },
+  "homepage": "https://github.com/realSaddy/JSA-Voting#readme",
+  "dependencies": {
+    "express": "latest"
+  }
+}

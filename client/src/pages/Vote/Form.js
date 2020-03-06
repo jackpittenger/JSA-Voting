@@ -1,5 +1,14 @@
 import React from 'react';
-import {TextField, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button} from '@material-ui/core';
+import {
+    Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    TextField
+} from '@material-ui/core';
 
 
 class NameForm extends React.Component {
@@ -27,7 +36,7 @@ class NameForm extends React.Component {
     handleChange(event) {
         this.setState({...this.state, [event.target.name]: event.target.value});
     }
-//register when walk in the room
+    //register when walk in the room
     // elections
     ShowChoices(){
         return this.rooms[this.state.room_number].map(data => (
@@ -52,6 +61,13 @@ class NameForm extends React.Component {
 
     formSubmit() {
         console.table(this.state);
+        this.testingRoute()
+            .then(res => console.log(res));
+    }
+
+    async testingRoute() {
+        const response = await fetch('/testing');
+        return await response.text();
     }
 
     render() {
