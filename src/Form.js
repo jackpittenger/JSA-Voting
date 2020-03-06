@@ -1,11 +1,11 @@
 import React from 'react';
-import {TextField, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio} from '@material-ui/core';
+import {TextField, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button} from '@material-ui/core';
 
 
 class NameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {first_name:'', room_number:'', last_name: '', speaker: ''};
+        this.state = {first_name:'', room_number:'', last_name: '', speaker: '', school: ''};
         this.rooms = {
             "100": [
                 "George",
@@ -19,8 +19,9 @@ class NameForm extends React.Component {
             ],
         };
         this.handleChange = this.handleChange.bind(this);
-        this.ShowChoices = this.ShowChoices.bind(this)
+        this.ShowChoices = this.ShowChoices.bind(this);
         this.ChoicesMenu = this.ChoicesMenu.bind(this);
+        this.formSubmit = this.formSubmit.bind(this);
     }
 
     handleChange(event) {
@@ -31,7 +32,7 @@ class NameForm extends React.Component {
     ShowChoices(){
         return this.rooms[this.state.room_number].map(data => (
                 <FormControlLabel control={<Radio color="primary" />}
-                                  label={data} labelPlacement="start" value={data} />
+                                  label={data} key={data} labelPlacement="start" value={data} />
             )
         );
     }
@@ -49,8 +50,11 @@ class NameForm extends React.Component {
         return "";
     }
 
-    render() {
+    formSubmit() {
+        console.table(this.state);
+    }
 
+    render() {
         return (
             <form style={{paddingTop:15}}>
                 <div>
@@ -71,6 +75,18 @@ class NameForm extends React.Component {
                             value={this.state.last_name}
                             onChange={this.handleChange}
                             label="Last Name"
+                            variant="outlined">
+                        </TextField>
+                    </FormControl>
+                </div>
+                <div>
+                    <FormControl style={{width: 200, paddingTop:15}}>
+                        <TextField
+                            name="school"
+                            id="school"
+                            value={this.state.school}
+                            onChange={this.handleChange}
+                            label="School"
                             variant="outlined">
                         </TextField>
                     </FormControl>
@@ -99,6 +115,11 @@ class NameForm extends React.Component {
                 </div>
                 <div>
                     <this.ChoicesMenu/>
+                </div>
+                <div>
+                    <Button variant="contained" color="primary" onClick={this.formSubmit}>
+                        Submit
+                    </Button>
                 </div>
             </form>
         );
