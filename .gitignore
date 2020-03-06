@@ -1,5 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+.idea/
 # dependencies
 /node_modules
 /.pnp
@@ -186,7 +187,7 @@ sketch
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
-
+.idea/workspace.xmxl
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
