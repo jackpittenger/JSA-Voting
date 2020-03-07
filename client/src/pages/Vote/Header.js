@@ -13,7 +13,7 @@ class Header extends React.Component {
     }
 
     showLoginForm() {
-        console.log("hi")
+
     }
     render(){
         return (
