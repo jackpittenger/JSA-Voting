@@ -26,7 +26,6 @@ class Header extends React.Component {
                         fullWidth
                     />
                     <TextField
-                        autoFocus
                         margin="dense"
                         id="pin"
                         label="Pin"
