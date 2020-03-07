@@ -15,7 +15,7 @@ class  Vote extends React.Component {
 
     loginHandler(){
         this.setState({
-            enableForm: true
+            enableForm: !this.state.enableForm
         });
         console.log("test");
     }
@@ -24,7 +24,7 @@ class  Vote extends React.Component {
         return (
             <div className="App">
                 <Header handler={this.loginHandler}/>
-                { this.state.enableForm ? < LoginForm />: ""}
+                { this.state.enableForm ? < LoginForm handler={this.loginHandler} />: ""}
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
                 <NameForm/>
