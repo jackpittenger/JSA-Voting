@@ -7,14 +7,6 @@ import Typography from '@material-ui/core/Typography';
 
 class Header extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.showLoginForm = this.showLoginForm.bind(this);
-    }
-
-    showLoginForm() {
-
-    }
     render(){
         return (
             <AppBar position="static">
@@ -22,7 +14,7 @@ class Header extends React.Component {
                     <Typography variant="h6">
                         JSA Voting
                     </Typography>
-                    <Button onClick={this.showLoginForm} style={{marginLeft: 'auto'}} color="inherit">Login</Button>
+                    <Button onClick={this.props.handler} style={{marginLeft: 'auto'}} color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
         );
