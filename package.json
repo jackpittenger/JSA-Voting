@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/realSaddy/JSA-Voting#readme",
   "dependencies": {
-    "express": "latest"
+    "dotenv": "^8.2.0",
+    "express": "latest",
+    "mongoose": "^5.9.3"
   }
 }
