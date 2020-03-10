@@ -30,6 +30,7 @@ jobs:
       run: | 
         cd client/
         sudo npm run build 
+        sudo chmod -R ugo+rwX .
     - name: Run server
       run: |
         pm2 start server.js
