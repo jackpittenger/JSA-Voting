@@ -33,4 +33,4 @@ jobs:
         sudo chmod -R ugo+rwX .
     - name: Run server
       run: |
-        pm2 start server.js
+        pm2 restart server.js
