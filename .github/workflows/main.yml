@@ -30,10 +30,6 @@ jobs:
       run: | 
         cd client/
         sudo npm run build 
-    - name: Run backend server
+    - name: Run server
       run: |
         pm2 start server.js
-    - name: Run static react
-      run: |
-        cd client/
-        sudo serve -s build -l 80  
