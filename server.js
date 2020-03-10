@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require("path");
 const app = express();
-const port = 5000;
+const port = 80;
 const { login } = require("./mongo");
 
 app.use(bodyParser.json());
