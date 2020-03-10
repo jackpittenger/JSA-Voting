@@ -26,6 +26,13 @@ jobs:
         npm i
         cd client/
         npm i
+    - name: Create .env
+      run: |
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+        echo "DB_PWD=${{ secrets.DB_PWD }}" >> .env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "SECRET=${{ secrets.SECRET }}" >> .env
+        echo "DB_DB=${{ secrets.DB_DB }}" >> .env
     - name: Build react
       run: | 
         cd client/
