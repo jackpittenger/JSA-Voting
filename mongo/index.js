@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PWD}@${process.env.DB_HOST}:27017/${process.env.DB_DB}`, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
 });
 
 const db = mongoose.connection;
@@ -12,6 +14,16 @@ db.once('open', function() {
 });
 
 const User = require('./User').User;
+
+module.exports.login = (token, pin) => {
+    return User.findOne({"token":token, "pin":pin})
+        .then(doc=>doc)
+        .then(doc=>{
+            if(!doc) return false;
+            return doc.token;
+        })
+        .catch(err=>console.error(err));
+};
 
 
 // User.find({token: "admin"},(err,doc)=>{

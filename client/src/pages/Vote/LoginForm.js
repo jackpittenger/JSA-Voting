@@ -9,6 +9,40 @@ import Button from '@material-ui/core/Button';
 
 class Header extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {token: "", pin: ""};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
+    }
+
+    handleLogin(){
+        fetch("/api/login",  {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: this.state.token,
+                pin: this.state.pin,
+            })
+        })
+            .then(r => r.text())
+            .then(r=>{
+                console.log(r);
+            })
+            .catch(err=>{
+                console.error(err);
+            });
+        this.props.handler();
+    }
+
+    handleChange(event) {
+        this.setState({...this.state, [event.target.name]: event.target.value});
+    }
+
     render(){
         return (
             <Dialog open={true}>
@@ -20,16 +54,22 @@ class Header extends React.Component {
                     <TextField
                         autoFocus
                         margin="dense"
+                        name="token"
                         id="token"
                         label="Token"
                         type="text"
+                        onChange={this.handleChange}
+                        value={this.state.token}
                         fullWidth
                     />
                     <TextField
                         margin="dense"
+                        name="pin"
                         id="pin"
                         label="Pin"
                         type="text"
+                        onChange={this.handleChange}
+                        value={this.state.pin}
                         fullWidth
                     />
                 </DialogContent>
@@ -37,7 +77,7 @@ class Header extends React.Component {
                     <Button onClick={this.props.handler} color="primary">
                         Cancel
                     </Button>
-                    <Button color="primary">
+                    <Button onClick={this.handleLogin} color="primary">
                         Login
                     </Button>
                 </DialogActions>
