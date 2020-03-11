@@ -26,6 +26,18 @@ jobs:
         npm i
         cd client/
         npm i
+    - name: Create .env
+      run: |
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+        echo "DB_PWD=${{ secrets.DB_PWD }}" >> .env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "SECRET=${{ secrets.SECRET }}" >> .env
+        echo "DB_DB=${{ secrets.DB_DB }}" >> .env
+        echo "DEPLOY=true" >> .env
+    - name: Create SSL key and cert
+      run: |
+        echo "${{ secrets.CRT }}" > server.crt
+        echo "${{ secrets.KEY }}" > server.key
     - name: Build react
       run: | 
         cd client/
@@ -33,4 +45,4 @@ jobs:
         sudo chmod -R ugo+rwX .
     - name: Run server
       run: |
-        pm2 start server.js
+        pm2 restart server.js
