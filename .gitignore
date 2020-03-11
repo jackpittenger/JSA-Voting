@@ -245,4 +245,9 @@ modules.xml
 # Sonarlint plugin
 .idea/sonarlint
 
+
+server.crt
+server.key
+build/
+
 # End of https://www.gitignore.io/api/git,node,react,webstorm+all
