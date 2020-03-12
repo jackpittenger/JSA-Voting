@@ -6,6 +6,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from '@material-ui/core/Button';
+import history from '../../services/history';
 
 class Header extends React.Component {
 
@@ -29,12 +30,18 @@ class Header extends React.Component {
                 pin: this.state.pin,
             })
         })
-            .then(r => r.text())
-            .then(r=>{
-                console.log(r);
+            .then(r =>{
+                if(r.status === 200) {
+                    history.push("/dashboard/");
+                } else if(r.status === 401) {
+                    alert("Please try again! Invalid credentials");
+                } else {
+                    alert("An error has occurred, please try again");
+                }
             })
             .catch(err=>{
                 console.error(err);
+                alert("Error logging in, please try again :)");
             });
         this.props.handler();
     }

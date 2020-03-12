@@ -4,23 +4,28 @@ const bodyParser = require('body-parser');
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const { login } = require("./mongo");
+const withAuth = require('./middleware/withAuth');
 const privateKey = fs.readFileSync('server.key', 'utf8');
 const certificate = fs.readFileSync('server.crt', 'utf8');
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './client/build')));
 
-app.get("/testing", (req, res)=>{
-    res.send("Test");
+app.get("/dashboard", withAuth, (req, res)=>{
+    res.sendStatus(500);
+});
+
+app.get('/api/checkToken', withAuth, function(req, res) {
+    res.sendStatus(200);
 });
 
 app.post("/api/login", (req, res)=>{
-    login(req.body.token, req.body.pin)
-        .then(ret=>console.log(ret));
-    return res.send("Hi!");
+    return login(req, res)
 });
 
 if(process.env.DEPLOY === "true"){
