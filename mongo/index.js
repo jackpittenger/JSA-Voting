@@ -15,6 +15,7 @@ db.once('open', function() {
 });
 
 const User = require('./User').User;
+const Room = require('./Room').Room;
 
 module.exports.login = (req, res) => {
     return User.findOne({"token":req.body.token})
