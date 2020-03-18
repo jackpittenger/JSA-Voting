@@ -25,11 +25,9 @@ class Header extends React.Component {
 
         this.Auth.login(this.state.token,this.state.pin)
             .then(res =>{
-                console.log("1");
                 history.push('/dashboard/');
             })
             .catch(err =>{
-                console.log("here");
                 alert(err);
             });
         this.props.handler();
