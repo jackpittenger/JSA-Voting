@@ -4,13 +4,13 @@ import { Switch, Route } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import Vote from '../pages/Vote';
 import NotFound from '../pages/NotFound';
-import withAuth from '../services/withAuth';
+import history from "../services/history";
 
 export default function Routes() {
     return (
         <Switch>
             <Route path="/" exact component={Vote} />
-            <Route path="/dashboard" component={withAuth(Dashboard)}/>
+            <Route history={history} path="/dashboard" component={Dashboard}/>
             <Route component={NotFound} />
         </Switch>
     )

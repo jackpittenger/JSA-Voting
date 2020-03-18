@@ -27,7 +27,7 @@ module.exports.login = (req, res) => {
                 let jwtToken = jwt.sign(payload, process.env.SECRET, {
                     expiresIn: '1h'
                 });
-                res.cookie('token', jwtToken, {httpOnly: true}).send();
+                res.json({token: jwtToken, message: "Success"}).send();
             } else return res.status(401).json({error: "Invalid login credentials"});
         })
         .catch(err=>{

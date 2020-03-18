@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './client/build')));
 
 app.get("/dashboard", withAuth, (req, res)=>{
-    res.sendStatus(500);
+    res.sendStatus(500).json({message: "Unknown server error"});
 });
 
 app.get('/api/checkToken', withAuth, function(req, res) {

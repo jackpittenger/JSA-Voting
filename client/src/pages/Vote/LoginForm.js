@@ -6,7 +6,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from '@material-ui/core/Button';
-import history from '../../services/history';
+import AuthService from "../../services/AuthService";
+import history from "../../services/history";
 
 class Header extends React.Component {
 
@@ -15,39 +16,33 @@ class Header extends React.Component {
         this.state = {token: "", pin: ""};
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        this.Auth = new AuthService();
     }
 
-    handleLogin(){
-        fetch("/api/login",  {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                token: this.state.token,
-                pin: this.state.pin,
+    handleFormSubmit(e){
+        e.preventDefault();
+
+        this.Auth.login(this.state.token,this.state.pin)
+            .then(res =>{
+                console.log("1");
+                history.push('/dashboard/');
             })
-        })
-            .then(r =>{
-                if(r.status === 200) {
-                    history.push("/dashboard/");
-                } else if(r.status === 401) {
-                    alert("Please try again! Invalid credentials");
-                } else {
-                    alert("An error has occurred, please try again");
-                }
-            })
-            .catch(err=>{
-                console.error(err);
-                alert("Error logging in, please try again :)");
+            .catch(err =>{
+                console.log("here");
+                alert(err);
             });
         this.props.handler();
     }
 
+    componentDidMount(){
+        if(this.Auth.loggedIn())
+            history.replace('/dashboard/');
+    }
+
+
     handleChange(event) {
-        this.setState({...this.state, [event.target.name]: event.target.value});
+        this.setState({[event.target.name]: event.target.value});
     }
 
     render(){
@@ -84,7 +79,7 @@ class Header extends React.Component {
                     <Button onClick={this.props.handler} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={this.handleLogin} color="primary">
+                    <Button onClick={this.handleFormSubmit} color="primary">
                         Login
                     </Button>
                 </DialogActions>

@@ -1,32 +1,41 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';export default function withAuth(ComponentToProtect) {  return class extends Component {
-    constructor() {
-        super();
-        this.state = {
-            loading: true,
-            redirect: false,
-        };
-    }    componentDidMount() {
-        fetch('/api/checkToken')
-            .then(res => {
-                if (res.status === 200) {
-                    this.setState({ loading: false });
-                } else {
-                    alert("You are unauthorized! Code "+res.status);
+import AuthService from './AuthService';
+import history from "./history";
+
+export default function withAuth(AuthComponent) {
+    const Auth = new AuthService('http://localhost:3000');
+    return class AuthWrapped extends Component {
+        constructor() {
+            super();
+            this.state = {
+                user: null
+            }
+        }
+
+        componentDidMount() {
+            if (!Auth.loggedIn()) {
+                history.replace('/')
+            } else {
+                try {
+                    const profile = Auth.getProfile();
+                    this.setState({
+                        user: profile
+                    })
+                } catch (err) {
+                    Auth.logout();
+                    history.replace('/')
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                this.setState({ loading: false, redirect: true });
-            });
-    }    render() {
-        const { loading, redirect } = this.state;
-        if (loading) {
-            return null;
+            }
         }
-        if (redirect) {
-            return <Redirect to="/login" />;
+
+        render() {
+            if (this.state.user) {
+                return (
+                    <AuthComponent user={this.state.user}/>
+                )
+            } else {
+                return null
+            }
         }
-        return <ComponentToProtect {...this.props} />;
     }
-}}
+}
