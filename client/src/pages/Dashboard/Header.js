@@ -12,7 +12,7 @@ class Header extends React.Component {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6">
-                        JSA Voting
+                        JSA Voting Dashboard
                     </Typography>
                     <Button onClick={this.props.handler} style={{marginLeft: 'auto'}} color="inherit">Logout</Button>
                 </Toolbar>

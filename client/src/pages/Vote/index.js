@@ -17,7 +17,6 @@ class  Vote extends React.Component {
         this.setState({
             enableForm: !this.state.enableForm
         });
-        console.log("test");
     }
 
     render(){

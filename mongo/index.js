@@ -23,7 +23,7 @@ module.exports.login = (req, res) => {
         .then(doc=>{
             if(!doc) return res.status(401).json({error: "Invalid login credentials"});
             if(doc.pin === req.body.pin) {
-                let payload = {token: req.body.token};
+                let payload = {token: req.body.token, permissions: doc.permissions};
                 let jwtToken = jwt.sign(payload, process.env.SECRET, {
                     expiresIn: '1h'
                 });
