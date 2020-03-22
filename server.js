@@ -7,10 +7,11 @@ const https = require("https");
 const cookieParser = require('cookie-parser');
 
 const app = express();
-const { login } = require("./mongo");
+const { login, createUser } = require("./mongo");
 const withAuth = require('./middleware/withAuth');
 const privateKey = fs.readFileSync('server.key', 'utf8');
 const certificate = fs.readFileSync('server.crt', 'utf8');
+
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -20,12 +21,12 @@ app.get("/dashboard", withAuth, (req, res)=>{
     res.sendStatus(500).json({message: "Unknown server error"});
 });
 
-app.get('/api/checkToken', withAuth, function(req, res) {
-    res.sendStatus(200);
-});
-
 app.post("/api/login", (req, res)=>{
     return login(req, res)
+});
+
+app.post("/api/create_user",  (req, res)=> {
+    return createUser(req, res);
 });
 
 if(process.env.DEPLOY === "true"){

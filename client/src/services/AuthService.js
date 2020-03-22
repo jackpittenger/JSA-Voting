@@ -58,7 +58,7 @@ export default class AuthService {
     }
 
 
-    fetch(url, options) {
+    fetch(url, options, callback) {
         // performs api calls sending the required authentication headers
         const headers = {
             'Accept': 'application/json',
@@ -68,7 +68,7 @@ export default class AuthService {
         // Setting Authorization header
         // Authorization: Bearer xxxxxxx.xxxxxxxx.xxxxxx
         if (this.loggedIn()) {
-            headers['Authorization'] = 'Bearer ' + this.getToken()
+            headers['Authorization'] = this.getToken();
         }
 
         return fetch(url, {
@@ -77,6 +77,9 @@ export default class AuthService {
         })
             .then(this._checkStatus)
             .then(response => response.json())
+            .then(ret=>{
+                if(callback) callback(ret)
+            });
     }
 
     _checkStatus(response) {
