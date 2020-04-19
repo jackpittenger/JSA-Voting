@@ -1,25 +1,20 @@
 import decode from 'jwt-decode';
+import axios from 'axios';
+
 export default class AuthService {
 
-    constructor(domain) {
-        this.domain = domain || 'http://localhost:3000';
-        this.fetch = this.fetch.bind(this);
+    constructor() {
         this.login = this.login.bind(this);
         this.getProfile = this.getProfile.bind(this);
     }
 
     login(token, pin) {
         // Get a token from api server using the fetch api
-        return this.fetch(`${this.domain}/api/login`, {
-            method: 'POST',
-            body: JSON.stringify({
-                token,
-                pin
-            })
-        }).then(res => {
-            this.setToken(res.token); // Setting the token in localStorage
-            return Promise.resolve(res);
-        })
+        console.log(this.domain)
+        return axios.post(`/api/login`, {token, pin})
+            .then(res => {
+                this.setToken(res.data.token);
+            }).catch(e => console.error(e))
     }
 
     loggedIn() {
@@ -31,8 +26,7 @@ export default class AuthService {
         try {
             const decoded = decode(token);
             return decoded.exp < Date.now() / 1000;
-        }
-        catch (err) {
+        } catch (err) {
             return false;
         }
     }
@@ -77,8 +71,8 @@ export default class AuthService {
         })
             .then(this._checkStatus)
             .then(response => response.json())
-            .then(ret=>{
-                if(callback) callback(ret)
+            .then(ret => {
+                if (callback) callback(ret)
             });
     }
 

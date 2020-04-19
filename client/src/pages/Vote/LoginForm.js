@@ -24,7 +24,7 @@ class Header extends React.Component {
         e.preventDefault();
 
         this.Auth.login(this.state.token,this.state.pin)
-            .then(res =>{
+            .then(() =>{
                 history.push('/dashboard/');
             })
             .catch(err =>{
