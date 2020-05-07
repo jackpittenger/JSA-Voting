@@ -6,7 +6,7 @@ mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PWD}@${proce
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true
-});
+}).then(r => console.log("Mongoose ✓"));
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -27,7 +27,7 @@ module.exports.login = (req, res) => {
                 let jwtToken = jwt.sign(payload, process.env.SECRET, {
                     expiresIn: '1h'
                 });
-                res.json({token: jwtToken, message: "Success"}).send();
+                res.status(202).send({token: jwtToken, message: "Success"})
             } else return res.status(401).json({error: "Invalid login credentials"});
         })
         .catch(err=>{
@@ -39,32 +39,54 @@ module.exports.login = (req, res) => {
 module.exports.createUser = (req, res)=> {
     jwt.verify(req.header("Authorization"), process.env.SECRET, (err, decoded)=>{
         if(err) {
-            console.error(err);
             return res.status(401).json({error: "JWT not verified"});
+        } else if(req.body.type !== "admin" && req.body.type !== "mod") {
+            return res.status(501).json({error: "Not Implemented"});
+        } else if((req.body.type==="admin" && decoded.permissions.indexOf("Dev") === -1)  || (req.body.type==="mod" &&
+            decoded.permissions.indexOf("Admin") === -1)){
+            return res.status(401).json({error: "Not authorized"});
+        } else if(!req.body.name || req.body.name.length > 24 || req.body.name.length < 5) {
+            return res.status(422).json({error: "Invalid name"});
         }
-        switch(req.body.type) {
-            case "mod":
-                return res.status(501).json({error: "Not Implemented"});
-            case "admin":
-                if(decoded.permissions.indexOf("Dev") === -1) return res.status(401).json({error: "Not authorized"});
-                if(!req.body.name || req.body.name.length > 24 || req.body.name.length < 5)
-                    return res.status(422).json({error: "Invalid name"});
-                let pin = _generatePIN(7);
-                User.create({token: req.body.name, pin: pin, permissions: ["Admin"]})
-                    .then(doc=>{
-                        console.log("Sending");
-                       return res.status(200).json({pin: doc.pin});
-                    })
-                    .catch(err=>{
-                        console.error(err);
-                        return res.status(500).json({error: "Error while creating a user"})
-                    });
-                break;
-            default:
-                return res.status(501).json({error: "Not Implemented"});
-        }
+
+        let pin = _generatePIN(7);
+        User.create({token: req.body.name, pin: pin,
+            permissions: [req.body.type.charAt(0).toUpperCase() + req.body.type.slice(1)]})
+            .then(doc=>{
+               return res.status(200).json({pin: doc.pin});
+            })
+            .catch(err=>{
+                console.error(err);
+                return res.status(500).json({error: "Error while creating a user"})
+            });
     })
 };
+
+module.exports.createRoom = (req, res) => {
+    jwt.verify(req.header("Authorization"), process.env.SECRET, (err, decoded)=> {
+        if (err) {
+            return res.status(401).json({error: "JWT not verified"});
+        } else if(decoded.permissions.indexOf("Mod") === -1) {
+            return res.status(401).json({error: "Not authorized"});
+        }
+
+        return User.findOne({token: decoded.token}, (er, usr)=> {
+            if(er) return req.status(500).send({error: "User account not found!"})
+            let pin = _generatePIN(7);
+            Room.create({id: req.body.name, accessCode: pin, owner: usr._id})
+                .then(()=> res.status(201).send({code:pin}))
+                .catch((err)=>{
+                    console.error(err);
+                    return res.status(500).send({error:"Error creating room"})
+                })
+        })
+    })
+}
+
+module.exports.authenticateCode = (req, res)=> {
+    return res.sendStatus(200);
+}
+
 
 function _generatePIN(length) {
     let result = '';

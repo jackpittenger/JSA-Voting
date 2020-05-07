@@ -8,6 +8,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
+import TextField from "@material-ui/core/TextField";
 
 class Mod extends React.Component {
 
@@ -17,6 +18,7 @@ class Mod extends React.Component {
             openDialog: false,
             dialogTitle: "",
             firstLine: "",
+            room_name: ""
         };
         this.Auth = new AuthService();
         this.handleChange = this.handleChange.bind(this);
@@ -30,7 +32,8 @@ class Mod extends React.Component {
 
     createRoom() {
         console.log("Creating a room")
-        this.Auth.fetch("/api/create_room", {method: "POST"}, this.processRoom)
+        this.Auth.fetch("/api/create_room", {method: "POST",
+            body: JSON.stringify({name: this.state.room_name})}, this.processRoom)
     }
 
     processRoom(res) {
@@ -67,6 +70,14 @@ class Mod extends React.Component {
                     Mod
                     <br/>
                     <div>
+                        <TextField
+                            name="room_name"
+                            id="room_name"
+                            label="Room name"
+                            type="text"
+                            onChange={this.handleChange}
+                            value={this.state.room_name}
+                        />
                         <Button onClick={this.createRoom} color="primary">
                             Create a new room
                         </Button>
