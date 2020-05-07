@@ -1,12 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import {
     Button,
     FormControl,
-    FormControlLabel,
-    FormLabel,
-    MenuItem,
-    Radio,
-    RadioGroup,
     TextField
 } from '@material-ui/core';
 
@@ -14,60 +10,19 @@ import {
 class NameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {first_name:'', room_number:'', last_name: '', speaker: '', school: ''};
-        this.rooms = {
-            "100": [
-                "George",
-                "Greg",
-                "Dan"
-            ],
-            "200": [
-                "Hover",
-                "Jen",
-                "Lena"
-            ],
-        };
+        this.state = {first_name:'', code:'', last_name: '', school: ''};
         this.handleChange = this.handleChange.bind(this);
-        this.ShowChoices = this.ShowChoices.bind(this);
-        this.ChoicesMenu = this.ChoicesMenu.bind(this);
-        this.formSubmit = this.formSubmit.bind(this);
+        this.submitCode = this.submitCode.bind(this);
     }
 
     handleChange(event) {
-        this.setState({...this.state, [event.target.name]: event.target.value});
-    }
-    //register when walk in the room
-    // elections
-    ShowChoices(){
-        return this.rooms[this.state.room_number].map(data => (
-                <FormControlLabel control={<Radio color="primary" />}
-                                  label={data} key={data} labelPlacement="start" value={data} />
-            )
-        );
+        this.setState({[event.target.name]: event.target.value});
     }
 
-    ChoicesMenu(){
-        if(Object.keys(this.rooms).indexOf(this.state.room_number) !== -1)
-            return (<FormControl component="fieldset">
-                <FormLabel style={{width: 200, paddingTop:15}} component="legend">
-                    Speaker
-                </FormLabel>
-                <RadioGroup name="speaker" value={this.state.speaker} onChange={this.handleChange} row>
-                    < this.ShowChoices/>
-                </RadioGroup>
-            </FormControl>);
-        return "";
-    }
-
-    formSubmit() {
+    submitCode() {
         console.table(this.state);
-        this.testingRoute()
-            .then(res => console.log(res));
-    }
-
-    async testingRoute() {
-        const response = await fetch('/testing');
-        return await response.text();
+        axios.post("/api/auth_code", {code: this.state.code})
+            .then(res=>console.log(res));
     }
 
     render() {
@@ -110,31 +65,19 @@ class NameForm extends React.Component {
                 <div>
                     <FormControl style={{width: 200, paddingTop:15}}>
                         <TextField
-                            select
-                            name="room_number"
-                            id="room-number"
-                            value={this.state.room_number}
+                            name="code"
+                            id="code"
+                            value={this.state.code}
                             onChange={this.handleChange}
-                            label="Room Number"
+                            label="Code"
                             variant="outlined"
                         >
-                            <MenuItem key={"Room Number"} value={""} disabled>
-                                Room Number
-                            </MenuItem>
-                            {Object.keys(this.rooms).map(option=>(
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
                         </TextField>
                     </FormControl>
                 </div>
                 <div>
-                    <this.ChoicesMenu/>
-                </div>
-                <div>
-                    <Button variant="contained" color="primary" onClick={this.formSubmit}>
-                        Submit
+                    <Button variant="contained" color="primary" onClick={this.submitCode}>
+                        Next
                     </Button>
                 </div>
             </form>

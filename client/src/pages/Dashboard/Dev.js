@@ -38,9 +38,10 @@ class Dev extends React.Component {
 
     givePin(pin){
         this.setState({
-           dialogTitle: "Created new user "+this.state.admin_name,
-           firstLine: "Pin: "+pin.pin,
-           openDialog: true
+            dialogTitle: "Created new user "+this.state.admin_name,
+            firstLine: "Pin: "+pin.pin,
+            openDialog: true,
+            admin_name: ""
         });
     }
 
