@@ -83,6 +83,27 @@ module.exports.createRoom = (req, res) => {
     })
 }
 
+module.exports.getRoom = (req, res) => {
+    jwt.verify(req.header("Authorization"), process.env.SECRET, (err, decoded)=> {
+        if (err) {
+            return res.status(401).json({error: "JWT not verified"});
+        } else if (decoded.permissions.indexOf("Mod") === -1) {
+            return res.status(401).json({error: "Not authorized"});
+        }
+        return User.findOne({token: decoded.token})
+            .then(doc=>doc)
+            .then(doc=> {
+                console.log(doc._id);
+                return Room.findOne({owner: doc._id})
+                    .then(room=>room)
+                    .then(room=>{
+                        console.log(room._id)
+                        return res.status(200).send({id: room.id, users: room.users, accessCode: room.accessCode, owner: room.owner});
+                    })
+            })
+    })
+}
+
 module.exports.authenticateCode = (req, res)=> {
     return res.sendStatus(200);
 }

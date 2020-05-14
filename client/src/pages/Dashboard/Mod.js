@@ -26,6 +26,14 @@ class Mod extends React.Component {
         this.createRoom = this.createRoom.bind(this);
     }
 
+    componentDidMount() {
+        console.log("Getting room")
+        this.Auth.fetch("/api/get_room", {method: "POST"}, (res)=>{
+            console.log(res);
+            this.setState({room: res})
+        })
+    }
+
     handleChange(event) {
         this.setState({[event.target.name]: event.target.value});
     }
@@ -82,6 +90,8 @@ class Mod extends React.Component {
                             Create a new room
                         </Button>
                     </div>
+                    Active room:
+                    {this.state.room != null ? this.state.room.id : ""}
                 </Paper>
             </Grid>
         );

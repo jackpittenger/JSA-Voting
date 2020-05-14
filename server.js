@@ -7,7 +7,7 @@ const https = require("https");
 const cookieParser = require('cookie-parser');
 
 const app = express();
-const { login, createUser, authenticateCode, createRoom } = require("./mongo");
+const { login, createUser, authenticateCode, createRoom, getRoom } = require("./mongo");
 const withAuth = require('./middleware/withAuth');
 const privateKey = fs.readFileSync('server.key', 'utf8');
 const certificate = fs.readFileSync('server.crt', 'utf8');
@@ -33,6 +33,10 @@ app.post("/api/auth_code", (req, res)=> {
 
 app.post("/api/create_room", (req, res)=> {
     return createRoom(req, res);
+})
+
+app.post("/api/get_room", (req, res)=> {
+    return getRoom(req, res);
 })
 
 if(process.env.DEPLOY === "true"){
