@@ -21,7 +21,15 @@
     "cookie-parser": "^1.4.4",
     "dotenv": "^8.2.0",
     "express": "latest",
+    "husky": "^4.2.5",
     "jsonwebtoken": "latest",
-    "mongoose": "^5.9.3"
+    "mongoose": "^5.9.3",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
