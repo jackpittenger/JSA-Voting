@@ -140,14 +140,12 @@ module.exports.getRoom = (req, res) => {
             .then((room) => room)
             .then((room) => {
               console.log(room._id);
-              return res
-                .status(200)
-                .send({
-                  id: room.id,
-                  users: room.users,
-                  accessCode: room.accessCode,
-                  owner: room.owner,
-                });
+              return res.status(200).send({
+                id: room.id,
+                users: room.users,
+                accessCode: room.accessCode,
+                owner: room.owner,
+              });
             });
         });
     }
