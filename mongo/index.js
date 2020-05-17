@@ -11,7 +11,7 @@ mongoose
       useCreateIndex: true,
     }
   )
-  .then((r) => console.log("Mongoose ✓"));
+  .then(() => console.log("Mongoose ✓"));
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -110,7 +110,9 @@ module.exports.createRoom = (req, res) => {
             usr.save((err) => {
               if (err)
                 return res.status(500).send({ error: "Error creating room" });
-              res.status(201).send({ code: pin });
+              res
+                .status(201)
+                .send({ id: req.body.name, accessCode: pin, users: [] });
             });
           })
           .catch((err) => {
@@ -135,16 +137,17 @@ module.exports.getRoom = (req, res) => {
       return User.findOne({ token: decoded.token })
         .then((doc) => doc)
         .then((doc) => {
-          console.log(doc._id);
+          if (!doc)
+            return res.status(403).json({ error: "Current user not found!" });
           return Room.findOne({ owner: doc._id })
             .then((room) => room)
             .then((room) => {
-              console.log(room._id);
+              if (!room)
+                return res.status(206).json({ error: "No current room!" });
               return res.status(200).send({
                 id: room.id,
                 users: room.users,
                 accessCode: room.accessCode,
-                owner: room.owner,
               });
             });
         });

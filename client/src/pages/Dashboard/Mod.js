@@ -1,4 +1,5 @@
 import React from "react";
+import Room from "./Room";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import AuthService from "../../services/AuthService";
@@ -18,6 +19,7 @@ class Mod extends React.Component {
       dialogTitle: "",
       firstLine: "",
       room_name: "",
+      room: false,
     };
     this.Auth = new AuthService();
     this.handleChange = this.handleChange.bind(this);
@@ -26,9 +28,8 @@ class Mod extends React.Component {
   }
 
   componentDidMount() {
-    console.log("Getting room");
     this.Auth.fetch("/api/get_room", { method: "POST" }, (res) => {
-      console.log(res);
+      if (res.error) return;
       this.setState({ room: res });
     });
   }
@@ -47,7 +48,7 @@ class Mod extends React.Component {
   }
 
   processRoom(res) {
-    console.log(res);
+    this.setState({ room: res });
   }
 
   closeDialog() {
@@ -84,8 +85,7 @@ class Mod extends React.Component {
               Create a new room
             </Button>
           </div>
-          Active room:
-          {this.state.room != null ? this.state.room.id : ""}
+          {this.state.room ? <Room room={this.state.room} /> : ""}
         </Paper>
       </Grid>
     );

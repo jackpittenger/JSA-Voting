@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
-const cookieParser = require("cookie-parser");
 
 const app = express();
 const {
@@ -19,7 +18,6 @@ const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
 app.use(bodyParser.json());
-app.use(cookieParser());
 
 app.get("/dashboard", withAuth, (req, res) => {
   res.sendStatus(500).json({ message: "Unknown server error" });
