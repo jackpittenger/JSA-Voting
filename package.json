@@ -23,7 +23,7 @@
     "express": "latest",
     "husky": "^4.2.5",
     "jsonwebtoken": "latest",
-    "mongoose": "^5.9.3",
+    "mongoose": "^5.9.14",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1"
   },
