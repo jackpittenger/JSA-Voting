@@ -12,6 +12,7 @@ const {
   authenticateCode,
   createRoom,
   getRoom,
+  deleteRoom,
 } = require("./mongo");
 const withAuth = require("./middleware/withAuth");
 const privateKey = fs.readFileSync("server.key", "utf8");
@@ -41,6 +42,10 @@ app.post("/api/create_room", (req, res) => {
 
 app.post("/api/get_room", (req, res) => {
   return getRoom(req, res);
+});
+
+app.delete("/api/room", (req, res) => {
+  return deleteRoom(req, res);
 });
 
 if (process.env.DEPLOY === "true") {

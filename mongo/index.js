@@ -155,6 +155,35 @@ module.exports.getRoom = (req, res) => {
   );
 };
 
+module.exports.deleteRoom = (req, res) => {
+  jwt.verify(
+    req.header("Authorization"),
+    process.env.SECRET,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "JWT not verified" });
+      } else if (decoded.permissions.indexOf("Mod") === -1) {
+        return res.status(401).json({ error: "Not authorized" });
+      }
+      User.findOne({ token: decoded.token })
+        .then((doc) => doc)
+        .then((doc) => {
+          if (!doc)
+            return res.status(403).json({ error: "Current user not found!" });
+          else if (doc.room !== req.body.room)
+            return res.status(401).json({ error: "You do not own this room!" });
+          Room.deleteOne({ id: req.body.room })
+            .then(() => {
+              doc.room = null;
+              doc.save();
+              res.status(200).json({ success: true });
+            })
+            .catch(() => res.status(500).json({ error: "Unable to delete!" }));
+        });
+    }
+  );
+};
+
 module.exports.authenticateCode = (req, res) => {
   return res.sendStatus(200);
 };

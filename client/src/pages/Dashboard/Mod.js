@@ -25,6 +25,7 @@ class Mod extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
     this.createRoom = this.createRoom.bind(this);
+    this.processRoom = this.processRoom.bind(this);
   }
 
   componentDidMount() {
