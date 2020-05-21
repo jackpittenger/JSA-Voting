@@ -5,7 +5,7 @@ const roomSchema = new mongoose.Schema({
   users: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Voter",
     },
   ],
   accessCode: String,

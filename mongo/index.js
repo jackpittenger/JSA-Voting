@@ -21,6 +21,7 @@ db.once("open", function () {
 
 const User = require("./User").User;
 const Room = require("./Room").Room;
+const Voter = require("./Voter").Voter;
 
 module.exports.login = (req, res) => {
   return User.findOne({ token: req.body.token })
@@ -185,7 +186,40 @@ module.exports.deleteRoom = (req, res) => {
 };
 
 module.exports.authenticateCode = (req, res) => {
-  return res.sendStatus(200);
+  Voter.findOne({
+    firstName: req.body.first_name,
+    code: req.body.code,
+    lastName: req.body.last_name,
+    school: req.body.school,
+  })
+    .then((doc) => doc)
+    .then((doc) => {
+      if (doc)
+        return res
+          .status(409)
+          .json({ error: "User already registered for this room!" });
+      Voter.create({
+        firstName: req.body.first_name,
+        code: req.body.code,
+        lastName: req.body.last_name,
+        school: req.body.school,
+      }).then((usr) => {
+        console.log(usr + " created!");
+        let payload = {
+          firstName: usr.firstName,
+          code: usr.code,
+          lastName: usr.lastName,
+          school: usr.school,
+        };
+        let jwtToken = jwt.sign(payload, process.env.SECRET, {
+          expiresIn: "1h",
+        });
+        return res.status(201).send({ token: jwtToken, message: "Success" });
+      });
+    })
+    .catch(() => {
+      return res.status(500).json({ error: "Error fetching voter" });
+    });
 };
 
 function _generatePIN(length) {
