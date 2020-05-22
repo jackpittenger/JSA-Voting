@@ -34,6 +34,15 @@ export default class AuthService {
     }
   }
 
+  isTokenVoter() {
+    const token = this.getToken();
+    return (
+      !!token &&
+      !this.isTokenExpired(token) &&
+      !("permission" in this.getProfile())
+    );
+  }
+
   setToken(idToken) {
     localStorage.setItem("token", idToken);
   }

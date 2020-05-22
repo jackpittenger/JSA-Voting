@@ -6,7 +6,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import AuthService from "../../services/AuthService";
 import history from "../../services/history";
 
 class Header extends React.Component {
@@ -16,7 +15,7 @@ class Header extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.Auth = new AuthService();
+    this.Auth = props.auth;
   }
 
   handleFormSubmit(e) {

@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
 import { Button, FormControl, TextField } from "@material-ui/core";
-import AuthService from "../../services/AuthService";
 
 class NameForm extends React.Component {
   constructor(props) {
@@ -9,7 +8,7 @@ class NameForm extends React.Component {
     this.state = { first_name: "", code: "", last_name: "", school: "" };
     this.handleChange = this.handleChange.bind(this);
     this.submitCode = this.submitCode.bind(this);
-    this.Auth = new AuthService();
+    this.Auth = this.props.auth;
   }
 
   handleChange(event) {
@@ -24,7 +23,7 @@ class NameForm extends React.Component {
         last_name: this.state.last_name,
         school: this.state.school,
       })
-      .then((res) => this.Auth.setToken(res.data.token));
+      .then((res) => this.props.change(res));
   }
 
   render() {
