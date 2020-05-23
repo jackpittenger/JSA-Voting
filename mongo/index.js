@@ -210,7 +210,6 @@ module.exports.authenticateCode = (req, res) => {
           }).then((usr) => {
             room.users.push(usr._id);
             room.save();
-            console.log(usr + " created!");
             let payload = {
               firstName: usr.firstName,
               code: usr.code,

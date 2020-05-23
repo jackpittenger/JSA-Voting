@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import AuthService from "../../services/AuthService";
+import { openSoc } from "../../services/api";
 
 class Room extends React.Component {
   constructor(props) {
@@ -11,6 +12,16 @@ class Room extends React.Component {
     this.Auth = new AuthService();
     this.deleteRoom = this.deleteRoom.bind(this);
     this.processDelete = this.processDelete.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.Auth.loggedIn()) {
+      this.io = openSoc(this.Auth.getToken());
+    }
+  }
+
+  componentWillUnmount() {
+    this.io.disconnect();
   }
 
   deleteRoom() {

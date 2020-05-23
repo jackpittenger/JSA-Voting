@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+const io = require("socket.io")();
 
 const app = express();
 const {
@@ -18,6 +19,7 @@ const withAuth = require("./middleware/withAuth");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
+require("./middleware/socket")(io);
 app.use(bodyParser.json());
 
 app.get("/dashboard", withAuth, (req, res) => {
@@ -62,3 +64,6 @@ if (process.env.DEPLOY === "true") {
 } else {
   app.listen(443, () => console.log("Running on port 443 in dev mode"));
 }
+
+io.listen(8000);
+console.log("Socket.io listening on port 8000 ✓");
