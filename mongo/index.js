@@ -141,6 +141,7 @@ module.exports.getRoom = (req, res) => {
           if (!doc)
             return res.status(403).json({ error: "Current user not found!" });
           return Room.findOne({ owner: doc._id })
+            .populate("users")
             .then((room) => room)
             .then((room) => {
               if (!room)

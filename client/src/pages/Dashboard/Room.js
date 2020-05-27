@@ -18,6 +18,8 @@ class Room extends React.Component {
     if (this.Auth.loggedIn()) {
       this.io = openSoc(this.Auth.getToken());
     }
+
+    console.log(this.state.room.users);
   }
 
   componentWillUnmount() {
@@ -44,6 +46,12 @@ class Room extends React.Component {
         <Button onClick={this.deleteRoom} color="secondary">
           Delete room
         </Button>
+        <h3>Users:</h3>
+        <div>
+          {this.state.room.users.map((x, i) => {
+            return <li key={i}>{x.firstName + " " + x.lastName}</li>;
+          })}
+        </div>
       </div>
     );
   }
