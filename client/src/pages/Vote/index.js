@@ -35,15 +35,11 @@ class Vote extends React.Component {
         <Header handler={this.loginHandler} />
         {this.state.enableForm ? (
           <LoginForm auth={this.Auth} handler={this.loginHandler} />
-        ) : (
-          ""
-        )}
+        ) : null}
         {!this.Auth.isTokenVoter() ? (
           <NameForm change={this.submitEnabled} auth={this.Auth} />
-        ) : (
-          ""
-        )}
-        {this.Auth.isTokenVoter() ? <SubmitForm /> : ""}
+        ) : null}
+        {this.Auth.isTokenVoter() ? <SubmitForm /> : null}
       </div>
     );
   }

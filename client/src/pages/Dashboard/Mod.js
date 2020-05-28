@@ -86,7 +86,7 @@ class Mod extends React.Component {
               Create a new room
             </Button>
           </div>
-          {this.state.room ? <Room room={this.state.room} /> : ""}
+          {this.state.room ? <Room room={this.state.room} /> : null}
         </Paper>
       </Grid>
     );

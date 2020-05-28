@@ -36,9 +36,9 @@ class Dashboard extends React.Component {
     return (
       <div className="App">
         <Header handler={this.handleLogout} />
-        {this.state.permissions.indexOf("Mod") !== -1 ? <Mod /> : ""}
-        {this.state.permissions.indexOf("Admin") !== -1 ? <Admin /> : ""}
-        {this.state.permissions.indexOf("Dev") !== -1 ? <Dev /> : ""}
+        {this.state.permissions.indexOf("Mod") !== -1 ? <Mod /> : null}
+        {this.state.permissions.indexOf("Admin") !== -1 ? <Admin /> : null}
+        {this.state.permissions.indexOf("Dev") !== -1 ? <Dev /> : null}
       </div>
     );
   }

@@ -38,7 +38,7 @@ class NameForm extends React.Component {
               onChange={this.handleChange}
               label="First Name"
               variant="outlined"
-            ></TextField>
+            />
           </FormControl>
           <FormControl style={{ width: 200, paddingTop: 15 }}>
             <TextField
