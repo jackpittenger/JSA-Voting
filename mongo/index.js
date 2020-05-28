@@ -174,14 +174,25 @@ module.exports.deleteRoom = (req, res) => {
             return res.status(403).json({ error: "Current user not found!" });
           else if (doc.room !== req.body.room)
             return res.status(401).json({ error: "You do not own this room!" });
-          Room.deleteOne({ id: req.body.room })
-            .then(() => {
+          Room.findOneAndDelete({ id: req.body.room })
+            .then((room) => {
               doc.room = null;
               doc.save();
-              res.status(200).json({ success: true });
+              Voter.deleteMany({
+                _id: { $in: room.users.map((v) => mongoose.Types.ObjectId(v)) },
+              })
+                .then(() => {
+                  return res.status(200).json({ success: true });
+                })
+                .catch(() => {
+                  return res
+                    .status(500)
+                    .json({ error: "Unable to delete Voter!" });
+                });
             })
             .catch(() => res.status(500).json({ error: "Unable to delete!" }));
-        });
+        })
+        .catch(() => res.status(401).json({ error: "User not found!" }));
     }
   );
 };
