@@ -11,12 +11,12 @@ mongoose
       useCreateIndex: true,
     }
   )
-  .then(() => console.log("Mongoose ✓"));
+  .then(() => console.log("✓ Mongoose"));
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
-  console.log("connected successfully!");
+  console.log("✓ Mongoose Open");
 });
 
 const User = require("./User").User;

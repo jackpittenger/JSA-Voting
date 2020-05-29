@@ -65,10 +65,10 @@ if (process.env.DEPLOY === "true") {
     { key: privateKey, cert: certificate },
     app
   );
-  httpsServer.listen(443, () => console.log("Production: 443"));
+  httpsServer.listen(443, () => console.log("✓ Production: 443"));
 } else {
-  app.listen(443, () => console.log("Running on port 443 in dev mode"));
+  app.listen(443, () => console.log("✓ Running on port 443 in dev mode"));
 }
 
 io.listen(8000);
-console.log("Socket.io listening on port 8000 ✓");
+console.log("✓ Socket.io listening on port 8000");
