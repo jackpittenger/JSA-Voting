@@ -2,6 +2,13 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import AuthService from "../../services/AuthService";
 import { openSoc } from "../../services/api";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableBody from "@material-ui/core/TableBody";
 
 class Room extends React.Component {
   constructor(props) {
@@ -47,11 +54,32 @@ class Room extends React.Component {
           Delete room
         </Button>
         <h3>Users:</h3>
-        <div>
-          {this.state.room.users.map((x, i) => {
-            return <li key={i}>{x.firstName + " " + x.lastName}</li>;
-          })}
-        </div>
+        <Paper>
+          <TableContainer>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>First Name</TableCell>
+                  <TableCell>Last Name</TableCell>
+                  <TableCell>School</TableCell>
+                  <TableCell>Vote</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {this.state.room.users.map((x, i) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={i}>
+                      <TableCell key={i}>{x.firstName}</TableCell>
+                      <TableCell key={i}>{x.lastName}</TableCell>
+                      <TableCell key={i}>{x.school}</TableCell>
+                      <TableCell key={i}>{x.vote}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       </div>
     );
   }
