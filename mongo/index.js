@@ -38,12 +38,9 @@ module.exports.login = (req, res) => {
       } else
         return res.status(401).json({ error: "Invalid login credentials" });
     })
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(500)
-        .json({ error: "Internal error, please try again" });
-    });
+    .catch(() =>
+      res.status(500).json({ error: "Internal error, please try again" })
+    );
 };
 
 module.exports.createUser = (req, res) => {
@@ -77,13 +74,10 @@ module.exports.createUser = (req, res) => {
           req.body.type.charAt(0).toUpperCase() + req.body.type.slice(1),
         ],
       })
-        .then((doc) => {
-          return res.status(200).json({ pin: doc.pin });
-        })
-        .catch((err) => {
-          console.error(err);
-          return res.status(500).json({ error: "Error while creating a user" });
-        });
+        .then((doc) => res.status(200).json({ pin: doc.pin }))
+        .catch(() =>
+          res.status(500).json({ error: "Error while creating a user" })
+        );
     }
   );
 };
@@ -108,18 +102,18 @@ module.exports.createRoom = (req, res) => {
         Room.create({ id: req.body.name, accessCode: pin, owner: usr._id })
           .then(() => {
             usr.room = req.body.name;
-            usr.save((err) => {
-              if (err)
-                return res.status(500).send({ error: "Error creating room" });
-              res
-                .status(201)
-                .send({ id: req.body.name, accessCode: pin, users: [] });
-            });
+            usr
+              .save()
+              .then(() =>
+                res
+                  .status(201)
+                  .send({ id: req.body.name, accessCode: pin, users: [] })
+              )
+              .catch(() =>
+                res.status(500).send({ error: "Error creating room" })
+              );
           })
-          .catch((err) => {
-            console.error(err);
-            return res.status(500).send({ error: "Error creating room" });
-          });
+          .catch(() => res.status(500).send({ error: "Error creating room" }));
       });
     }
   );
