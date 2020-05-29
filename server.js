@@ -20,7 +20,7 @@ const withAuth = require("./middleware/withAuth");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
-require("./middleware/socket")(io);
+require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
 
 app.get("/dashboard", withAuth, (req, res) => {

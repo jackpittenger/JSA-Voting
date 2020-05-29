@@ -14,7 +14,9 @@ class Room extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      room: props.room,
+      accessCode: props.room.accessCode,
+      id: props.room.id,
+      users: props.room.users,
     };
     this.Auth = new AuthService();
     this.deleteRoom = this.deleteRoom.bind(this);
@@ -24,9 +26,10 @@ class Room extends React.Component {
   componentDidMount() {
     if (this.Auth.loggedIn()) {
       this.io = openSoc(this.Auth.getToken());
+      this.io.on("newuser", (data) =>
+        this.setState({ users: [...this.state.users, data] })
+      );
     }
-
-    console.log(this.state.room.users);
   }
 
   componentWillUnmount() {
@@ -36,7 +39,7 @@ class Room extends React.Component {
   deleteRoom() {
     this.Auth.fetch(
       "/api/room",
-      { method: "DELETE", body: JSON.stringify({ room: this.state.room.id }) },
+      { method: "DELETE", body: JSON.stringify({ room: this.state.id }) },
       this.processDelete
     );
   }
@@ -48,8 +51,8 @@ class Room extends React.Component {
   render() {
     return (
       <div>
-        <div>Active room: {this.state.room.id}</div>
-        <div>Code: {this.state.room.accessCode}</div>
+        <div>Active room: {this.state.id}</div>
+        <div>Code: {this.state.accessCode}</div>
         <Button onClick={this.deleteRoom} color="secondary">
           Delete room
         </Button>
@@ -66,7 +69,7 @@ class Room extends React.Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.state.room.users.map((x, i) => {
+                {this.state.users.map((x, i) => {
                   return (
                     <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                       <TableCell key={i}>{x.firstName}</TableCell>

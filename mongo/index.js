@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const { newVoter } = require("../middleware/socket");
 
 mongoose
   .connect(
@@ -205,6 +206,7 @@ module.exports.authenticateCode = (req, res) => {
           .status(409)
           .json({ error: "User already registered for this room!" });
       Room.findOne({ accessCode: req.body.code })
+        .populate("owner")
         .then((room) => room)
         .then((room) => {
           if (!room) return res.status(409).json({ error: "Incorrect code!" });
@@ -222,6 +224,7 @@ module.exports.authenticateCode = (req, res) => {
               lastName: usr.lastName,
               school: usr.school,
             };
+            newVoter(payload, room.owner);
             let jwtToken = jwt.sign(payload, process.env.SECRET, {
               expiresIn: "1h",
             });
