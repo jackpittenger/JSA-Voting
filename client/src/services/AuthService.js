@@ -65,7 +65,7 @@ export default class AuthService {
       "Content-Type": "application/json",
     };
 
-    if (this.loggedIn()) {
+    if (this.loggedIn() || this.isTokenVoter()) {
       headers["Authorization"] = this.getToken();
     }
 

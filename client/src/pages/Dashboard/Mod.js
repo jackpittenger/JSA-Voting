@@ -40,7 +40,6 @@ class Mod extends React.Component {
   }
 
   createRoom() {
-    console.log("Creating a room");
     this.Auth.fetch(
       "/api/create_room",
       { method: "POST", body: JSON.stringify({ name: this.state.room_name }) },

@@ -242,6 +242,35 @@ module.exports.authenticateCode = (req, res) => {
     });
 };
 
+module.exports.submitForm = (req, res) => {
+  jwt.verify(
+    req.header("Authorization"),
+    process.env.SECRET,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "JWT not verified" });
+      }
+      Voter.findOne({
+        firstName: decoded.firstName,
+        code: decoded.code,
+        lastName: decoded.lastName,
+        school: decoded.school,
+      })
+        .then((doc) => {
+          if (doc.vote != null)
+            return res.status(403).json({ error: "You've already voted!" });
+          doc.vote = req.body.vote;
+          return doc
+            .save()
+            .then(() => res.status(202).json({ success: "Saved" }));
+        })
+        .catch(() => {
+          res.status(401).json({ error: "Voter not found!" });
+        });
+    }
+  );
+};
+
 function _generatePIN(length) {
   let result = "";
   let characters = "0123456789";

@@ -39,7 +39,7 @@ class Vote extends React.Component {
         {!this.Auth.isTokenVoter() ? (
           <NameForm change={this.submitEnabled} auth={this.Auth} />
         ) : null}
-        {this.Auth.isTokenVoter() ? <SubmitForm /> : null}
+        {this.Auth.isTokenVoter() ? <SubmitForm auth={this.Auth} /> : null}
       </div>
     );
   }
