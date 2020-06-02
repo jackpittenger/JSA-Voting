@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../mongo/User").User;
 let sockets = [];
 
-module.exports.setup = (io) => {
+module.exports.setup = (io) =>
   io.on("connection", (client) => {
     client.on("token", (data) => {
       jwt.verify(data, process.env.SECRET, (err, decoded) => {
@@ -10,20 +10,24 @@ module.exports.setup = (io) => {
           return client.emit("unauthorized", () => client.disconnect());
         User.findOne({ token: decoded.token })
           .then((usr) => usr)
-          .then((usr) => sockets.push([client, usr]));
+          .then((usr) => sockets.push([client, usr]))
+          .then(() => console.log("new socket pushed!"))
+          .catch((err) => console.error(err));
       });
     });
-    client.on("disconnect", () => {
-      console.log(sockets);
-      sockets = sockets.filter((c) => c[0] !== client);
-    });
+    client.on(
+      "disconnect",
+      () => (sockets = sockets.filter((c) => c[0] !== client))
+    );
   });
-};
 
-module.exports.newVoter = (payload, owner) => {
-  return sockets
+module.exports.newVoter = (payload, owner) =>
+  sockets
     .filter((c) => c[1].token === owner.token)
-    .forEach((v, i) => {
-      v[0].emit("newuser", payload);
-    });
+    .forEach((v, i) => v[0].emit("newuser", payload));
+
+module.exports.vote = (payload, owner) => {
+  sockets
+    .filter((c) => c[1]._id.toString() === owner.owner.toString())
+    .forEach((v) => v[0].emit("vote", payload));
 };

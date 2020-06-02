@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { newVoter } = require("../middleware/socket");
+const { newVoter, vote } = require("../middleware/socket");
 
 mongoose
   .connect(
@@ -259,9 +259,21 @@ module.exports.submitForm = (req, res) => {
           doc.vote = req.body.vote;
           return doc
             .save()
-            .then(() => res.status(202).json({ success: "Saved" }));
+            .then(() => res.status(202).json({ success: "Saved" }))
+            .then(async () =>
+              vote(
+                [
+                  decoded.firstName,
+                  decoded.lastName,
+                  decoded.school,
+                  req.body.vote,
+                ],
+                await Room.findOne({ accessCode: decoded.code })
+              )
+            );
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error(err);
           res.status(401).json({ error: "Voter not found!" });
         });
     }

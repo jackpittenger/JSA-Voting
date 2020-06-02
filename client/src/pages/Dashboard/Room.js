@@ -29,6 +29,21 @@ class Room extends React.Component {
       this.io.on("newuser", (data) =>
         this.setState({ users: [...this.state.users, data] })
       );
+      this.io.on("vote", (data) => {
+        let users = this.state.users;
+        users.find((o, i) => {
+          if (
+            o.firstName === data[0] &&
+            o.lastName === data[1] &&
+            o.school === data[2]
+          ) {
+            users[i].vote = data[3];
+            return true;
+          }
+          return false;
+        });
+        this.setState({ users: users });
+      });
     }
   }
 
@@ -72,10 +87,10 @@ class Room extends React.Component {
                 {this.state.users.map((x, i) => {
                   return (
                     <TableRow hover role="checkbox" tabIndex={-1} key={i}>
-                      <TableCell key={i}>{x.firstName}</TableCell>
-                      <TableCell key={i}>{x.lastName}</TableCell>
-                      <TableCell key={i}>{x.school}</TableCell>
-                      <TableCell key={i}>{x.vote}</TableCell>
+                      <TableCell>{x.firstName}</TableCell>
+                      <TableCell>{x.lastName}</TableCell>
+                      <TableCell>{x.school}</TableCell>
+                      <TableCell>{x.vote}</TableCell>
                     </TableRow>
                   );
                 })}
