@@ -26,6 +26,7 @@ class Mod extends React.Component {
     this.closeDialog = this.closeDialog.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this.processRoom = this.processRoom.bind(this);
+    this.disableRoom = this.disableRoom.bind(this);
   }
 
   componentDidMount() {
@@ -53,6 +54,10 @@ class Mod extends React.Component {
 
   closeDialog() {
     this.setState({ openDialog: false });
+  }
+
+  disableRoom() {
+    this.setState({ room: null });
   }
 
   render() {
@@ -85,7 +90,9 @@ class Mod extends React.Component {
               Create a new room
             </Button>
           </div>
-          {this.state.room ? <Room room={this.state.room} /> : null}
+          {this.state.room ? (
+            <Room disable={this.disableRoom} room={this.state.room} />
+          ) : null}
         </Paper>
       </Grid>
     );

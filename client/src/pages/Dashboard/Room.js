@@ -20,7 +20,6 @@ class Room extends React.Component {
     };
     this.Auth = new AuthService();
     this.deleteRoom = this.deleteRoom.bind(this);
-    this.processDelete = this.processDelete.bind(this);
   }
 
   componentDidMount() {
@@ -55,12 +54,8 @@ class Room extends React.Component {
     this.Auth.fetch(
       "/api/room",
       { method: "DELETE", body: JSON.stringify({ room: this.state.id }) },
-      this.processDelete
+      this.props.disable
     );
-  }
-
-  processDelete() {
-    console.log("Done!");
   }
 
   render() {
