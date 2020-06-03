@@ -17,9 +17,11 @@ class Room extends React.Component {
       accessCode: props.room.accessCode,
       id: props.room.id,
       users: props.room.users,
+      open: props.room.open,
     };
     this.Auth = new AuthService();
     this.deleteRoom = this.deleteRoom.bind(this);
+    this.toggleRoom = this.toggleRoom.bind(this);
   }
 
   componentDidMount() {
@@ -58,13 +60,26 @@ class Room extends React.Component {
     );
   }
 
+  toggleRoom() {
+    this.Auth.fetch(
+      "/api/toggle_open",
+      { method: "POST" },
+      function () {
+        this.setState({ open: !this.state.open });
+      }.bind(this)
+    );
+  }
+
   render() {
     return (
       <div>
         <div>Active room: {this.state.id}</div>
         <div>Code: {this.state.accessCode}</div>
+        <Button onClick={this.toggleRoom} color="primary">
+          {this.state.open === false ? "Open Room" : "Close Room"}
+        </Button>
         <Button onClick={this.deleteRoom} color="secondary">
-          Delete room
+          Delete Room
         </Button>
         <h3>Users:</h3>
         <Paper>

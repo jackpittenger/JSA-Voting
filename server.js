@@ -15,6 +15,7 @@ const {
   getRoom,
   deleteRoom,
   submitForm,
+  toggleOpen,
 } = require("./mongo");
 const withAuth = require("./middleware/withAuth");
 const privateKey = fs.readFileSync("server.key", "utf8");
@@ -53,6 +54,10 @@ app.post("/api/submit_form", (req, res) => {
 
 app.delete("/api/room", (req, res) => {
   return deleteRoom(req, res);
+});
+
+app.post("/api/toggle_open", (req, res) => {
+  return toggleOpen(req, res);
 });
 
 if (process.env.DEPLOY === "true") {

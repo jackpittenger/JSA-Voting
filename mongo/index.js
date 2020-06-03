@@ -106,9 +106,12 @@ module.exports.createRoom = (req, res) => {
             usr
               .save()
               .then(() =>
-                res
-                  .status(201)
-                  .send({ id: req.body.name, accessCode: pin, users: [] })
+                res.status(201).send({
+                  id: req.body.name,
+                  accessCode: pin,
+                  users: [],
+                  open: true,
+                })
               )
               .catch(() =>
                 res.status(500).send({ error: "Error creating room" })
@@ -145,6 +148,7 @@ module.exports.getRoom = (req, res) => {
                 id: room.id,
                 users: room.users,
                 accessCode: room.accessCode,
+                open: room.open,
               });
             });
         });
@@ -275,6 +279,41 @@ module.exports.submitForm = (req, res) => {
         .catch((err) => {
           console.error(err);
           res.status(401).json({ error: "Voter not found!" });
+        });
+    }
+  );
+};
+
+module.exports.toggleOpen = (req, res) => {
+  jwt.verify(
+    req.header("Authorization"),
+    process.env.SECRET,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "JWT not verified" });
+      } else if (decoded.permissions.indexOf("Mod") === -1) {
+        return res.status(401).json({ error: "Not authorized" });
+      }
+      User.findOne({ token: decoded.token })
+        .then((doc) => doc)
+        .then((doc) => {
+          if (!doc)
+            return res.status(403).json({ error: "Current user not found!" });
+          Room.findOne({ id: doc.room })
+            .then((room) => room)
+            .then((room) => {
+              if (!room)
+                return res
+                  .status(403)
+                  .json({ error: "Current room not found!" });
+              room.open = !room.open;
+              room
+                .save()
+                .then(() => {
+                  res.status(200).json({ success: true });
+                })
+                .catch(() => res.status(500).json({ error: "Error saving" }));
+            });
         });
     }
   );

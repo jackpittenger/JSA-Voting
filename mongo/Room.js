@@ -13,6 +13,7 @@ const roomSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  open: { type: Boolean, default: true },
 });
 
 module.exports.Room = mongoose.model("Room", roomSchema);
