@@ -11,7 +11,6 @@ module.exports.setup = (io) =>
         User.findOne({ token: decoded.token })
           .then((usr) => usr)
           .then((usr) => sockets.push([client, usr]))
-          .then(() => console.log("new socket pushed!"))
           .catch((err) => console.error(err));
       });
     });
