@@ -10,6 +10,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import TextField from "@material-ui/core/TextField";
+import ErrorPopup from "../../services/ErrorPopup";
 
 class Mod extends React.Component {
   constructor(props) {
@@ -19,6 +20,9 @@ class Mod extends React.Component {
       dialogTitle: "",
       firstLine: "",
       room_name: "",
+      openError: false,
+      status_code: "",
+      error_message: "",
     };
     this.Auth = new AuthService();
     this.handleChange = this.handleChange.bind(this);
@@ -26,12 +30,12 @@ class Mod extends React.Component {
     this.createRoom = this.createRoom.bind(this);
     this.processRoom = this.processRoom.bind(this);
     this.disableRoom = this.disableRoom.bind(this);
+    this.closeError = this.closeError.bind(this);
   }
 
   componentDidMount() {
-    this.Auth.fetch("/api/get_room", { method: "POST" }, (res) => {
-      if (res.error) return;
-      this.setState({ room: res });
+    this.Auth.fetch("/api/get_room", { method: "POST" }, (res, status) => {
+      if (status < 300) this.setState({ room: res });
     });
   }
 
@@ -43,8 +47,20 @@ class Mod extends React.Component {
     this.Auth.fetch(
       "/api/create_room",
       { method: "POST", body: JSON.stringify({ name: this.state.room_name }) },
-      this.processRoom
+      (res, status) => {
+        if (status >= 400) {
+          this.setState({
+            openError: true,
+            status_code: status,
+            error_message: res.error,
+          });
+        } else this.processRoom(res);
+      }
     );
+  }
+
+  closeError() {
+    this.setState({ openError: false });
   }
 
   processRoom(res) {
@@ -62,6 +78,13 @@ class Mod extends React.Component {
   render() {
     return (
       <Grid container direction="column" justify="center" alignItems="stretch">
+        {this.state.openError ? (
+          <ErrorPopup
+            closeError={this.closeError}
+            status_code={this.state.status_code}
+            error_message={this.state.error_message}
+          />
+        ) : null}
         <Dialog open={this.state.openDialog}>
           <DialogTitle>{this.state.dialogTitle}</DialogTitle>
           <DialogContent>
@@ -76,7 +99,7 @@ class Mod extends React.Component {
         <Paper>
           Mod
           <br />
-          {this.state.room ? (
+          {this.state.room !== undefined ? (
             <Room disable={this.disableRoom} room={this.state.room} />
           ) : (
             <div>

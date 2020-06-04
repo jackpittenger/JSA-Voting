@@ -143,7 +143,7 @@ module.exports.getRoom = (req, res) => {
             .then((room) => room)
             .then((room) => {
               if (!room)
-                return res.status(206).json({ error: "No current room!" });
+                return res.status(404).json({ error: "No current room!" });
               return res.status(200).send({
                 id: room.id,
                 users: room.users,
