@@ -8,12 +8,9 @@ export default class AuthService {
   }
 
   login(token, pin) {
-    return axios
-      .post(`/api/login`, { token, pin })
-      .then((res) => {
-        this.setToken(res.data.token);
-      })
-      .catch((e) => console.error(e));
+    return axios.post(`/api/login`, { token, pin }).then((res) => {
+      this.setToken(res.data.token);
+    });
   }
 
   loggedIn() {
@@ -73,20 +70,9 @@ export default class AuthService {
       headers,
       ...options,
     })
-      .then(this._checkStatus)
-      .then((response) => response.json())
+      .then(async (response) => [await response.json(), response.status])
       .then((ret) => {
-        if (callback) callback(ret);
+        if (callback) callback(ret[0], ret[1]);
       });
-  }
-
-  _checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
-      return response;
-    } else {
-      let error = new Error(response.statusText);
-      error.response = response;
-      throw error;
-    }
   }
 }

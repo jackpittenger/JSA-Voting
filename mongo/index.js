@@ -214,6 +214,10 @@ module.exports.authenticateCode = (req, res) => {
         .then((room) => room)
         .then((room) => {
           if (!room) return res.status(409).json({ error: "Incorrect code!" });
+          else if (!room.open)
+            return res
+              .status(401)
+              .json({ error: "This room is closed for new voters!" });
           Voter.create({
             firstName: req.body.first_name,
             code: req.body.code,

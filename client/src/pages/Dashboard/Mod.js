@@ -19,7 +19,6 @@ class Mod extends React.Component {
       dialogTitle: "",
       firstLine: "",
       room_name: "",
-      room: false,
     };
     this.Auth = new AuthService();
     this.handleChange = this.handleChange.bind(this);
@@ -77,22 +76,23 @@ class Mod extends React.Component {
         <Paper>
           Mod
           <br />
-          <div>
-            <TextField
-              name="room_name"
-              id="room_name"
-              label="Room name"
-              type="text"
-              onChange={this.handleChange}
-              value={this.state.room_name}
-            />
-            <Button onClick={this.createRoom} color="primary">
-              Create a new room
-            </Button>
-          </div>
           {this.state.room ? (
             <Room disable={this.disableRoom} room={this.state.room} />
-          ) : null}
+          ) : (
+            <div>
+              <TextField
+                name="room_name"
+                id="room_name"
+                label="Room name"
+                type="text"
+                onChange={this.handleChange}
+                value={this.state.room_name}
+              />
+              <Button onClick={this.createRoom} color="primary">
+                Create a new room
+              </Button>
+            </div>
+          )}
         </Paper>
       </Grid>
     );

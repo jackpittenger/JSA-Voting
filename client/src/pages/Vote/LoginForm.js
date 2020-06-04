@@ -7,14 +7,22 @@ import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import history from "../../services/history";
+import ErrorPopup from "../../services/ErrorPopup";
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { token: "", pin: "" };
+    this.state = {
+      token: "",
+      pin: "",
+      open: false,
+      status_code: "",
+      error_message: "",
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.closeError = this.closeError.bind(this);
     this.Auth = props.auth;
   }
 
@@ -26,9 +34,16 @@ class Header extends React.Component {
         history.push("/dashboard/");
       })
       .catch((err) => {
-        alert(err);
+        this.setState({
+          open: true,
+          status_code: err.response.status,
+          error_message: err.response.data.error,
+        });
       });
-    this.props.handler();
+  }
+
+  closeError() {
+    this.setState({ open: false });
   }
 
   componentDidMount() {
@@ -42,6 +57,13 @@ class Header extends React.Component {
   render() {
     return (
       <Dialog open={true}>
+        {this.state.open ? (
+          <ErrorPopup
+            closeError={this.closeError}
+            status_code={this.state.status_code}
+            error_message={this.state.error_message}
+          />
+        ) : null}
         <DialogTitle id="form-dialog-title">Login</DialogTitle>
         <DialogContent>
           <DialogContentText>
