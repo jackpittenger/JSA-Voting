@@ -172,7 +172,9 @@ module.exports.deleteRoom = (req, res) => {
           if (!doc)
             return res.status(403).json({ error: "Current user not found!" });
           else if (doc.room !== req.body.room)
-            return res.status(401).json({ error: "You do not own this room!" });
+            return res
+              .status(401)
+              .json({ error: "You do not own this room or it doesn't exist!" });
           Room.findOneAndDelete({ id: req.body.room })
             .then((room) => {
               doc.room = null;

@@ -9,6 +9,7 @@ import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
+import ErrorPopup from "../../services/ErrorPopup";
 
 class Room extends React.Component {
   constructor(props) {
@@ -18,10 +19,14 @@ class Room extends React.Component {
       id: props.room.id,
       users: props.room.users,
       open: props.room.open,
+      openError: false,
+      status_code: "",
+      error_message: "",
     };
     this.Auth = new AuthService();
     this.deleteRoom = this.deleteRoom.bind(this);
     this.toggleRoom = this.toggleRoom.bind(this);
+    this.closeError = this.closeError.bind(this);
   }
 
   componentDidMount() {
@@ -48,6 +53,10 @@ class Room extends React.Component {
     }
   }
 
+  closeError() {
+    this.setState({ openError: false });
+  }
+
   componentWillUnmount() {
     this.io.disconnect();
   }
@@ -56,7 +65,15 @@ class Room extends React.Component {
     this.Auth.fetch(
       "/api/room",
       { method: "DELETE", body: JSON.stringify({ room: this.state.id }) },
-      this.props.disable
+      (res, status) => {
+        if (status >= 400) {
+          this.setState({
+            openError: true,
+            status_code: status,
+            error_message: res.error,
+          });
+        } else this.props.disable(res);
+      }
     );
   }
 
@@ -64,7 +81,14 @@ class Room extends React.Component {
     this.Auth.fetch(
       "/api/toggle_open",
       { method: "POST" },
-      function () {
+      function (res, status) {
+        if (status >= 400) {
+          this.setState({
+            openError: true,
+            status_code: status,
+            error_message: res.error,
+          });
+        }
         this.setState({ open: !this.state.open });
       }.bind(this)
     );
@@ -73,6 +97,13 @@ class Room extends React.Component {
   render() {
     return (
       <div>
+        {this.state.openError ? (
+          <ErrorPopup
+            closeError={this.closeError}
+            status_code={this.state.status_code}
+            error_message={this.state.error_message}
+          />
+        ) : null}
         <div>Active room: {this.state.id}</div>
         <div>Code: {this.state.accessCode}</div>
         <Button onClick={this.toggleRoom} color="primary">
