@@ -1,18 +1,32 @@
 import React from "react";
 import axios from "axios";
 import { Button, FormControl, TextField } from "@material-ui/core";
+import ErrorPopup from "../../services/ErrorPopup";
 
 class NameForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { first_name: "", code: "", last_name: "", school: "" };
+    this.state = {
+      first_name: "",
+      code: "",
+      last_name: "",
+      school: "",
+      open: false,
+      status_code: "",
+      error_message: "",
+    };
     this.handleChange = this.handleChange.bind(this);
     this.submitCode = this.submitCode.bind(this);
+    this.closeError = this.closeError.bind(this);
     this.Auth = this.props.auth;
   }
 
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
+  }
+
+  closeError() {
+    this.setState({ open: false });
   }
 
   submitCode() {
@@ -23,12 +37,26 @@ class NameForm extends React.Component {
         last_name: this.state.last_name,
         school: this.state.school,
       })
-      .then((res) => this.props.change(res));
+      .then((res) => this.props.change(res))
+      .catch((err) => {
+        this.setState({
+          open: true,
+          status_code: err.response.status,
+          error_message: err.response.data.error,
+        });
+      });
   }
 
   render() {
     return (
       <form style={{ paddingTop: 15 }}>
+        {this.state.open ? (
+          <ErrorPopup
+            closeError={this.closeError}
+            status_code={this.state.status_code}
+            error_message={this.state.error_message}
+          />
+        ) : null}
         <div>
           <FormControl style={{ width: 200, paddingTop: 15 }}>
             <TextField
