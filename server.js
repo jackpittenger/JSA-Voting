@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const https = require("https");
 const io = require("socket.io")();
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const {
@@ -21,6 +22,7 @@ const withAuth = require("./middleware/withAuth");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
+app.use(cookieParser());
 require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
 
