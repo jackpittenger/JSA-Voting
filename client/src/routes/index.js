@@ -1,5 +1,6 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import Switch from "react-router-dom/Switch";
+import Route from "react-router-dom/Route";
 
 import Dashboard from "../pages/Dashboard";
 import Vote from "../pages/Vote";

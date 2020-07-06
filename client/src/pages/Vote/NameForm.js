@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
-import { Button, FormControl, TextField } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import FormControl from "@material-ui/core/FormControl";
+import TextField from "@material-ui/core/TextField";
 import ErrorPopup from "../../services/ErrorPopup";
 
 class NameForm extends React.Component {

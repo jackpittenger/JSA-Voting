@@ -7,4 +7,4 @@ function openSoc(token) {
   return socket;
 }
 
-export { openSoc };
+export default openSoc;
