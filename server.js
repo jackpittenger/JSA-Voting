@@ -18,17 +18,12 @@ const {
   submitForm,
   toggleOpen,
 } = require("./mongo");
-const withAuth = require("./middleware/withAuth");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
 app.use(cookieParser());
 require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
-
-app.get("/dashboard", withAuth, (req, res) => {
-  res.sendStatus(500).json({ message: "Unknown server error" });
-});
 
 app.post("/api/login", (req, res) => {
   return login(req, res);
