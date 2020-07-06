@@ -22,11 +22,13 @@ class Room extends React.Component {
       openError: false,
       status_code: "",
       error_message: "",
+      votingOpen: props.room.votingOpen,
     };
     this.Auth = new AuthService();
     this.deleteRoom = this.deleteRoom.bind(this);
     this.toggleRoom = this.toggleRoom.bind(this);
     this.closeError = this.closeError.bind(this);
+    this.toggleVoting = this.toggleVoting.bind(this);
   }
 
   componentDidMount() {
@@ -94,6 +96,23 @@ class Room extends React.Component {
     );
   }
 
+  toggleVoting() {
+    this.Auth.fetch(
+      "/api/toggle_voting",
+      { method: "POST" },
+      function (res, status) {
+        if (status >= 400) {
+          this.setState({
+            openError: true,
+            status_code: status,
+            error_message: res.error,
+          });
+        }
+        this.setState({ votingOpen: !this.state.votingOpen });
+      }.bind(this)
+    );
+  }
+
   render() {
     return (
       <div>
@@ -108,6 +127,9 @@ class Room extends React.Component {
         <div>Code: {this.state.accessCode}</div>
         <Button onClick={this.toggleRoom} color="primary">
           {this.state.open === false ? "Open Room" : "Close Room"}
+        </Button>
+        <Button onClick={this.toggleVoting} color="default">
+          {this.state.votingOpen === false ? "Open for Voting" : "Close Voting"}
         </Button>
         <Button onClick={this.deleteRoom} color="secondary">
           Delete Room

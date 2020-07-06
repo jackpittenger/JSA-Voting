@@ -17,6 +17,7 @@ const {
   deleteRoom,
   submitForm,
   toggleOpen,
+  toggleVoting,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -55,6 +56,10 @@ app.delete("/api/room", (req, res) => {
 
 app.post("/api/toggle_open", (req, res) => {
   return toggleOpen(req, res);
+});
+
+app.post("/api/toggle_voting", (req, res) => {
+  return toggleVoting(req, res);
 });
 
 if (process.env.DEPLOY === "true") {

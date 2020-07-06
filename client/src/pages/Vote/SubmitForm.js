@@ -6,15 +6,21 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
 import history from "../../services/history";
+import ErrorPopup from "../../services/ErrorPopup";
 
 class SubmitForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { vote: null };
+    this.state = { vote: null, status_code: "", error_message: "" };
     this.Auth = props.auth;
+    this.closeError = this.closeError.bind(this);
     this.submit = this.submit.bind(this);
     this.processReturn = this.processReturn.bind(this);
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  closeError() {
+    this.setState({ openError: false });
   }
 
   submit() {
@@ -25,9 +31,17 @@ class SubmitForm extends React.Component {
     );
   }
 
-  processReturn() {
-    this.Auth.logout();
-    history.push("/");
+  processReturn(res, status) {
+    if (status === 455) {
+      this.setState({
+        openError: true,
+        status_code: status,
+        error_message: res.error,
+      });
+    } else {
+      this.Auth.logout();
+      history.push("/");
+    }
   }
 
   handleChange(event) {
@@ -38,6 +52,13 @@ class SubmitForm extends React.Component {
     return (
       <form style={{ paddingTop: 15 }}>
         <div>
+          {this.state.openError ? (
+            <ErrorPopup
+              closeError={this.closeError}
+              status_code={this.state.status_code}
+              error_message={this.state.error_message}
+            />
+          ) : null}
           <FormControl>
             <FormLabel>Vote</FormLabel>
             <RadioGroup

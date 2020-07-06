@@ -149,6 +149,7 @@ module.exports.getRoom = (req, res) => {
                 users: room.users,
                 accessCode: room.accessCode,
                 open: room.open,
+                votingOpen: room.votingOpen,
               });
             });
         });
@@ -266,21 +267,29 @@ module.exports.submitForm = (req, res) => {
         .then((doc) => {
           if (doc.vote != null)
             return res.status(403).json({ error: "You've already voted!" });
-          doc.vote = req.body.vote;
-          return doc
-            .save()
-            .then(() => res.status(202).json({ success: "Saved" }))
-            .then(async () =>
-              vote(
-                [
-                  decoded.firstName,
-                  decoded.lastName,
-                  decoded.school,
-                  req.body.vote,
-                ],
-                await Room.findOne({ accessCode: decoded.code })
-              )
-            );
+          Room.findOne({ accessCode: doc.code }).then((room) => {
+            if (!room)
+              return res.status(409).json({ error: "Incorrect code!" });
+            else if (!room.votingOpen)
+              return res.status(455).json({
+                error: "This room is not currently open for votes!",
+              });
+            doc.vote = req.body.vote;
+            return doc
+              .save()
+              .then(() => res.status(202).json({ success: "Saved" }))
+              .then(async () =>
+                vote(
+                  [
+                    decoded.firstName,
+                    decoded.lastName,
+                    decoded.school,
+                    req.body.vote,
+                  ],
+                  await Room.findOne({ accessCode: decoded.code })
+                )
+              );
+          });
         })
         .catch((err) => {
           console.error(err);
@@ -313,6 +322,41 @@ module.exports.toggleOpen = (req, res) => {
                   .status(403)
                   .json({ error: "Current room not found!" });
               room.open = !room.open;
+              room
+                .save()
+                .then(() => {
+                  res.status(200).json({ success: true });
+                })
+                .catch(() => res.status(500).json({ error: "Error saving" }));
+            });
+        });
+    }
+  );
+};
+
+module.exports.toggleVoting = (req, res) => {
+  jwt.verify(
+    req.header("Authorization"),
+    process.env.SECRET,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "JWT not verified" });
+      } else if (decoded.permissions.indexOf("Mod") === -1) {
+        return res.status(401).json({ error: "Not authorized" });
+      }
+      User.findOne({ token: decoded.token })
+        .then((doc) => doc)
+        .then((doc) => {
+          if (!doc)
+            return res.status(403).json({ error: "Current user not found!" });
+          Room.findOne({ id: doc.room })
+            .then((room) => room)
+            .then((room) => {
+              if (!room)
+                return res
+                  .status(403)
+                  .json({ error: "Current room not found!" });
+              room.votingOpen = !room.votingOpen;
               room
                 .save()
                 .then(() => {

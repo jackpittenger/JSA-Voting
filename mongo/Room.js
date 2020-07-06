@@ -14,6 +14,7 @@ const roomSchema = new mongoose.Schema({
     ref: "User",
   },
   open: { type: Boolean, default: true },
+  votingOpen: { type: Boolean, default: false },
 });
 
 module.exports.Room = mongoose.model("Room", roomSchema);
