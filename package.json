@@ -21,12 +21,14 @@
     "cookie-parser": "^1.4.4",
     "dotenv": "^8.2.0",
     "express": "latest",
-    "husky": "^4.2.5",
     "jsonwebtoken": "latest",
     "mongoose": "^5.9.14",
-    "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "prettier": "^2.0.5"
   },
   "husky": {
     "hooks": {

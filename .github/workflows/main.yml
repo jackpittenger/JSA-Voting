@@ -13,9 +13,10 @@ jobs:
 
       - name: Install packages
         run: |
-          npm i
+          npm set progress=false
+          npm i --production
           cd client/
-          npm i
+          npm i --production
       - name: Create .env
         run: |
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
