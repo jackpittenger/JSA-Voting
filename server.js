@@ -22,6 +22,7 @@ const {
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
+io.origins("localhost:*");
 app.use(cookieParser());
 require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
