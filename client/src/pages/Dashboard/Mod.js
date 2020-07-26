@@ -20,6 +20,7 @@ class Mod extends React.Component {
       dialogTitle: "",
       firstLine: "",
       room_name: "",
+      room: null,
       openError: false,
       status_code: "",
       error_message: "",
@@ -35,7 +36,7 @@ class Mod extends React.Component {
 
   componentDidMount() {
     this.Auth.fetch("/api/get_room", { method: "POST" }, (res, status) => {
-      if (status < 300) this.setState({ room: res });
+      if (status < 300) this.setState({ initialRoom: res });
     });
   }
 
@@ -64,7 +65,7 @@ class Mod extends React.Component {
   }
 
   processRoom(res) {
-    this.setState({ room: res });
+    this.setState({ initialRoom: res });
   }
 
   closeDialog() {
@@ -72,7 +73,7 @@ class Mod extends React.Component {
   }
 
   disableRoom() {
-    this.setState({ room: null });
+    this.setState({ initialRoom: null });
   }
 
   render() {
@@ -99,8 +100,8 @@ class Mod extends React.Component {
         <Paper>
           Mod
           <br />
-          {this.state.room !== undefined ? (
-            <Room disable={this.disableRoom} room={this.state.room} />
+          {this.state.initialRoom != null ? (
+            <Room disable={this.disableRoom} room={this.state.initialRoom} />
           ) : (
             <div>
               <TextField
