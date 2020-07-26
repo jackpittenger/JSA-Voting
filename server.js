@@ -74,7 +74,12 @@ if (process.env.DEPLOY === "true") {
     app
   );
   httpsServer.listen(443, () => console.log("✓ Production: 443"));
-  io.listen(8443);
+  const ioserver = https.createServer(
+    { key: privateKey, cert: certificate },
+    app
+  );
+  ioserver.listen(8443);
+  io.listen(ioserver);
   console.log("\x1b[32m✓\x1b[0m Socket.io listening on port 8443");
 } else {
   app.listen(443, () =>
