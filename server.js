@@ -75,7 +75,7 @@ if (process.env.DEPLOY === "true") {
   );
   httpsServer.listen(443, () => console.log("✓ Production: 443"));
   io.listen(8443);
-  console.log("\x1b[32m✓\x1b[0m Socket.io listening on port 8000");
+  console.log("\x1b[32m✓\x1b[0m Socket.io listening on port 8443");
 } else {
   app.listen(443, () =>
     console.log("\x1b[32m✓\x1b[0m Running on port 443 in dev mode")
