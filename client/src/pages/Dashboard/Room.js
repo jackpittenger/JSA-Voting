@@ -30,6 +30,7 @@ class Room extends React.Component {
     this.closeError = this.closeError.bind(this);
     this.toggleVoting = this.toggleVoting.bind(this);
     this.renderVotes = this.renderVotes.bind(this);
+    this.deleteUser = this.deleteUser.bind(this);
   }
 
   componentDidMount() {
@@ -130,6 +131,43 @@ class Room extends React.Component {
     );
   }
 
+  deleteUser(first, last, school) {
+    this.Auth.fetch(
+      "/api/delete_user",
+      {
+        method: "DELETE",
+        body: JSON.stringify({
+          first: first,
+          last: last,
+          school: school,
+          code: this.state.accessCode,
+        }),
+      },
+      (res, status) => {
+        if (status >= 400) {
+          this.setState({
+            openError: true,
+            status_code: status,
+            error_message: res.error,
+          });
+        } else {
+          if (res.success) {
+            let arr = this.state.users.filter((val) => {
+              if (
+                val.firstName === first &&
+                val.lastName === last &&
+                val.school === school
+              )
+                return false;
+              return true;
+            });
+            this.setState({ users: arr });
+          }
+        }
+      }
+    );
+  }
+
   render() {
     return (
       <div>
@@ -162,6 +200,7 @@ class Room extends React.Component {
                   <TableCell>Last Name</TableCell>
                   <TableCell>School</TableCell>
                   <TableCell>Vote</TableCell>
+                  <TableCell>Delete</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -172,6 +211,13 @@ class Room extends React.Component {
                       <TableCell>{x.lastName}</TableCell>
                       <TableCell>{x.school}</TableCell>
                       <TableCell>{x.vote}</TableCell>
+                      <TableCell
+                        onClick={() =>
+                          this.deleteUser(x.firstName, x.lastName, x.school)
+                        }
+                      >
+                        X
+                      </TableCell>
                     </TableRow>
                   );
                 })}
