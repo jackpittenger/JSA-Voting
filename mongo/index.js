@@ -111,6 +111,7 @@ module.exports.createRoom = (req, res) => {
                   accessCode: pin,
                   users: [],
                   open: true,
+                  votingOpen: false,
                 })
               )
               .catch(() =>
