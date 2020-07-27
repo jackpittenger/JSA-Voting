@@ -29,6 +29,7 @@ class Room extends React.Component {
     this.toggleRoom = this.toggleRoom.bind(this);
     this.closeError = this.closeError.bind(this);
     this.toggleVoting = this.toggleVoting.bind(this);
+    this.renderVotes = this.renderVotes.bind(this);
   }
 
   componentDidMount() {
@@ -113,6 +114,22 @@ class Room extends React.Component {
     );
   }
 
+  renderVotes() {
+    let arr = [0, 0, 0];
+    for (let i = 0; i < this.state.users.length; i++) {
+      if (this.state.users[i].vote === "yea") arr[0]++;
+      if (this.state.users[i].vote === "abstain") arr[1]++;
+      if (this.state.users[i].vote === "nay") arr[2]++;
+    }
+    return (
+      <div>
+        <span style={{ color: "green" }}>{arr[0]}</span> /{" "}
+        <span style={{ color: "grey" }}>{arr[1]}</span> /{" "}
+        <span style={{ color: "red" }}>{arr[2]}</span>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -134,6 +151,7 @@ class Room extends React.Component {
         <Button onClick={this.deleteRoom} color="secondary">
           Delete Room
         </Button>
+        <h4 style={{ marginTop: ".5em" }}>{this.renderVotes()}</h4>
         <h3>Users:</h3>
         <Paper>
           <TableContainer>
