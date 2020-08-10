@@ -1,6 +1,6 @@
-# JSA Voting
+# JSA-Voting
 
-JSA Voting is a contracted responsive web application to be used in speaker voting for the Junior State of America Texas Chapter.
+JSA Voting is a responsive web application built on the MERN stack that allows room-based voting targeted at public debates. It features real-time updating, SSL/WSS, and room locking.
 
 ---
 
