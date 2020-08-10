@@ -24,6 +24,16 @@ const User = require("./User").User;
 const Room = require("./Room").Room;
 const Voter = require("./Voter").Voter;
 
+async function verifyJwt(token, res) {
+  return jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    if (err) {
+      res.status(401).json({ error: "JWT not verified" });
+      return false;
+    }
+    return decoded;
+  });
+}
+
 module.exports.login = (req, res) => {
   return User.findOne({ token: req.body.token })
     .then((doc) => doc)
@@ -44,163 +54,132 @@ module.exports.login = (req, res) => {
     );
 };
 
-module.exports.createUser = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (req.body.type !== "admin" && req.body.type !== "mod") {
-        return res.status(501).json({ error: "Not Implemented" });
-      } else if (
-        (req.body.type === "admin" &&
-          decoded.permissions.indexOf("Dev") === -1) ||
-        (req.body.type === "mod" && decoded.permissions.indexOf("Admin") === -1)
-      ) {
-        return res.status(401).json({ error: "Not authorized" });
-      } else if (
-        !req.body.name ||
-        req.body.name.length > 24 ||
-        req.body.name.length < 5
-      ) {
-        return res.status(422).json({ error: "Invalid name" });
-      }
+module.exports.createUser = async (req, res) => {
+  if (req.body.type !== "admin" && req.body.type !== "mod") {
+    return res.status(501).json({ error: "Not Implemented" });
+  }
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (
+    (req.body.type === "admin" && decoded.permissions.indexOf("Dev") === -1) ||
+    (req.body.type === "mod" && decoded.permissions.indexOf("Admin") === -1)
+  ) {
+    return res.status(401).json({ error: "Not authorized" });
+  } else if (
+    !req.body.name ||
+    req.body.name.length > 24 ||
+    req.body.name.length < 5
+  ) {
+    return res.status(422).json({ error: "Invalid name" });
+  }
 
-      let pin = _generatePIN(7);
-      User.create({
-        token: req.body.name,
-        pin: pin,
-        permissions: [
-          req.body.type.charAt(0).toUpperCase() + req.body.type.slice(1),
-        ],
-      })
-        .then((doc) => res.status(200).json({ pin: doc.pin }))
-        .catch(() =>
-          res.status(500).json({ error: "Error while creating a user" })
-        );
-    }
-  );
+  let pin = _generatePIN(7);
+  User.create({
+    token: req.body.name,
+    pin: pin,
+    permissions: [
+      req.body.type.charAt(0).toUpperCase() + req.body.type.slice(1),
+    ],
+  })
+    .then((doc) => res.status(200).json({ pin: doc.pin }))
+    .catch(() =>
+      res.status(500).json({ error: "Error while creating a user" })
+    );
 };
 
-module.exports.createRoom = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (decoded.permissions.indexOf("Mod") === -1) {
-        return res.status(401).json({ error: "Not authorized" });
-      }
+module.exports.createRoom = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
 
-      return User.findOne({ token: decoded.token }, (er, usr) => {
-        if (er)
-          return res.status(500).send({ error: "User account not found!" });
-        if (usr.room)
-          return res.status(409).send({ error: "Already assigned to a room!" });
-        let pin = _generatePIN(7);
-        Room.create({ id: req.body.name, accessCode: pin, owner: usr._id })
-          .then(() => {
-            usr.room = req.body.name;
-            usr
-              .save()
-              .then(() =>
-                res.status(201).send({
-                  id: req.body.name,
-                  accessCode: pin,
-                  users: [],
-                  open: true,
-                  votingOpen: false,
-                })
-              )
-              .catch(() =>
-                res.status(500).send({ error: "Error creating room" })
-              );
-          })
-          .catch(() => res.status(500).send({ error: "Error creating room" }));
-      });
-    }
-  );
-};
-
-module.exports.getRoom = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (decoded.permissions.indexOf("Mod") === -1) {
-        return res.status(401).json({ error: "Not authorized" });
-      }
-      return User.findOne({ token: decoded.token })
-        .then((doc) => doc)
-        .then((doc) => {
-          if (!doc)
-            return res.status(403).json({ error: "Current user not found!" });
-          return Room.findOne({ owner: doc._id })
-            .populate("users")
-            .then((room) => room)
-            .then((room) => {
-              if (!room)
-                return res.status(404).json({ error: "No current room!" });
-              return res.status(200).send({
-                id: room.id,
-                users: room.users,
-                accessCode: room.accessCode,
-                open: room.open,
-                votingOpen: room.votingOpen,
-              });
-            });
-        });
-    }
-  );
-};
-
-module.exports.deleteRoom = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (decoded.permissions.indexOf("Mod") === -1) {
-        return res.status(401).json({ error: "Not authorized" });
-      }
-      User.findOne({ token: decoded.token })
-        .then((doc) => doc)
-        .then((doc) => {
-          if (!doc)
-            return res.status(403).json({ error: "Current user not found!" });
-          else if (doc.room !== req.body.room)
-            return res
-              .status(401)
-              .json({ error: "You do not own this room or it doesn't exist!" });
-          Room.findOneAndDelete({ id: req.body.room })
-            .then((room) => {
-              doc.room = null;
-              doc.save();
-              Voter.deleteMany({
-                _id: { $in: room.users.map((v) => mongoose.Types.ObjectId(v)) },
-              })
-                .then(() => {
-                  return res.status(200).json({ success: true });
-                })
-                .catch(() => {
-                  return res
-                    .status(500)
-                    .json({ error: "Unable to delete Voter!" });
-                });
+  return User.findOne({ token: decoded.token }, (er, usr) => {
+    if (er) return res.status(500).send({ error: "User account not found!" });
+    if (usr.room)
+      return res.status(409).send({ error: "Already assigned to a room!" });
+    let pin = _generatePIN(7);
+    Room.create({ id: req.body.name, accessCode: pin, owner: usr._id })
+      .then(() => {
+        usr.room = req.body.name;
+        usr
+          .save()
+          .then(() =>
+            res.status(201).send({
+              id: req.body.name,
+              accessCode: pin,
+              users: [],
+              open: true,
+              votingOpen: false,
             })
-            .catch(() => res.status(500).json({ error: "Unable to delete!" }));
-        })
-        .catch(() => res.status(401).json({ error: "User not found!" }));
-    }
-  );
+          )
+          .catch(() => res.status(500).send({ error: "Error creating room" }));
+      })
+      .catch(() => res.status(500).send({ error: "Error creating room" }));
+  });
 };
 
-module.exports.authenticateCode = (req, res) => {
+module.exports.getRoom = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  return User.findOne({ token: decoded.token })
+    .then((doc) => doc)
+    .then((doc) => {
+      if (!doc)
+        return res.status(403).json({ error: "Current user not found!" });
+      return Room.findOne({ owner: doc._id })
+        .populate("users")
+        .then((room) => room)
+        .then((room) => {
+          if (!room) return res.status(404).json({ error: "No current room!" });
+          return res.status(200).send({
+            id: room.id,
+            users: room.users,
+            accessCode: room.accessCode,
+            open: room.open,
+            votingOpen: room.votingOpen,
+          });
+        });
+    });
+};
+
+module.exports.deleteRoom = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  User.findOne({ token: decoded.token })
+    .then((doc) => doc)
+    .then((doc) => {
+      if (!doc)
+        return res.status(403).json({ error: "Current user not found!" });
+      else if (doc.room !== req.body.room)
+        return res
+          .status(401)
+          .json({ error: "You do not own this room or it doesn't exist!" });
+      Room.findOneAndDelete({ id: req.body.room })
+        .then((room) => {
+          doc.room = null;
+          doc.save();
+          Voter.deleteMany({
+            _id: { $in: room.users.map((v) => mongoose.Types.ObjectId(v)) },
+          })
+            .then(() => {
+              return res.status(200).json({ success: true });
+            })
+            .catch(() => {
+              return res.status(500).json({ error: "Unable to delete Voter!" });
+            });
+        })
+        .catch(() => res.status(500).json({ error: "Unable to delete!" }));
+    })
+    .catch(() => res.status(401).json({ error: "User not found!" }));
+};
+
+module.exports.authenticateCode = async (req, res) => {
   Voter.findOne({
     firstName: req.body.first_name,
     code: req.body.code,
@@ -251,158 +230,126 @@ module.exports.authenticateCode = (req, res) => {
     });
 };
 
-module.exports.submitForm = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      }
-      Voter.findOne({
-        firstName: decoded.firstName,
-        code: decoded.code,
-        lastName: decoded.lastName,
-        school: decoded.school,
-      })
-        .then((doc) => {
-          if (doc.vote != null)
-            return res.status(403).json({ error: "You've already voted!" });
-          Room.findOne({ accessCode: doc.code }).then((room) => {
-            if (!room)
-              return res.status(409).json({ error: "Incorrect code!" });
-            else if (!room.votingOpen)
-              return res.status(455).json({
-                error: "This room is not currently open for votes!",
-              });
-            doc.vote = req.body.vote;
-            return doc
-              .save()
-              .then(() => res.status(202).json({ success: "Saved" }))
-              .then(async () =>
-                vote(
-                  [
-                    decoded.firstName,
-                    decoded.lastName,
-                    decoded.school,
-                    req.body.vote,
-                  ],
-                  await Room.findOne({ accessCode: decoded.code })
-                )
-              );
+module.exports.submitForm = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  Voter.findOne({
+    firstName: decoded.firstName,
+    code: decoded.code,
+    lastName: decoded.lastName,
+    school: decoded.school,
+  })
+    .then((doc) => {
+      if (doc.vote != null)
+        return res.status(403).json({ error: "You've already voted!" });
+      Room.findOne({ accessCode: doc.code }).then((room) => {
+        if (!room) return res.status(409).json({ error: "Incorrect code!" });
+        else if (!room.votingOpen)
+          return res.status(455).json({
+            error: "This room is not currently open for votes!",
           });
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(401).json({ error: "Voter not found!" });
-        });
-    }
-  );
+        doc.vote = req.body.vote;
+        return doc
+          .save()
+          .then(() => res.status(202).json({ success: "Saved" }))
+          .then(async () =>
+            vote(
+              [
+                decoded.firstName,
+                decoded.lastName,
+                decoded.school,
+                req.body.vote,
+              ],
+              await Room.findOne({ accessCode: decoded.code })
+            )
+          );
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(401).json({ error: "Voter not found!" });
+    });
 };
 
-module.exports.toggleOpen = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (decoded.permissions.indexOf("Mod") === -1) {
-        return res.status(401).json({ error: "Not authorized" });
-      }
-      User.findOne({ token: decoded.token })
-        .then((doc) => doc)
-        .then((doc) => {
-          if (!doc)
-            return res.status(403).json({ error: "Current user not found!" });
-          Room.findOne({ id: doc.room })
-            .then((room) => room)
-            .then((room) => {
-              if (!room)
-                return res
-                  .status(403)
-                  .json({ error: "Current room not found!" });
-              room.open = !room.open;
-              room
-                .save()
-                .then(() => {
-                  res.status(200).json({ success: true });
-                })
-                .catch(() => res.status(500).json({ error: "Error saving" }));
-            });
+module.exports.toggleOpen = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  User.findOne({ token: decoded.token })
+    .then((doc) => doc)
+    .then((doc) => {
+      if (!doc)
+        return res.status(403).json({ error: "Current user not found!" });
+      Room.findOne({ id: doc.room })
+        .then((room) => room)
+        .then((room) => {
+          if (!room)
+            return res.status(403).json({ error: "Current room not found!" });
+          room.open = !room.open;
+          room
+            .save()
+            .then(() => {
+              res.status(200).json({ success: true });
+            })
+            .catch(() => res.status(500).json({ error: "Error saving" }));
         });
-    }
-  );
+    });
 };
 
-module.exports.toggleVoting = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (decoded.permissions.indexOf("Mod") === -1) {
-        return res.status(401).json({ error: "Not authorized" });
-      }
-      User.findOne({ token: decoded.token })
-        .then((doc) => doc)
-        .then((doc) => {
-          if (!doc)
-            return res.status(403).json({ error: "Current user not found!" });
-          Room.findOne({ id: doc.room })
-            .then((room) => room)
-            .then((room) => {
-              if (!room)
-                return res
-                  .status(403)
-                  .json({ error: "Current room not found!" });
-              room.votingOpen = !room.votingOpen;
-              room
-                .save()
-                .then(() => {
-                  res.status(200).json({ success: true });
-                })
-                .catch(() => res.status(500).json({ error: "Error saving" }));
-            });
+module.exports.toggleVoting = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  User.findOne({ token: decoded.token })
+    .then((doc) => doc)
+    .then((doc) => {
+      if (!doc)
+        return res.status(403).json({ error: "Current user not found!" });
+      Room.findOne({ id: doc.room })
+        .then((room) => room)
+        .then((room) => {
+          if (!room)
+            return res.status(403).json({ error: "Current room not found!" });
+          room.votingOpen = !room.votingOpen;
+          room
+            .save()
+            .then(() => {
+              res.status(200).json({ success: true });
+            })
+            .catch(() => res.status(500).json({ error: "Error saving" }));
         });
-    }
-  );
+    });
 };
 
-module.exports.deleteUser = (req, res) => {
-  jwt.verify(
-    req.header("Authorization"),
-    process.env.SECRET,
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "JWT not verified" });
-      } else if (decoded.permissions.indexOf("Mod") === -1) {
-        return res.status(401).json({ error: "Not authorized" });
-      }
-      User.findOne({ token: decoded.token })
-        .then((user) => user)
-        .then((user) => {
-          Room.findOne({ owner: user._id })
-            .then((room) => room)
-            .then((room) => {
-              Voter.findOneAndDelete({
-                firstName: req.body.first,
-                lastName: req.body.last,
-                school: req.body.school,
-                code: room.accessCode,
-              }).then((doc) => {
-                if (doc == null) {
-                  return res
-                    .status(404)
-                    .json({ error: "Voter was not found!" });
-                }
-                return res.status(200).json({ success: true });
-              });
-            });
+module.exports.deleteUser = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  User.findOne({ token: decoded.token })
+    .then((user) => user)
+    .then((user) => {
+      Room.findOne({ owner: user._id })
+        .then((room) => room)
+        .then((room) => {
+          Voter.findOneAndDelete({
+            firstName: req.body.first,
+            lastName: req.body.last,
+            school: req.body.school,
+            code: room.accessCode,
+          }).then((doc) => {
+            if (doc == null) {
+              return res.status(404).json({ error: "Voter was not found!" });
+            }
+            return res.status(200).json({ success: true });
+          });
         });
-    }
-  );
+    });
 };
 
 function _generatePIN(length) {
