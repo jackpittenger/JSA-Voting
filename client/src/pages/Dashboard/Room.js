@@ -198,7 +198,7 @@ class Room extends React.Component {
                   <TableCell>Last Name</TableCell>
                   <TableCell>School</TableCell>
                   <TableCell>Vote</TableCell>
-                  <TableCell>Delete</TableCell>
+                  <TableCell>Remove</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -209,12 +209,15 @@ class Room extends React.Component {
                       <TableCell>{x.lastName}</TableCell>
                       <TableCell>{x.school}</TableCell>
                       <TableCell>{x.vote}</TableCell>
-                      <TableCell
-                        onClick={() =>
-                          this.deleteUser(x.firstName, x.lastName, x.school)
-                        }
-                      >
-                        X
+                      <TableCell>
+                        <Button
+                          onClick={() =>
+                            this.deleteUser(x.firstName, x.lastName, x.school)
+                          }
+                          color="secondary"
+                        >
+                          Remove
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
