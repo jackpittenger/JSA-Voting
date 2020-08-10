@@ -92,8 +92,7 @@ class Room extends React.Component {
             status_code: status,
             error_message: res.error,
           });
-        }
-        this.setState({ open: !this.state.open });
+        } else this.setState({ open: !this.state.open });
       }.bind(this)
     );
   }
@@ -109,8 +108,7 @@ class Room extends React.Component {
             status_code: status,
             error_message: res.error,
           });
-        }
-        this.setState({ votingOpen: !this.state.votingOpen });
+        } else this.setState({ votingOpen: !this.state.votingOpen });
       }.bind(this)
     );
   }
