@@ -6,8 +6,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import history from "../../services/history";
-import ErrorPopup from "../../services/ErrorPopup";
+import history from "../services/history";
+import ErrorPopup from "../services/ErrorPopup";
 
 class Header extends React.Component {
   constructor(props) {
@@ -93,7 +93,10 @@ class Header extends React.Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.props.handler} color="primary">
+          <Button
+            onClick={() => this.props.setFormEnabled(false)}
+            color="primary"
+          >
             Cancel
           </Button>
           <Button onClick={this.handleFormSubmit} color="primary">
