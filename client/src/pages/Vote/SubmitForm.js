@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControl from "@material-ui/core/FormControl";
@@ -8,82 +8,67 @@ import Button from "@material-ui/core/Button";
 import history from "../../services/history";
 import ErrorPopup from "../../services/ErrorPopup";
 
-class SubmitForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { vote: null, status_code: "", error_message: "" };
-    this.Auth = props.auth;
-    this.closeError = this.closeError.bind(this);
-    this.submit = this.submit.bind(this);
-    this.processReturn = this.processReturn.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  closeError() {
-    this.setState({ openError: false });
-  }
-
-  submit() {
-    this.Auth.fetch(
+export default function SubmitForm(props) {
+  const [vote, setVote] = useState(null);
+  const [error, setError] = useState({
+    open: false,
+    statusCode: "",
+    errorMessage: "",
+  });
+  function submit() {
+    props.auth.fetch(
       "/api/submit_form",
-      { method: "POST", body: JSON.stringify({ vote: this.state.vote }) },
-      this.processReturn
+      { method: "POST", body: JSON.stringify({ vote: vote }) },
+      processReturn
     );
   }
 
-  processReturn(res, status) {
+  function processReturn(res, status) {
     if (status === 455) {
-      this.setState({
-        openError: true,
-        status_code: status,
-        error_message: res.error,
+      setError({
+        open: true,
+        statusCode: status,
+        errorMessage: res.error,
       });
     } else {
-      this.Auth.logout();
+      props.auth.logout();
+      props.setIsTokenVoter(false);
       history.push("/");
     }
   }
 
-  handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
-  render() {
-    return (
-      <form style={{ paddingTop: 15 }}>
-        <div>
-          {this.state.openError ? (
-            <ErrorPopup
-              closeError={this.closeError}
-              status_code={this.state.status_code}
-              error_message={this.state.error_message}
+  return (
+    <form style={{ paddingTop: 15 }}>
+      <div>
+        {error.open ? (
+          <ErrorPopup
+            closeError={setError}
+            status_code={error.statusCode}
+            error_message={error.errorMessage}
+          />
+        ) : null}
+        <FormControl>
+          <FormLabel>Vote</FormLabel>
+          <RadioGroup
+            name="vote"
+            value={vote}
+            onChange={(e) => setVote(e.target.value)}
+          >
+            <FormControlLabel value="yea" control={<Radio />} label="Yea" />
+            <FormControlLabel value="nay" control={<Radio />} label="Nay" />
+            <FormControlLabel
+              value="abstain"
+              control={<Radio />}
+              label="Abstain"
             />
-          ) : null}
-          <FormControl>
-            <FormLabel>Vote</FormLabel>
-            <RadioGroup
-              name="vote"
-              value={this.state.vote}
-              onChange={this.handleChange}
-            >
-              <FormControlLabel value="yea" control={<Radio />} label="Yea" />
-              <FormControlLabel value="nay" control={<Radio />} label="Nay" />
-              <FormControlLabel
-                value="abstain"
-                control={<Radio />}
-                label="Abstain"
-              />
-            </RadioGroup>
-          </FormControl>
-          <div>
-            <Button variant="contained" color="primary" onClick={this.submit}>
-              Submit
-            </Button>
-          </div>
+          </RadioGroup>
+        </FormControl>
+        <div>
+          <Button variant="contained" color="primary" onClick={submit}>
+            Submit
+          </Button>
         </div>
-      </form>
-    );
-  }
+      </div>
+    </form>
+  );
 }
-
-export default SubmitForm;

@@ -13,7 +13,7 @@ export default function Vote() {
     <div className="App">
       <Header auth={Auth} />
       {isTokenVoter ? (
-        <SubmitForm auth={Auth} />
+        <SubmitForm setIsTokenVoter={setIsTokenVoter} auth={Auth} />
       ) : (
         <NameForm setIsTokenVoter={setIsTokenVoter} auth={Auth} />
       )}
