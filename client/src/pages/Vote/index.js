@@ -6,7 +6,7 @@ import NameForm from "./NameForm";
 import SubmitForm from "./SubmitForm";
 import AuthService from "../../services/AuthService";
 
-export default function Vote(props) {
+export default function Vote() {
   const Auth = new AuthService();
   return (
     <div className="App">
