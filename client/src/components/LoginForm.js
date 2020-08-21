@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -9,103 +9,81 @@ import Button from "@material-ui/core/Button";
 import history from "../services/history";
 import ErrorPopup from "../services/ErrorPopup";
 
-class Header extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      token: "",
-      pin: "",
-      open: false,
-      status_code: "",
-      error_message: "",
-    };
+export default function Header(props) {
+  const [token, setToken] = useState("");
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState({
+    open: false,
+    statusCode: "",
+    errorMessage: "",
+  });
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.closeError = this.closeError.bind(this);
-    this.Auth = props.auth;
-  }
-
-  handleFormSubmit(e) {
+  function handleFormSubmit(e) {
     e.preventDefault();
 
-    this.Auth.login(this.state.token, this.state.pin)
+    props.auth
+      .login(token, pin)
       .then(() => {
         history.push("/dashboard/");
       })
       .catch((err) => {
-        this.setState({
+        setError({
           open: true,
-          status_code: err.response.status,
-          error_message: err.response.data.error,
+          statusCode: err.response.status,
+          errorMessage: err.response.data.error,
         });
       });
   }
 
-  closeError() {
-    this.setState({ open: false });
-  }
+  useEffect(() => {
+    if (props.auth.loggedIn()) history.replace("/dashboard/");
+  });
 
-  componentDidMount() {
-    if (this.Auth.loggedIn()) history.replace("/dashboard/");
-  }
-
-  handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
-  render() {
-    return (
-      <Dialog open={true}>
-        {this.state.open ? (
-          <ErrorPopup
-            closeError={this.closeError}
-            status_code={this.state.status_code}
-            error_message={this.state.error_message}
-          />
-        ) : null}
-        <DialogTitle id="form-dialog-title">Login</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            If you've been giving authorization, please enter the credentials
-            below:
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="token"
-            id="token"
-            label="Token"
-            type="text"
-            onChange={this.handleChange}
-            value={this.state.token}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            name="pin"
-            id="pin"
-            label="Pin"
-            type="text"
-            onChange={this.handleChange}
-            value={this.state.pin}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => this.props.setFormEnabled(false)}
-            color="primary"
-          >
-            Cancel
-          </Button>
-          <Button onClick={this.handleFormSubmit} color="primary">
-            Login
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog open={true}>
+      {error.open ? (
+        <ErrorPopup
+          closeError={setError}
+          status_code={error.statusCode}
+          error_message={error.errorMessage}
+        />
+      ) : null}
+      <DialogTitle id="form-dialog-title">Login</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          If you've been giving authorization, please enter the credentials
+          below:
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          name="token"
+          id="token"
+          label="Token"
+          type="text"
+          onChange={(e) => setToken(e.target.value)}
+          value={token}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          name="pin"
+          id="pin"
+          label="Pin"
+          type="text"
+          onChange={(e) => setPin(e.target.value)}
+          value={pin}
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => props.setFormEnabled(false)} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleFormSubmit} color="primary">
+          Login
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
-
-export default Header;
