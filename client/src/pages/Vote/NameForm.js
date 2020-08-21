@@ -24,8 +24,12 @@ export default function NameForm(props) {
         last_name: lastName,
         school: school,
       })
-      .then((res) => props.change(res))
+      .then(
+        (res) => props.auth.setToken(res.data.token),
+        props.setIsTokenVoter(true)
+      )
       .catch((err) => {
+        console.log(err);
         setError({
           open: true,
           statusCode: err.response.status,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 import Header from "../../components/Header";
@@ -8,10 +8,15 @@ import AuthService from "../../services/AuthService";
 
 export default function Vote() {
   const Auth = new AuthService();
+  const [isTokenVoter, setIsTokenVoter] = useState(Auth.setIsTokenVoter);
   return (
     <div className="App">
       <Header auth={Auth} />
-      {Auth.isTokenVoter() ? <SubmitForm auth={Auth} /> : <NameForm />}
+      {isTokenVoter ? (
+        <SubmitForm auth={Auth} />
+      ) : (
+        <NameForm setIsTokenVoter={setIsTokenVoter} auth={Auth} />
+      )}
     </div>
   );
 }
