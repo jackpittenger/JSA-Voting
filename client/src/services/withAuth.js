@@ -1,39 +1,28 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import AuthService from "./AuthService";
 import history from "./history";
 
 export default function withAuth(AuthComponent) {
   const Auth = new AuthService();
-  return class AuthWrapped extends Component {
-    constructor() {
-      super();
-      this.state = {
-        user: null,
-      };
-    }
-
-    componentDidMount() {
+  return function AuthWrapped() {
+    const [user, setUser] = useState(null);
+    useEffect(() => {
       if (!Auth.loggedIn()) {
         history.replace("/");
       } else {
         try {
-          const profile = Auth.getProfile();
-          this.setState({
-            user: profile,
-          });
+          setUser(Auth.getProfile());
         } catch (err) {
           Auth.logout();
           history.replace("/");
         }
       }
-    }
+    }, []);
 
-    render() {
-      if (this.state.user) {
-        return <AuthComponent user={this.state.user} />;
-      } else {
-        return null;
-      }
+    if (user) {
+      return <AuthComponent user={user} />;
+    } else {
+      return null;
     }
   };
 }
