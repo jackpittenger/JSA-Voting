@@ -3,7 +3,7 @@ import axios from "axios";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
-import ErrorPopup from "../../services/ErrorPopup";
+import ErrorPopup from "../../components/ErrorPopup";
 
 export default function NameForm(props) {
   const [firstName, setFirstName] = useState("");

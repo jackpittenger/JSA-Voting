@@ -6,7 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
 import history from "../../services/history";
-import ErrorPopup from "../../services/ErrorPopup";
+import ErrorPopup from "../../components/ErrorPopup";
 
 export default function SubmitForm(props) {
   const [vote, setVote] = useState(null);

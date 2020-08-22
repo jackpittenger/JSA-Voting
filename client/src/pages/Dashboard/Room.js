@@ -9,7 +9,7 @@ import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
-import ErrorPopup from "../../services/ErrorPopup";
+import ErrorPopup from "../../components/ErrorPopup";
 
 class Room extends React.Component {
   constructor(props) {

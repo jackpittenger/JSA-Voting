@@ -10,7 +10,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import TextField from "@material-ui/core/TextField";
-import ErrorPopup from "../../services/ErrorPopup";
+import ErrorPopup from "../../components/ErrorPopup";
 
 class Mod extends React.Component {
   constructor(props) {

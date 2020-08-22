@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import history from "../services/history";
-import ErrorPopup from "../services/ErrorPopup";
+import ErrorPopup from "./ErrorPopup";
 
 export default function Header(props) {
   const [token, setToken] = useState("");
