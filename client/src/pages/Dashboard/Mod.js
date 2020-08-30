@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Room from "./Room";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import AuthService from "../../services/AuthService";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -12,115 +11,82 @@ import Dialog from "@material-ui/core/Dialog";
 import TextField from "@material-ui/core/TextField";
 import ErrorPopup from "../../components/ErrorPopup";
 
-class Mod extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      openDialog: false,
-      dialogTitle: "",
-      firstLine: "",
-      room_name: "",
-      room: null,
-      openError: false,
-      status_code: "",
-      error_message: "",
-    };
-    this.Auth = new AuthService();
-    this.handleChange = this.handleChange.bind(this);
-    this.closeDialog = this.closeDialog.bind(this);
-    this.createRoom = this.createRoom.bind(this);
-    this.processRoom = this.processRoom.bind(this);
-    this.disableRoom = this.disableRoom.bind(this);
-    this.closeError = this.closeError.bind(this);
-  }
-
-  componentDidMount() {
-    this.Auth.fetch("/api/get_room", { method: "POST" }, (res, status) => {
-      if (status < 300) this.setState({ initialRoom: res });
+export default function Mod(props) {
+  const [roomName, setRoomName] = useState("");
+  const [room, setRoom] = useState(null);
+  const [dialog, setDialog] = useState({
+    open: false,
+    title: "",
+    firstLine: "",
+  });
+  const [error, setError] = useState({
+    open: false,
+    statusCode: "",
+    errorMessage: "",
+  });
+  useEffect(() => {
+    props.auth.fetch("/api/get_room", { method: "POST" }, (res, status) => {
+      if (status < 300) setRoom(res);
     });
-  }
+  }, [props.auth]);
 
-  handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
-  createRoom() {
-    this.Auth.fetch(
+  function createRoom() {
+    props.auth.fetch(
       "/api/create_room",
-      { method: "POST", body: JSON.stringify({ name: this.state.room_name }) },
+      { method: "POST", body: JSON.stringify({ name: roomName }) },
       (res, status) => {
         if (status >= 400) {
-          this.setState({
-            openError: true,
-            status_code: status,
-            error_message: res.error,
+          setError({
+            open: true,
+            statusCode: status,
+            errorMessage: res.error,
           });
-        } else this.processRoom(res);
+        } else setRoom(res);
       }
     );
   }
 
-  closeError() {
-    this.setState({ openError: false });
-  }
-
-  processRoom(res) {
-    this.setState({ initialRoom: res });
-  }
-
-  closeDialog() {
-    this.setState({ openDialog: false });
-  }
-
-  disableRoom() {
-    this.setState({ initialRoom: null });
-  }
-
-  render() {
-    return (
-      <Grid container direction="column" justify="center" alignItems="stretch">
-        {this.state.openError ? (
-          <ErrorPopup
-            closeError={this.closeError}
-            status_code={this.state.status_code}
-            error_message={this.state.error_message}
-          />
-        ) : null}
-        <Dialog open={this.state.openDialog}>
-          <DialogTitle>{this.state.dialogTitle}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{this.state.firstLine}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.closeDialog} color="primary">
-              Close
+  return (
+    <Grid container direction="column" justify="center" alignItems="stretch">
+      {error.open ? (
+        <ErrorPopup
+          closeError={() => setError({ open: false })}
+          status_code={error.statusCode}
+          error_message={error.errorMessage}
+        />
+      ) : null}
+      <Dialog open={dialog.open}>
+        <DialogTitle>{dialog.title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{dialog.firstLine}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialog({ open: false })} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Paper>
+        Mod
+        <br />
+        {room != null ? (
+          <Room disable={() => setRoom(null)} room={room} />
+        ) : (
+          <div>
+            <TextField
+              name="room_name"
+              id="room_name"
+              label="Room name"
+              type="text"
+              onChange={(e) => setRoomName(e.target.value)}
+              value={roomName}
+            />
+            <Button onClick={createRoom} color="primary">
+              Create a new room
             </Button>
-          </DialogActions>
-        </Dialog>
-        <Paper>
-          Mod
-          <br />
-          {this.state.initialRoom != null ? (
-            <Room disable={this.disableRoom} room={this.state.initialRoom} />
-          ) : (
-            <div>
-              <TextField
-                name="room_name"
-                id="room_name"
-                label="Room name"
-                type="text"
-                onChange={this.handleChange}
-                value={this.state.room_name}
-              />
-              <Button onClick={this.createRoom} color="primary">
-                Create a new room
-              </Button>
-            </div>
-          )}
-        </Paper>
-      </Grid>
-    );
-  }
+          </div>
+        )}
+      </Paper>
+    </Grid>
+  );
 }
-
-export default Mod;

@@ -14,9 +14,9 @@ function Dashboard() {
   return (
     <div className="App">
       <Header auth={auth} />
-      {permissions.indexOf("Mod") !== -1 ? <Mod /> : null}
-      {permissions.indexOf("Admin") !== -1 ? <Admin /> : null}
-      {permissions.indexOf("Dev") !== -1 ? <Dev /> : null}
+      {permissions.indexOf("Mod") !== -1 ? <Mod auth={auth} /> : null}
+      {permissions.indexOf("Admin") !== -1 ? <Admin auth={auth} /> : null}
+      {permissions.indexOf("Dev") !== -1 ? <Dev auth={auth} /> : null}
     </div>
   );
 }
