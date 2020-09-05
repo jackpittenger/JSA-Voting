@@ -70,7 +70,7 @@ export default function Mod(props) {
         Mod
         <br />
         {room != null ? (
-          <Room disable={() => setRoom(null)} room={room} />
+          <Room disable={() => setRoom(null)} auth={props.auth} room={room} />
         ) : (
           <div>
             <TextField

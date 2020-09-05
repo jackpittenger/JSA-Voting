@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
-import AuthService from "../../services/AuthService";
 import openSoc from "../../services/api";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -11,36 +10,28 @@ import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import ErrorPopup from "../../components/ErrorPopup";
 
-class Room extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      accessCode: props.room.accessCode,
-      id: props.room.id,
-      users: props.room.users,
-      open: props.room.open,
-      openError: false,
-      status_code: "",
-      error_message: "",
-      votingOpen: props.room.votingOpen,
-    };
-    this.Auth = new AuthService();
-    this.deleteRoom = this.deleteRoom.bind(this);
-    this.toggleRoom = this.toggleRoom.bind(this);
-    this.closeError = this.closeError.bind(this);
-    this.toggleVoting = this.toggleVoting.bind(this);
-    this.renderVotes = this.renderVotes.bind(this);
-    this.deleteUser = this.deleteUser.bind(this);
-  }
+export default function Room(props) {
+  const [room, setRoom] = useState({
+    accessCode: props.room.accessCode,
+    id: props.room.id,
+    users: props.room.users,
+    open: props.room.open,
+    votingOpen: props.room.votingOpen,
+  });
+  const [error, setError] = useState({
+    open: false,
+    statusCode: "",
+    errorMessage: "",
+  });
 
-  componentDidMount() {
-    if (this.Auth.loggedIn()) {
-      this.io = openSoc(this.Auth.getToken());
-      this.io.on("newuser", (data) =>
-        this.setState({ users: [...this.state.users, data] })
+  useEffect(() => {
+    if (props.auth.loggedIn()) {
+      const io = openSoc(props.auth.getToken());
+      io.on("newuser", (data) =>
+        setRoom({ ...room, users: [...room.users, data] })
       );
-      this.io.on("vote", (data) => {
-        let users = this.state.users;
+      io.on("vote", (data) => {
+        let users = room.users;
         users.find((o, i) => {
           if (
             o.firstName === data[0] &&
@@ -52,73 +43,66 @@ class Room extends React.Component {
           }
           return false;
         });
-        this.setState({ users: users });
+        setRoom({ ...room, users: users });
       });
+      return () => {
+        io.disconnect();
+      };
     }
-  }
+  }, [props.auth, room]);
 
-  closeError() {
-    this.setState({ openError: false });
-  }
-
-  componentWillUnmount() {
-    this.io.disconnect();
-  }
-
-  deleteRoom() {
-    this.Auth.fetch(
+  function deleteRoom() {
+    props.auth.fetch(
       "/api/room",
-      { method: "DELETE", body: JSON.stringify({ room: this.state.id }) },
+      { method: "DELETE", body: JSON.stringify({ room: room.id }) },
       (res, status) => {
         if (status >= 400) {
-          this.setState({
-            openError: true,
-            status_code: status,
-            error_message: res.error,
+          setError({
+            open: true,
+            statusCode: status,
+            errorMessage: res.error,
           });
-        } else this.props.disable(res);
+        } else props.disable(res);
       }
     );
   }
 
-  toggleRoom() {
-    this.Auth.fetch(
-      "/api/toggle_open",
-      { method: "POST" },
-      function (res, status) {
-        if (status >= 400) {
-          this.setState({
-            openError: true,
-            status_code: status,
-            error_message: res.error,
-          });
-        } else this.setState({ open: !this.state.open });
-      }.bind(this)
-    );
+  function toggleRoom() {
+    props.auth.fetch("/api/toggle_open", { method: "POST" }, function (
+      res,
+      status
+    ) {
+      if (status >= 400) {
+        setError({
+          open: true,
+          statusCode: status,
+          errorMessage: res.error,
+        });
+      } else setRoom({ ...room, open: !room.open });
+    });
   }
 
-  toggleVoting() {
-    this.Auth.fetch(
-      "/api/toggle_voting",
-      { method: "POST" },
-      function (res, status) {
-        if (status >= 400) {
-          this.setState({
-            openError: true,
-            status_code: status,
-            error_message: res.error,
-          });
-        } else this.setState({ votingOpen: !this.state.votingOpen });
-      }.bind(this)
-    );
+  function toggleVoting() {
+    props.auth.fetch("/api/toggle_voting", { method: "POST" }, function (
+      res,
+      status
+    ) {
+      if (status >= 400) {
+        setError({
+          open: true,
+          statusCode: status,
+          errorMessage: res.error,
+        });
+      } else setRoom({ ...room, votingOpen: !room.votingOpen });
+    });
   }
 
-  renderVotes() {
+  function renderVotes() {
     let arr = [0, 0, 0];
-    for (let i = 0; i < this.state.users.length; i++) {
-      if (this.state.users[i].vote === "yea") arr[0]++;
-      if (this.state.users[i].vote === "abstain") arr[1]++;
-      if (this.state.users[i].vote === "nay") arr[2]++;
+    for (let i = 0; i < room.users.length; i++) {
+      if (room.users[i].vote === "yea") arr[0]++;
+      if (room.users[i].vote === "abstain") arr[1]++;
+      if (room.users[i].vote === "nay") arr[2]++;
     }
     return (
       <div>
@@ -129,8 +113,8 @@ class Room extends React.Component {
     );
   }
 
-  deleteUser(first, last, school) {
-    this.Auth.fetch(
+  function deleteUser(first, last, school) {
+    props.auth.fetch(
       "/api/delete_user",
       {
         method: "DELETE",
@@ -138,19 +122,19 @@ class Room extends React.Component {
           first: first,
           last: last,
           school: school,
-          code: this.state.accessCode,
+          code: room.accessCode,
         }),
       },
       (res, status) => {
         if (status >= 400) {
-          this.setState({
-            openError: true,
-            status_code: status,
-            error_message: res.error,
+          setError({
+            open: true,
+            statusCode: status,
+            errorMessage: res.error,
           });
         } else {
           if (res.success) {
-            let arr = this.state.users.filter((val) => {
+            let arr = room.users.filter((val) => {
               if (
                 val.firstName === first &&
                 val.lastName === last &&
@@ -159,76 +143,72 @@ class Room extends React.Component {
                 return false;
               return true;
             });
-            this.setState({ users: arr });
+            setRoom({ ...room, users: arr });
           }
         }
       }
     );
   }
 
-  render() {
-    return (
-      <div>
-        {this.state.openError ? (
-          <ErrorPopup
-            closeError={this.closeError}
-            status_code={this.state.status_code}
-            error_message={this.state.error_message}
-          />
-        ) : null}
-        <div>Active room: {this.state.id}</div>
-        <div>Code: {this.state.accessCode}</div>
-        <Button onClick={this.toggleRoom} color="primary">
-          {this.state.open === false ? "Open Room" : "Close Room"}
-        </Button>
-        <Button onClick={this.toggleVoting} color="default">
-          {this.state.votingOpen === false ? "Open for Voting" : "Close Voting"}
-        </Button>
-        <Button onClick={this.deleteRoom} color="secondary">
-          Delete Room
-        </Button>
-        <h4 style={{ marginTop: ".5em" }}>{this.renderVotes()}</h4>
-        <h3>Users:</h3>
-        <Paper>
-          <TableContainer>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>School</TableCell>
-                  <TableCell>Vote</TableCell>
-                  <TableCell>Remove</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.users.map((x, i) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={i}>
-                      <TableCell>{x.firstName}</TableCell>
-                      <TableCell>{x.lastName}</TableCell>
-                      <TableCell>{x.school}</TableCell>
-                      <TableCell>{x.vote}</TableCell>
-                      <TableCell>
-                        <Button
-                          onClick={() =>
-                            this.deleteUser(x.firstName, x.lastName, x.school)
-                          }
-                          color="secondary"
-                        >
-                          Remove
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </div>
-    );
-  }
+  return (
+    <div>
+      {error.open ? (
+        <ErrorPopup
+          closeError={error.closeError}
+          status_code={error.statusCode}
+          error_message={error.errorMessage}
+        />
+      ) : null}
+      <div>Active room: {room.id}</div>
+      <div>Code: {room.accessCode}</div>
+      <Button onClick={toggleRoom} color="primary">
+        {room.open === false ? "Open Room" : "Close Room"}
+      </Button>
+      <Button onClick={toggleVoting} color="default">
+        {room.votingOpen === false ? "Open for Voting" : "Close Voting"}
+      </Button>
+      <Button onClick={deleteRoom} color="secondary">
+        Delete Room
+      </Button>
+      <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
+      <h3>Users:</h3>
+      <Paper>
+        <TableContainer>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>First Name</TableCell>
+                <TableCell>Last Name</TableCell>
+                <TableCell>School</TableCell>
+                <TableCell>Vote</TableCell>
+                <TableCell>Remove</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {room.users.map((x, i) => {
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={i}>
+                    <TableCell>{x.firstName}</TableCell>
+                    <TableCell>{x.lastName}</TableCell>
+                    <TableCell>{x.school}</TableCell>
+                    <TableCell>{x.vote}</TableCell>
+                    <TableCell>
+                      <Button
+                        onClick={() =>
+                          deleteUser(x.firstName, x.lastName, x.school)
+                        }
+                        color="secondary"
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </div>
+  );
 }
-
-export default Room;
