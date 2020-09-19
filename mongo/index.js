@@ -22,6 +22,7 @@ db.once("open", function () {
 
 const User = require("./User").User;
 const Room = require("./Room").Room;
+const ConcludedRoom = require("./ConcludedRoom").ConcludedRoom;
 const Voter = require("./Voter").Voter;
 
 async function verifyJwt(token, res) {
@@ -349,6 +350,58 @@ module.exports.deleteUser = async (req, res) => {
             return res.status(200).json({ success: true });
           });
         });
+    });
+};
+
+module.exports.concludeRoom = async (req, res) => {
+  decoded = await verifyJwt(req.header("Authorization"), res);
+  if (decoded === false) return;
+  if (decoded.permissions.indexOf("Mod") === -1) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  User.findOne({ token: decoded.token })
+    .then((user) => user)
+    .then((user) => {
+      Room.findOne({ owner: user._id })
+        .then((room) => room)
+        .then((room) => {
+          let arr = [0, 0, 0];
+          for (let i = 0; i < room.users.length; i++) {
+            if (room.users[i].vote === "yea") arr[0]++;
+            if (room.users[i].vote === "abstain") arr[1]++;
+            if (room.users[i].vote === "nay") arr[2]++;
+          }
+          ConcludedRoom.create({
+            id: room.id,
+            yea: arr[0],
+            nay: arr[1],
+            abs: arr[2],
+            owner: room.owner,
+          })
+            .then(() => {
+              room
+                .delete()
+                .then(() => res.status(200).json({ success: true }))
+                .catch(() =>
+                  res.status(500).json({ error: "Unable to delete room" })
+                );
+            })
+            .catch(() =>
+              res.status(500).json({ error: "Unable to create concluded room" })
+            );
+        });
+    });
+};
+
+module.exports.page = async (req, res) => {
+  ConcludedRoom.find()
+    .sort({ _id: req.params.page > 0 ? req.params.page * -10 : -1 })
+    .limit(10)
+    .then((arr) => {
+      return res.status(200).json({ res: arr, success: true });
+    })
+    .catch(() => {
+      return res.status(500).json({ error: "Failure getting page" });
     });
 };
 
