@@ -27,6 +27,16 @@ export default function Header(props) {
           >
             Rooms
           </Button>
+          {props.auth.loggedIn() ? (
+            <Button
+              onClick={() => {
+                history.push("/dashboard");
+              }}
+              color="inherit"
+            >
+              Dashboard
+            </Button>
+          ) : null}
           <Button
             onClick={() =>
               props.auth.loggedIn()
