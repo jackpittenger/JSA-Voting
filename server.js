@@ -19,6 +19,8 @@ const {
   toggleOpen,
   toggleVoting,
   deleteUser,
+  concludeRoom,
+  page,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -66,6 +68,14 @@ app.post("/api/toggle_voting", (req, res) => {
 
 app.delete("/api/delete_user", (req, res) => {
   return deleteUser(req, res);
+});
+
+app.patch("/api/conclude_room", (req, res) => {
+  return concludeRoom(req, res);
+});
+
+app.get("/api/page/:page", (req, res) => {
+  return page(req, res);
 });
 
 if (process.env.DEPLOY === "true") {

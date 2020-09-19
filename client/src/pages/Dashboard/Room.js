@@ -150,6 +150,21 @@ export default function Room(props) {
     );
   }
 
+  function closeRoom() {
+    props.auth.fetch("/api/conclude_room", { method: "PATCH" }, function (
+      res,
+      status
+    ) {
+      if (status >= 400) {
+        setError({
+          open: true,
+          statusCode: status,
+          errorMessage: res.error,
+        });
+      } else props.disable();
+    });
+  }
+
   return (
     <div>
       {error.open ? (
@@ -169,6 +184,9 @@ export default function Room(props) {
       </Button>
       <Button onClick={deleteRoom} color="secondary">
         Delete Room
+      </Button>
+      <Button onClick={closeRoom} color="primary">
+        Conclude
       </Button>
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
