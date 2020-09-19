@@ -70,7 +70,7 @@ export default function Header(props) {
           name="pin"
           id="pin"
           label="Pin"
-          type="text"
+          type="password"
           onChange={(e) => setPin(e.target.value)}
           value={pin}
           fullWidth
