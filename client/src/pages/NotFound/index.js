@@ -1,5 +1,18 @@
 import React from "react";
+import Header from "../../components/Header";
+import AuthService from "../../services/AuthService";
 
 export default function Dashboard() {
-  return <h1>404 NOT FOUND</h1>;
+  const Auth = new AuthService();
+  return (
+    <div>
+      <Header auth={Auth} />
+      <h1 style={{ textAlign: "center" }}>
+        404
+        <br />
+        Not Found
+      </h1>
+      ;
+    </div>
+  );
 }
