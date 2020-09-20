@@ -209,7 +209,18 @@ export default function Room(props) {
                     <TableCell>{x.firstName}</TableCell>
                     <TableCell>{x.lastName}</TableCell>
                     <TableCell>{x.school}</TableCell>
-                    <TableCell>{x.vote}</TableCell>
+                    <TableCell
+                      style={{
+                        color:
+                          x.vote === "yea"
+                            ? "green"
+                            : x.vote === "nay"
+                            ? "red"
+                            : "grey",
+                      }}
+                    >
+                      {x.vote}
+                    </TableCell>
                     <TableCell>
                       <Button
                         onClick={() =>
