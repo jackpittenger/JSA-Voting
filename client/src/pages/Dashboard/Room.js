@@ -7,8 +7,16 @@ import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableBody from "@material-ui/core/TableBody";
 import ErrorPopup from "../../components/ErrorPopup";
+
+const headCells = [
+  { id: "firstName", label: "First Name" },
+  { id: "lastName", label: "Last Name" },
+  { id: "school", label: "School" },
+  { id: "vote", label: "Vote" },
+];
 
 export default function Room(props) {
   const [room, setRoom] = useState({
@@ -23,6 +31,8 @@ export default function Room(props) {
     statusCode: "",
     errorMessage: "",
   });
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("firstName");
 
   useEffect(() => {
     if (props.auth.loggedIn()) {
@@ -165,6 +175,34 @@ export default function Room(props) {
     });
   }
 
+  function handleSortRequest(event) {
+    setOrder(orderBy === event && order === "asc" ? "desc" : "asc");
+    setOrderBy(event);
+  }
+
+  function descendingComparator(a, b) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  }
+
+  function sort(array) {
+    let stabilizedArray = array.map((el, index) => [el, index]);
+    stabilizedArray.sort((a, b) => {
+      let change =
+        order === "asc"
+          ? -descendingComparator(a[0], b[0])
+          : descendingComparator(a[0], b[0]);
+      if (change !== 0) return change;
+      return a[1] - b[1];
+    });
+    return stabilizedArray.map((el) => el[0]);
+  }
+
   return (
     <div>
       {error.open ? (
@@ -195,15 +233,25 @@ export default function Room(props) {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-                <TableCell>School</TableCell>
-                <TableCell>Vote</TableCell>
+                {headCells.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    padding={headCell.disablePadding ? "none" : "default"}
+                  >
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : "asc"}
+                      onClick={() => handleSortRequest(headCell.id)}
+                    >
+                      {headCell.label}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
                 <TableCell>Remove</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {room.users.map((x, i) => {
+              {sort(room.users).map((x, i) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                     <TableCell>{x.firstName}</TableCell>
