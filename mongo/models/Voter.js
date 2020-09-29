@@ -9,4 +9,4 @@ const voterSchema = new mongoose.Schema({
   speaker: { type: String },
 });
 
-module.exports.Voter = mongoose.model("Voter", voterSchema);
+module.exports = mongoose.model("Voter", voterSchema);

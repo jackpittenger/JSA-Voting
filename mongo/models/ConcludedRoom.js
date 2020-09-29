@@ -13,7 +13,4 @@ const concludedRoomSchema = new mongoose.Schema({
   time: { type: Date, required: true, default: Date.now },
 });
 
-module.exports.ConcludedRoom = mongoose.model(
-  "ConcludedRoom",
-  concludedRoomSchema
-);
+module.exports = mongoose.model("ConcludedRoom", concludedRoomSchema);
