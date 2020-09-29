@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../mongo/User").User;
+const User = require("../mongo/models/User");
 let sockets = [];
 
 module.exports.setup = (io) =>

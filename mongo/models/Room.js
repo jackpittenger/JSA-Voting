@@ -17,4 +17,4 @@ const roomSchema = new mongoose.Schema({
   votingOpen: { type: Boolean, default: false },
 });
 
-module.exports.Room = mongoose.model("Room", roomSchema);
+module.exports = mongoose.model("Room", roomSchema);
