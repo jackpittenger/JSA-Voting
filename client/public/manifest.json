@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JSA Vote",
+  "name": "JSA Vote",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
