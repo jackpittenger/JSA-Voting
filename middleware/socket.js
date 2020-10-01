@@ -23,7 +23,7 @@ module.exports.setup = (io) =>
 module.exports.newVoter = (payload, owner) =>
   sockets
     .filter((c) => c[1].token === owner.token)
-    .forEach((v, i) => v[0].emit("newuser", payload));
+    .forEach((v) => v[0].emit("newuser", payload));
 
 module.exports.vote = (payload, owner) => {
   sockets
