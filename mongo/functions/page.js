@@ -1,7 +1,7 @@
-const ConcludedRoom = require("../models/ConcludedRoom");
+const Room = require("../models/Room");
 
 module.exports = async (req, res) => {
-  ConcludedRoom.find()
+  Room.find({ concluded: true })
     .sort({ _id: req.params.page > 0 ? req.params.page * -10 : -1 })
     .limit(10)
     .then((arr) => {

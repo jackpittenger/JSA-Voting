@@ -17,8 +17,8 @@ module.exports = async (req, res) => {
       return res.status(409).send({ error: "Already assigned to a room!" });
     let pin = generatePin(7);
     Room.create({ id: req.body.name, accessCode: pin, owner: usr._id })
-      .then(() => {
-        usr.room = req.body.name;
+      .then((room) => {
+        usr.room = room._id;
         usr
           .save()
           .then(() =>
