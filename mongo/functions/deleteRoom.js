@@ -15,12 +15,13 @@ module.exports = async (req, res) => {
     .then((doc) => {
       if (!doc)
         return res.status(403).json({ error: "Current user not found!" });
-      else if (doc.room !== req.body.room)
-        return res
-          .status(401)
-          .json({ error: "You do not own this room or it doesn't exist!" });
-      Room.findOneAndDelete({ id: req.body.room })
+      Room.findOneAndDelete({ _id: doc.room, id: req.body.room })
         .then((room) => {
+          if (!room) {
+            return res
+              .status(401)
+              .json({ error: "You do not own this room or it doesn't exist!" });
+          }
           doc.room = null;
           doc.save();
           Voter.deleteMany({

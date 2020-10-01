@@ -4,7 +4,10 @@ const userSchema = new mongoose.Schema({
   token: { type: String, unique: true, required: true },
   pin: { type: String, required: true },
   permissions: { type: [String], required: true },
-  room: { type: String, required: false },
+  room: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Room",
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

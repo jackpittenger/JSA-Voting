@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     .then((doc) => {
       if (!doc)
         return res.status(403).json({ error: "Current user not found!" });
-      Room.findOne({ concluded: false, id: doc.room })
+      Room.findOne({ _id: doc.room, concluded: false, owner: doc._id })
         .then((room) => room)
         .then((room) => {
           if (!room)
