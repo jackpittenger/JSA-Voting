@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   User.findOne({ token: decoded.token })
     .then((user) => user)
     .then((user) => {
-      Room.findOne({ owner: user._id })
+      Room.findOne({ concluded: false, owner: user._id })
         .then((room) => room)
         .then((room) => {
           Voter.findOneAndDelete({

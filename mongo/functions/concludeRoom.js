@@ -2,7 +2,6 @@ const verifyJwt = require("./helpers/verifyJwt");
 
 const User = require("../models/User");
 const Room = require("../models/Room");
-const ConcludedRoom = require("../models/ConcludedRoom");
 
 module.exports = async (req, res) => {
   decoded = verifyJwt(req.header("Authorization"), res);
@@ -23,13 +22,14 @@ module.exports = async (req, res) => {
             if (room.users[i].vote === "abstain") arr[1]++;
             if (room.users[i].vote === "nay") arr[2]++;
           }
-          ConcludedRoom.create({
-            id: room.id,
-            yea: arr[0],
-            nay: arr[1],
-            abs: arr[2],
-            owner: room.owner,
-          })
+          room
+            .update({
+              concluded: true,
+              time: Date.now(),
+              yea: arr[0],
+              nay: arr[1],
+              abs: arr[2],
+            })
             .then(() => {
               room
                 .delete()

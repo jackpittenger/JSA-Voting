@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     .then((doc) => {
       if (doc.vote != null)
         return res.status(403).json({ error: "You've already voted!" });
-      Room.findOne({ accessCode: doc.code }).then((room) => {
+      Room.findOne({ concluded: false, accessCode: doc.code }).then((room) => {
         if (!room) return res.status(409).json({ error: "Incorrect code!" });
         else if (!room.votingOpen)
           return res.status(455).json({
@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
                 decoded.school,
                 req.body.vote,
               ],
-              await Room.findOne({ accessCode: decoded.code })
+              await Room.findOne({ concluded: false, accessCode: decoded.code })
             )
           );
       });

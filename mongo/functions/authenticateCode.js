@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
         return res
           .status(409)
           .json({ error: "User already registered for this room!" });
-      Room.findOne({ accessCode: req.body.code })
+      Room.findOne({ concluded: false, accessCode: req.body.code })
         .populate("owner")
         .then((room) => room)
         .then((room) => {
