@@ -4,6 +4,15 @@
 JSA Voting is a responsive web application built on the MERN stack that allows room-based voting targeted at public debates. It features real-time updating, SSL/WSS, and room locking.
 
 ---
+# .env
+```
+DB_HOST=
+DB_USER=
+DB_PWD=
+DB_DB=
+SECRET=
+DEPLOY=(True|False)
+```
 
 ### Contributors
 
