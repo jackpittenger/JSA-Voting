@@ -14,6 +14,7 @@ module.exports = async (req, res) => {
     .then((user) => user)
     .then((user) => {
       Room.findOne({ owner: user._id })
+        .populate("users")
         .then((room) => room)
         .then((room) => {
           let arr = [0, 0, 0];
