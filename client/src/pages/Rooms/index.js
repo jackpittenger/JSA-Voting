@@ -11,13 +11,16 @@ import AuthService from "../../services/AuthService";
 
 const useStyles = makeStyles(() => ({
   grid: {
-    margin: 10,
+    width: "100%",
+    margin: "unset",
     justifyContent: "center",
   },
   gridItem: {
     flexGrow: "unset",
+    maxWidth: "100%",
   },
   item: {
+    maxWidth: "90%",
     width: "30em",
     height: "10em",
     padding: "1.2em",
@@ -34,7 +37,7 @@ export default function Room() {
     axios
       .get("/api/page/" + page)
       .then((res) => setRooms((r) => r.concat(res.data.res)))
-      .catch((err) => console.error("1" + err));
+      .catch((err) => console.error(err));
   }, [page]);
 
   return (
