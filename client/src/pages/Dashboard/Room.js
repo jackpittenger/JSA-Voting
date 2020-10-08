@@ -18,7 +18,7 @@ const headCells = [
   { id: "vote", label: "Vote" },
 ];
 
-export default function Room(props) {
+function Room(props) {
   const [room, setRoom] = useState({
     accessCode: props.room.accessCode,
     id: props.room.id,
@@ -257,3 +257,5 @@ export default function Room(props) {
     </div>
   );
 }
+
+export default ErrorPopup(Room);
