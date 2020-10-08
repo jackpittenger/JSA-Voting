@@ -9,14 +9,9 @@ import Button from "@material-ui/core/Button";
 import history from "../services/history";
 import ErrorPopup from "./ErrorPopup";
 
-export default function Header(props) {
+function Header(props) {
   const [token, setToken] = useState("");
   const [pin, setPin] = useState("");
-  const [error, setError] = useState({
-    open: false,
-    statusCode: "",
-    errorMessage: "",
-  });
 
   function handleFormSubmit(e) {
     e.preventDefault();
@@ -27,11 +22,7 @@ export default function Header(props) {
         history.push("/dashboard/");
       })
       .catch((err) => {
-        setError({
-          open: true,
-          statusCode: err.response.status,
-          errorMessage: err.response.data.error,
-        });
+        props.createError(err.response.status, err.response.data.error);
       });
   }
 
@@ -41,13 +32,6 @@ export default function Header(props) {
 
   return (
     <Dialog open={true}>
-      {error.open ? (
-        <ErrorPopup
-          closeError={setError}
-          status_code={error.statusCode}
-          error_message={error.errorMessage}
-        />
-      ) : null}
       <DialogTitle id="form-dialog-title">Login</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -87,3 +71,5 @@ export default function Header(props) {
     </Dialog>
   );
 }
+
+export default ErrorPopup(Header);

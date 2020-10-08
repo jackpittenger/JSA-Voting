@@ -18,18 +18,13 @@ const headCells = [
   { id: "vote", label: "Vote" },
 ];
 
-export default function Room(props) {
+function Room(props) {
   const [room, setRoom] = useState({
     accessCode: props.room.accessCode,
     id: props.room.id,
     users: props.room.users,
     open: props.room.open,
     votingOpen: props.room.votingOpen,
-  });
-  const [error, setError] = useState({
-    open: false,
-    statusCode: "",
-    errorMessage: "",
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
@@ -67,11 +62,7 @@ export default function Room(props) {
       { method: "DELETE", body: JSON.stringify({ room: room.id }) },
       (res, status) => {
         if (status >= 400) {
-          setError({
-            open: true,
-            statusCode: status,
-            errorMessage: res.error,
-          });
+          props.createError(status, res.error);
         } else props.disable(res);
       }
     );
@@ -83,11 +74,7 @@ export default function Room(props) {
       status
     ) {
       if (status >= 400) {
-        setError({
-          open: true,
-          statusCode: status,
-          errorMessage: res.error,
-        });
+        props.createError(status, res.error);
       } else setRoom({ ...room, open: !room.open });
     });
   }
@@ -98,11 +85,7 @@ export default function Room(props) {
       status
     ) {
       if (status >= 400) {
-        setError({
-          open: true,
-          statusCode: status,
-          errorMessage: res.error,
-        });
+        props.createError(status, res.error);
       } else setRoom({ ...room, votingOpen: !room.votingOpen });
     });
   }
@@ -137,11 +120,7 @@ export default function Room(props) {
       },
       (res, status) => {
         if (status >= 400) {
-          setError({
-            open: true,
-            statusCode: status,
-            errorMessage: res.error,
-          });
+          props.createError(status, res.error);
         } else {
           if (res.success) {
             let arr = room.users.filter((val) => {
@@ -166,11 +145,7 @@ export default function Room(props) {
       status
     ) {
       if (status >= 400) {
-        setError({
-          open: true,
-          statusCode: status,
-          errorMessage: res.error,
-        });
+        props.createError(status, res.error);
       } else props.disable();
     });
   }
@@ -205,13 +180,6 @@ export default function Room(props) {
 
   return (
     <div>
-      {error.open ? (
-        <ErrorPopup
-          closeError={error.closeError}
-          status_code={error.statusCode}
-          error_message={error.errorMessage}
-        />
-      ) : null}
       <div>Active room: {room.id}</div>
       <div>Code: {room.accessCode}</div>
       <Button onClick={toggleRoom} color="primary">
@@ -289,3 +257,5 @@ export default function Room(props) {
     </div>
   );
 }
+
+export default ErrorPopup(Room);

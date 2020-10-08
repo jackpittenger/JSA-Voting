@@ -11,18 +11,13 @@ import Dialog from "@material-ui/core/Dialog";
 import TextField from "@material-ui/core/TextField";
 import ErrorPopup from "../../components/ErrorPopup";
 
-export default function Mod(props) {
+function Mod(props) {
   const [roomName, setRoomName] = useState("");
   const [room, setRoom] = useState(null);
   const [dialog, setDialog] = useState({
     open: false,
     title: "",
     firstLine: "",
-  });
-  const [error, setError] = useState({
-    open: false,
-    statusCode: "",
-    errorMessage: "",
   });
   useEffect(() => {
     props.auth.fetch("/api/get_room", { method: "POST" }, (res, status) => {
@@ -36,11 +31,7 @@ export default function Mod(props) {
       { method: "POST", body: JSON.stringify({ name: roomName }) },
       (res, status) => {
         if (status >= 400) {
-          setError({
-            open: true,
-            statusCode: status,
-            errorMessage: res.error,
-          });
+          props.createError(status, res.error);
         } else setRoom(res);
       }
     );
@@ -48,13 +39,6 @@ export default function Mod(props) {
 
   return (
     <Grid container direction="column" justify="center" alignItems="stretch">
-      {error.open ? (
-        <ErrorPopup
-          closeError={() => setError({ open: false })}
-          status_code={error.statusCode}
-          error_message={error.errorMessage}
-        />
-      ) : null}
       <Dialog open={dialog.open}>
         <DialogTitle>{dialog.title}</DialogTitle>
         <DialogContent>
@@ -90,3 +74,5 @@ export default function Mod(props) {
     </Grid>
   );
 }
+
+export default ErrorPopup(Mod);
