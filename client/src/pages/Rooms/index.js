@@ -106,6 +106,11 @@ export default function Room() {
               );
             })}
       </Grid>
+      <Grid container spacing={3}>
+        <Grid item></Grid>
+        <Grid item></Grid>
+        <Grid item></Grid>
+      </Grid>
     </div>
   );
 }
