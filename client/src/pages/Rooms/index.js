@@ -48,19 +48,35 @@ export default function Room() {
           ? null
           : rooms.map((v, i) => {
               return (
-                <Grid item xs key={i} className={classes.gridItem}>
-                  <Paper className={classes.item}>
-                    <Typography gutterBottom variant="subtitle1">
-                      {v.id}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      ID: {v._id}
-                    </Typography>
-                    <Typography variant="subtitle1">
-                      {v.yea}-{v.abs}-{v.nay}
-                    </Typography>
-                  </Paper>
-                </Grid>
+                <Paper className={classes.item}>
+                  <Grid container spacing={2}>
+                    <Grid
+                      item
+                      xs
+                      container
+                      direction="column"
+                      key={i}
+                      spacing={2}
+                    >
+                      <Grid item>
+                        <Typography gutterBottom variant="subtitle1">
+                          {v.id}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          ID: {v._id}
+                        </Typography>
+                        <Typography variant="subtitle1">
+                          <span style={{ color: "green" }}>{v.yea}</span>-
+                          <span style={{ color: "grey" }}>{v.abs}</span>-
+                          <span style={{ color: "red" }}>{v.nay}</span>
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="subtitle1">$19.00</Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
               );
             })}
       </Grid>
