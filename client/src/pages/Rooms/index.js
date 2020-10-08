@@ -24,6 +24,7 @@ const useStyles = makeStyles(() => ({
     width: "30em",
     height: "10em",
     padding: "1.2em",
+    margin: "1%",
   },
 }));
 
