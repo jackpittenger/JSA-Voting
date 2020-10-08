@@ -5,6 +5,7 @@ import axios from "axios";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 import Header from "../../components/Header";
 import AuthService from "../../services/AuthService";
@@ -25,6 +26,16 @@ const useStyles = makeStyles(() => ({
     height: "10em",
     padding: "1.2em",
     margin: "1%",
+    flexBasis: "33%",
+  },
+  yea: {
+    backgroundColor: "lightgreen",
+  },
+  nay: {
+    backgroundColor: "#ffcccb",
+  },
+  abs: {
+    backgroundColor: "lightgray",
   },
 }));
 
@@ -44,7 +55,7 @@ export default function Room() {
   return (
     <div>
       <Header auth={Auth} />
-      <Grid container spacing={3} className={classes.grid}>
+      <Grid container spacing={2} className={classes.grid}>
         {rooms === []
           ? null
           : rooms.map((v, i) => {
@@ -74,7 +85,21 @@ export default function Room() {
                       </Grid>
                     </Grid>
                     <Grid item>
-                      <Typography variant="subtitle1">$19.00</Typography>
+                      <Typography variant="subtitle1">
+                        {v.yea > v.nay ? (
+                          <Button className={classes.yea} disableRipple>
+                            YEA
+                          </Button>
+                        ) : v.nay > v.yea ? (
+                          <Button className={classes.nay} disableRipple>
+                            NAY
+                          </Button>
+                        ) : (
+                          <Button className={classes.abs} disableRipple>
+                            ABS
+                          </Button>
+                        )}
+                      </Typography>
                     </Grid>
                   </Grid>
                 </Paper>
