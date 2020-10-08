@@ -5,16 +5,11 @@ import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import ErrorPopup from "../../components/ErrorPopup";
 
-export default function NameForm(props) {
+function NameForm(props) {
   const [firstName, setFirstName] = useState("");
   const [code, setCode] = useState("");
   const [lastName, setLastName] = useState("");
   const [school, setSchool] = useState("");
-  const [error, setError] = useState({
-    open: false,
-    statusCode: "",
-    errorMessage: "",
-  });
 
   function submitCode() {
     axios
@@ -24,29 +19,17 @@ export default function NameForm(props) {
         last_name: lastName,
         school: school,
       })
-      .then(
-        (res) => props.auth.setToken(res.data.token),
-        props.setIsTokenVoter(true)
-      )
+      .then((res) => {
+        props.auth.setToken(res.data.token);
+        props.setIsTokenVoter(true);
+      })
       .catch((err) => {
-        console.log(err);
-        setError({
-          open: true,
-          statusCode: err.response.status,
-          errorMessage: err.response.data.error,
-        });
+        props.createError(err.response.status, err.response.data.error);
       });
   }
 
   return (
     <form style={{ paddingTop: 15 }}>
-      {error.open ? (
-        <ErrorPopup
-          closeError={setError}
-          status_code={error.statusCode}
-          error_message={error.errorMessage}
-        />
-      ) : null}
       <div>
         <FormControl style={{ width: 200, paddingTop: 15 }}>
           <TextField
@@ -101,3 +84,5 @@ export default function NameForm(props) {
     </form>
   );
 }
+
+export default ErrorPopup(NameForm);

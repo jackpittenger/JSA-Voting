@@ -8,13 +8,8 @@ import Button from "@material-ui/core/Button";
 import history from "../../services/history";
 import ErrorPopup from "../../components/ErrorPopup";
 
-export default function SubmitForm(props) {
+function SubmitForm(props) {
   const [vote, setVote] = useState(null);
-  const [error, setError] = useState({
-    open: false,
-    statusCode: "",
-    errorMessage: "",
-  });
   function submit() {
     props.auth.fetch(
       "/api/submit_form",
@@ -24,12 +19,8 @@ export default function SubmitForm(props) {
   }
 
   function processReturn(res, status) {
-    if (status === 455) {
-      setError({
-        open: true,
-        statusCode: status,
-        errorMessage: res.error,
-      });
+    if (status >= 400) {
+      props.createError(status, res.error);
     } else {
       props.auth.logout();
       props.setIsTokenVoter(false);
@@ -40,13 +31,6 @@ export default function SubmitForm(props) {
   return (
     <form style={{ paddingTop: 15 }}>
       <div>
-        {error.open ? (
-          <ErrorPopup
-            closeError={setError}
-            status_code={error.statusCode}
-            error_message={error.errorMessage}
-          />
-        ) : null}
         <FormControl>
           <FormLabel>Vote</FormLabel>
           <RadioGroup
@@ -72,3 +56,5 @@ export default function SubmitForm(props) {
     </form>
   );
 }
+
+export default ErrorPopup(SubmitForm);
