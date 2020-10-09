@@ -1,15 +1,40 @@
 import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
+
 import ErrorPopup from "../../components/ErrorPopup";
+
+const useStyles = makeStyles(() => ({
+  form: {
+    paddingTop: 35,
+    maxWidth: "100%",
+  },
+  formControl: {
+    maxWidth: "85%",
+    padding: 5,
+  },
+  resize: {
+    fontSize: "1.3em",
+  },
+  resizeLabel: {
+    fontSize: "1.3em",
+  },
+  button: {
+    fontSize: "1.2em",
+    marginTop: 5,
+  },
+}));
 
 function NameForm(props) {
   const [firstName, setFirstName] = useState("");
   const [code, setCode] = useState("");
   const [lastName, setLastName] = useState("");
   const [school, setSchool] = useState("");
+  const classes = useStyles();
 
   function submitCode() {
     axios
@@ -29,9 +54,9 @@ function NameForm(props) {
   }
 
   return (
-    <form style={{ paddingTop: 15 }}>
+    <form className={classes.form}>
       <div>
-        <FormControl style={{ width: 200, paddingTop: 15 }}>
+        <FormControl className={classes.formControl}>
           <TextField
             name="first_name"
             id="select-first-name"
@@ -39,9 +64,19 @@ function NameForm(props) {
             onChange={(e) => setFirstName(e.target.value)}
             label="First Name"
             variant="outlined"
+            InputProps={{
+              classes: {
+                root: classes.resize,
+              },
+            }}
+            InputLabelProps={{
+              classes: {
+                root: classes.resizeLabel,
+              },
+            }}
           />
         </FormControl>
-        <FormControl style={{ width: 200, paddingTop: 15 }}>
+        <FormControl className={classes.formControl}>
           <TextField
             name="last_name"
             id="select-last-name"
@@ -49,11 +84,21 @@ function NameForm(props) {
             onChange={(e) => setLastName(e.target.value)}
             label="Last Name"
             variant="outlined"
+            InputProps={{
+              classes: {
+                root: classes.resize,
+              },
+            }}
+            InputLabelProps={{
+              classes: {
+                root: classes.resizeLabel,
+              },
+            }}
           ></TextField>
         </FormControl>
       </div>
       <div>
-        <FormControl style={{ width: 200, paddingTop: 15 }}>
+        <FormControl className={classes.formControl}>
           <TextField
             name="school"
             id="school"
@@ -61,11 +106,21 @@ function NameForm(props) {
             onChange={(e) => setSchool(e.target.value)}
             label="School"
             variant="outlined"
+            InputProps={{
+              classes: {
+                root: classes.resize,
+              },
+            }}
+            InputLabelProps={{
+              classes: {
+                root: classes.resizeLabel,
+              },
+            }}
           ></TextField>
         </FormControl>
       </div>
       <div>
-        <FormControl style={{ width: 200, paddingTop: 15 }}>
+        <FormControl className={classes.formControl}>
           <TextField
             name="code"
             id="code"
@@ -73,11 +128,26 @@ function NameForm(props) {
             onChange={(e) => setCode(e.target.value)}
             label="Code"
             variant="outlined"
+            InputProps={{
+              classes: {
+                root: classes.resize,
+              },
+            }}
+            InputLabelProps={{
+              classes: {
+                root: classes.resizeLabel,
+              },
+            }}
           ></TextField>
         </FormControl>
       </div>
       <div>
-        <Button variant="contained" color="primary" onClick={submitCode}>
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          onClick={submitCode}
+        >
           Next
         </Button>
       </div>
