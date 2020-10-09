@@ -6,6 +6,10 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+
+import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 
 import Header from "../../components/Header";
 import AuthService from "../../services/AuthService";
@@ -37,18 +41,31 @@ const useStyles = makeStyles(() => ({
   abs: {
     backgroundColor: "lightgray",
   },
+  pageNumber: {
+    alignItems: "center",
+    display: "flex",
+  },
+  navigationGrid: {
+    width: "100%",
+    justifyContent: "center",
+  },
 }));
 
 export default function Room() {
   const Auth = new AuthService();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
+  const [maxPages, setMaxPages] = useState(1);
   const [rooms, setRooms] = useState([]);
   const classes = useStyles();
 
   useEffect(() => {
     axios
       .get("/api/page/" + page)
-      .then((res) => setRooms((r) => r.concat(res.data.res)))
+      .then((res) => setRooms(res.data.res))
+      .catch((err) => console.error(err));
+    axios
+      .get("/api/max_pages")
+      .then((res) => setMaxPages(res.data.count))
       .catch((err) => console.error(err));
   }, [page]);
 
@@ -106,10 +123,23 @@ export default function Room() {
               );
             })}
       </Grid>
-      <Grid container spacing={3}>
-        <Grid item></Grid>
-        <Grid item></Grid>
-        <Grid item></Grid>
+      <Grid className={classes.navigationGrid} container spacing={3}>
+        <Grid item>
+          <IconButton disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <NavigateBeforeIcon />
+          </IconButton>
+        </Grid>
+        <Grid className={classes.pageNumber} item>
+          Page {page}
+        </Grid>
+        <Grid item>
+          <IconButton
+            disabled={maxPages === page}
+            onClick={() => setPage(page + 1)}
+          >
+            <NavigateNextIcon />
+          </IconButton>
+        </Grid>
       </Grid>
     </div>
   );

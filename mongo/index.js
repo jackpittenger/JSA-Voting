@@ -27,6 +27,7 @@ module.exports.createUser = require("./functions/createUser");
 module.exports.deleteRoom = require("./functions/deleteRoom");
 module.exports.deleteUser = require("./functions/deleteUser");
 module.exports.getRoom = require("./functions/getRoom");
+module.exports.getMaxPages = require("./functions/getMaxPages");
 module.exports.login = require("./functions/login");
 module.exports.page = require("./functions/page");
 module.exports.submitForm = require("./functions/submitForm");

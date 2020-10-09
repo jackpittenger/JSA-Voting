@@ -21,6 +21,7 @@ const {
   deleteUser,
   concludeRoom,
   page,
+  getMaxPages,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -76,6 +77,10 @@ app.patch("/api/conclude_room", (req, res) => {
 
 app.get("/api/page/:page", (req, res) => {
   return page(req, res);
+});
+
+app.get("/api/max_pages", (req, res) => {
+  return getMaxPages(req, res);
 });
 
 if (process.env.DEPLOY === "true") {
