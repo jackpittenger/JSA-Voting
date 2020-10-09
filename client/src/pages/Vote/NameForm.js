@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 
@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
   },
   formControl: {
     maxWidth: "85%",
-    padding: 5,
+    padding: 7,
   },
   resize: {
     fontSize: "1.3em",
@@ -31,10 +31,27 @@ const useStyles = makeStyles(() => ({
 
 function NameForm(props) {
   const [firstName, setFirstName] = useState("");
-  const [code, setCode] = useState("");
   const [lastName, setLastName] = useState("");
   const [school, setSchool] = useState("");
+  const [code, setCode] = useState("");
+  const [buttonValid, setButtonValid] = useState(false);
+  const [codeValid, setCodeValid] = useState(false);
+
   const classes = useStyles();
+
+  useEffect(() => {
+    setCodeValid(code.length === 0 || /^\d{7}$/.test(code));
+  }, [code]);
+
+  useEffect(() => {
+    setButtonValid(
+      firstName.length !== 0 &&
+        lastName.length !== 0 &&
+        school.length !== 0 &&
+        code.length !== 0 &&
+        codeValid
+    );
+  }, [firstName, lastName, school, code, codeValid]);
 
   function submitCode() {
     axios
@@ -138,6 +155,7 @@ function NameForm(props) {
                 root: classes.resizeLabel,
               },
             }}
+            error={!codeValid}
           ></TextField>
         </FormControl>
       </div>
@@ -147,6 +165,7 @@ function NameForm(props) {
           variant="contained"
           color="primary"
           onClick={submitCode}
+          disabled={!buttonValid}
         >
           Next
         </Button>
