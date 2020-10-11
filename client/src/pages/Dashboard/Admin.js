@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import withDialog from "../../components/withDialog";
+import ErrorPopup from "../../components/ErrorPopup";
 
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -21,7 +22,9 @@ function Admin(props) {
     );
   }
 
-  function givePin(result) {
+  function givePin(result, status) {
+    if (status >= 400)
+      return props.createError(status, "Failed creating a new user");
     props.createDialog("Created new user " + modName, "Pin: " + result.pin);
     setModName("");
   }
@@ -49,4 +52,4 @@ function Admin(props) {
   );
 }
 
-export default withDialog(Admin);
+export default withDialog(ErrorPopup(Admin));
