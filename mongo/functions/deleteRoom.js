@@ -5,11 +5,7 @@ const User = require("../models/User");
 const Room = require("../models/Room");
 const Voter = require("../models/Voter");
 
-module.exports = async (req, res) => {
-  decoded = verifyJwt(req.header("Authorization"), res);
-  if (decoded.permission < 1) {
-    return res.status(401).json({ error: "Not authorized" });
-  }
+const deleteRoom = async (req, res, decoded) => {
   User.findOne({ token: decoded.token })
     .then((doc) => doc)
     .then((doc) => {
@@ -38,3 +34,5 @@ module.exports = async (req, res) => {
     })
     .catch(() => res.status(401).json({ error: "User not found!" }));
 };
+
+module.exports = verifyJwt(deleteRoom, 1);

@@ -4,13 +4,7 @@ const generatePin = require("./helpers/generatePin");
 const User = require("../models/User");
 const Room = require("../models/Room");
 
-module.exports = async (req, res) => {
-  decoded = verifyJwt(req.header("Authorization"), res);
-  if (decoded === false) return;
-  if (decoded.permission < 1) {
-    return res.status(401).json({ error: "Not authorized" });
-  }
-
+const createRoom = async (req, res, decoded) => {
   return User.findOne({ token: decoded.token }, (er, usr) => {
     if (er) return res.status(500).send({ error: "User account not found!" });
     if (usr.room)
@@ -35,3 +29,5 @@ module.exports = async (req, res) => {
       .catch(() => res.status(500).send({ error: "Error creating room" }));
   });
 };
+
+module.exports = verifyJwt(createRoom, 1);
