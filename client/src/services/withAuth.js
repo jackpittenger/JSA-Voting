@@ -4,7 +4,7 @@ import history from "./history";
 
 export default function withAuth(AuthComponent) {
   const Auth = new AuthService();
-  return function AuthWrapped() {
+  return function AuthWrapped(props) {
     const [user, setUser] = useState(null);
     useEffect(() => {
       if (!Auth.loggedIn()) {
@@ -20,7 +20,7 @@ export default function withAuth(AuthComponent) {
     }, []);
 
     if (user) {
-      return <AuthComponent user={user} />;
+      return <AuthComponent {...props} user={user} />;
     } else {
       return null;
     }
