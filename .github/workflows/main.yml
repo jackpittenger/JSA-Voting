@@ -32,7 +32,7 @@ jobs:
       - name: Build react
         run: |
           cd client/
-          sudo npm run build 
+          sudo npm run build
           sudo chmod -R ugo+rwX .
       - name: Run server
         run: |
