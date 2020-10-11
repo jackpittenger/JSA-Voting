@@ -7,7 +7,7 @@ const Voter = require("../models/Voter");
 
 module.exports = async (req, res) => {
   decoded = verifyJwt(req.header("Authorization"), res);
-  if (decoded.permissions.indexOf("Mod") === -1) {
+  if (decoded.permission < 1) {
     return res.status(401).json({ error: "Not authorized" });
   }
   User.findOne({ token: decoded.token })

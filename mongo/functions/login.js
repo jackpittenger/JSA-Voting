@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   return User.findOne({ token: req.body.token })
     .then((doc) => doc)
     .then((doc) => {
       if (!doc)
         return res.status(401).json({ error: "Invalid login credentials" });
       if (doc.pin === req.body.pin) {
-        let payload = { token: req.body.token, permissions: doc.permissions };
+        let payload = { token: req.body.token, permission: doc.permission };
         let jwtToken = jwt.sign(payload, process.env.SECRET, {
           expiresIn: "1h",
         });

@@ -18,7 +18,7 @@ export default class AuthService {
     return (
       !!token &&
       !this.isTokenExpired(token) &&
-      "permissions" in this.getProfile()
+      "permission" in this.getProfile()
     );
   }
 
@@ -36,7 +36,7 @@ export default class AuthService {
     return (
       !!token &&
       !this.isTokenExpired(token) &&
-      !("permissions" in this.getProfile())
+      !("permission" in this.getProfile())
     );
   }
 

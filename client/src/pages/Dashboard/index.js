@@ -11,23 +11,18 @@ import Dev from "./Dev";
 
 function Dashboard(props) {
   const auth = new AuthService();
-  const permissions = useState(auth.getProfile().permissions)[0];
+  const permission = useState(auth.getProfile().permission)[0];
   const path = props.location.pathname.split("/");
   const mode = path[path.length - 1];
   return (
     <div className="App">
       <Header auth={auth} />
       <DashboardHeader auth={auth} />
-      {(mode === "dashboard" || mode.length === 0) &&
-      permissions.indexOf("Mod") !== -1 ? (
+      {(mode === "dashboard" || mode.length === 0) && permission >= 1 ? (
         <Mod auth={auth} />
       ) : null}
-      {mode === "admin" && permissions.indexOf("Admin") !== -1 ? (
-        <Admin auth={auth} />
-      ) : null}
-      {mode === "dev" && permissions.indexOf("Dev") !== -1 ? (
-        <Dev auth={auth} />
-      ) : null}
+      {mode === "admin" && permission >= 2 ? <Admin auth={auth} /> : null}
+      {mode === "dev" && permission >= 3 ? <Dev auth={auth} /> : null}
     </div>
   );
 }

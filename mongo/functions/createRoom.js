@@ -7,7 +7,7 @@ const Room = require("../models/Room");
 module.exports = async (req, res) => {
   decoded = verifyJwt(req.header("Authorization"), res);
   if (decoded === false) return;
-  if (decoded.permissions.indexOf("Mod") === -1) {
+  if (decoded.permission < 1) {
     return res.status(401).json({ error: "Not authorized" });
   }
 

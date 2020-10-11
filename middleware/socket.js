@@ -6,7 +6,7 @@ module.exports.setup = (io) =>
   io.on("connection", (client) => {
     client.on("token", (data) => {
       jwt.verify(data, process.env.SECRET, (err, decoded) => {
-        if (err || decoded.permissions.indexOf("Mod") === -1)
+        if (err || decoded.permission < 1)
           return client.emit("unauthorized", () => client.disconnect());
         User.findOne({ token: decoded.token })
           .then((usr) => usr)

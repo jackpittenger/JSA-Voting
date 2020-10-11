@@ -10,8 +10,8 @@ module.exports = async (req, res) => {
   decoded = verifyJwt(req.header("Authorization"), res);
   if (decoded === false) return;
   if (
-    (req.body.type === "admin" && decoded.permissions.indexOf("Dev") === -1) ||
-    (req.body.type === "mod" && decoded.permissions.indexOf("Admin") === -1)
+    (req.body.type === "admin" && decoded.permission < 3) ||
+    (req.body.type === "mod" && decoded.permission < 2)
   ) {
     return res.status(401).json({ error: "Not authorized" });
   } else if (
@@ -26,9 +26,7 @@ module.exports = async (req, res) => {
   User.create({
     token: req.body.name,
     pin: pin,
-    permissions: [
-      req.body.type.charAt(0).toUpperCase() + req.body.type.slice(1),
-    ],
+    permission: { mod: 1, admin: 2 }[req.body.type],
   })
     .then((doc) => res.status(200).json({ pin: doc.pin }))
     .catch(() =>
