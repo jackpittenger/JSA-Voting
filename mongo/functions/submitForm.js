@@ -4,9 +4,7 @@ const vote = require("../../middleware/socket").vote;
 const Room = require("../models/Room");
 const Voter = require("../models/Voter");
 
-module.exports = async (req, res) => {
-  decoded = verifyJwt(req.header("Authorization"), res);
-  if (decoded === false) return;
+const submitForm = async (req, res, decoded) => {
   Voter.findOne({
     firstName: decoded.firstName,
     code: decoded.code,
@@ -43,3 +41,5 @@ module.exports = async (req, res) => {
       res.status(401).json({ error: "Voter not found!" });
     });
 };
+
+module.exports = verifyJwt(submitForm, false);

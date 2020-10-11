@@ -3,12 +3,10 @@ const generatePin = require("./helpers/generatePin");
 
 const User = require("../models/User");
 
-module.exports = async (req, res) => {
+const createUser = async (req, res, decoded) => {
   if (req.body.type !== "admin" && req.body.type !== "mod") {
     return res.status(501).json({ error: "Not Implemented" });
   }
-  decoded = verifyJwt(req.header("Authorization"), res);
-  if (decoded === false) return;
   if (
     (req.body.type === "admin" && decoded.permission < 3) ||
     (req.body.type === "mod" && decoded.permission < 2)
@@ -33,3 +31,5 @@ module.exports = async (req, res) => {
       res.status(500).json({ error: "Error while creating a user" })
     );
 };
+
+module.exports = verifyJwt(createUser, false);
