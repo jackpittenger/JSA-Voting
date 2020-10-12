@@ -25,7 +25,10 @@ function Mod(props) {
       (res, status) => {
         if (status >= 400) {
           props.createError(status, res.error);
-        } else setRoom(res);
+        } else {
+          setRoomName("");
+          setRoom(res);
+        }
       }
     );
   }
