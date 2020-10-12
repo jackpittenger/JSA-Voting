@@ -11,6 +11,18 @@ import ErrorPopup from "../../components/ErrorPopup";
 function Mod(props) {
   const [roomName, setRoomName] = useState("");
   const [room, setRoom] = useState(null);
+  const [roomNameValid, setRoomNameValid] = useState(false);
+  const [buttonValid, setButtonValid] = useState(false);
+
+  useEffect(() => {
+    setRoomNameValid(
+      roomName.length === 0 || (roomName.length >= 1 && roomName.length <= 32)
+    );
+  }, [roomName]);
+
+  useEffect(() => {
+    setButtonValid(roomName.length !== 0 && roomNameValid);
+  }, [roomName, roomNameValid]);
 
   useEffect(() => {
     props.auth.fetch("/api/get_room", { method: "POST" }, (res, status) => {
@@ -49,8 +61,14 @@ function Mod(props) {
               type="text"
               onChange={(e) => setRoomName(e.target.value)}
               value={roomName}
+              error={!roomNameValid}
+              helperText="Between 1-32 characters"
             />
-            <Button onClick={createRoom} color="primary">
+            <Button
+              disabled={!buttonValid}
+              onClick={createRoom}
+              color="primary"
+            >
               Create a new room
             </Button>
           </div>

@@ -9,6 +9,10 @@ const createRoom = async (req, res, decoded) => {
     if (er) return res.status(500).send({ error: "User account not found!" });
     if (usr.room)
       return res.status(409).send({ error: "Already assigned to a room!" });
+    if (req.body.name.length < 1 || req.body.name.length > 32)
+      return res
+        .status(400)
+        .send({ error: "The name has to be between 1 and 32 characters" });
     let pin = generatePin(7);
     Room.create({ id: req.body.name, accessCode: pin, owner: usr._id })
       .then((room) => {
