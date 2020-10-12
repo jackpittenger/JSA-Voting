@@ -72,21 +72,38 @@ export default function Room() {
   return (
     <div>
       <Header auth={Auth} />
+      <br />
+      <Grid
+        style={{ margin: 0 }}
+        className={classes.navigationGrid}
+        container
+        spacing={3}
+      >
+        <Grid item>
+          <IconButton disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <NavigateBeforeIcon />
+          </IconButton>
+        </Grid>
+        <Grid className={classes.pageNumber} item>
+          Page {page}
+        </Grid>
+        <Grid item>
+          <IconButton
+            disabled={maxPages === page}
+            onClick={() => setPage(page + 1)}
+          >
+            <NavigateNextIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
       <Grid container spacing={2} className={classes.grid}>
         {rooms === []
           ? null
           : rooms.map((v, i) => {
               return (
-                <Paper className={classes.item}>
+                <Paper key={i} className={classes.item}>
                   <Grid container spacing={2}>
-                    <Grid
-                      item
-                      xs
-                      container
-                      direction="column"
-                      key={i}
-                      spacing={2}
-                    >
+                    <Grid item xs container direction="column" spacing={2}>
                       <Grid item>
                         <Typography gutterBottom variant="subtitle1">
                           {v.id}
@@ -122,24 +139,6 @@ export default function Room() {
                 </Paper>
               );
             })}
-      </Grid>
-      <Grid className={classes.navigationGrid} container spacing={3}>
-        <Grid item>
-          <IconButton disabled={page === 1} onClick={() => setPage(page - 1)}>
-            <NavigateBeforeIcon />
-          </IconButton>
-        </Grid>
-        <Grid className={classes.pageNumber} item>
-          Page {page}
-        </Grid>
-        <Grid item>
-          <IconButton
-            disabled={maxPages === page}
-            onClick={() => setPage(page + 1)}
-          >
-            <NavigateNextIcon />
-          </IconButton>
-        </Grid>
       </Grid>
     </div>
   );
