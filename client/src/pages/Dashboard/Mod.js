@@ -36,12 +36,12 @@ function Mod(props) {
   return (
     <Grid container direction="column" justify="center" alignItems="stretch">
       <Paper>
-        Mod
-        <br />
         {room != null ? (
           <Room disable={() => setRoom(null)} auth={props.auth} room={room} />
         ) : (
           <div>
+            Mod
+            <br />
             <TextField
               name="room_name"
               id="room_name"

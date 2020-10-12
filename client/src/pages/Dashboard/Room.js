@@ -180,7 +180,7 @@ function Room(props) {
 
   return (
     <div>
-      <div>Active room: {room.id}</div>
+      <h3>{room.id}</h3>
       <div>Code: {room.accessCode}</div>
       <Button onClick={toggleRoom} color="primary">
         {room.open === false ? "Open Room" : "Close Room"}
@@ -196,7 +196,7 @@ function Room(props) {
       </Button>
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
-      <Paper>
+      <Paper style={{ marginLeft: "3%", marginRight: "3%" }}>
         <TableContainer>
           <Table stickyHeader>
             <TableHead>
