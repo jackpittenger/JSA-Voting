@@ -31,7 +31,7 @@ function Room(props) {
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
-  const [byline, setByline] = useState(props.room.byline);
+  const [byline, setByline] = useState(props.room.byline || "");
   const [delay, setDelay] = useState(null);
 
   useEffect(() => {
@@ -62,14 +62,14 @@ function Room(props) {
   }, [props.auth, room]);
 
   function handleByline(value) {
-    console.log(delay);
     clearTimeout(delay);
     setByline(value);
-    setDelay(
-      setTimeout(() => {
-        fetchByline(value);
-      }, 2000)
-    );
+    if (value.length <= 120)
+      setDelay(
+        setTimeout(() => {
+          fetchByline(value);
+        }, 2000)
+      );
   }
 
   function fetchByline(value) {
@@ -216,6 +216,8 @@ function Room(props) {
         rowsMax={3}
         value={byline}
         onChange={(e) => handleByline(e.target.value)}
+        error={byline.length > 120}
+        helperText="Maxmimum of 120 characters"
         style={{ width: "25em" }}
       />
       <br />

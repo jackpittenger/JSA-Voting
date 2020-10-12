@@ -20,6 +20,7 @@ const getRoom = async (req, res, decoded) => {
             accessCode: room.accessCode,
             open: room.open,
             votingOpen: room.votingOpen,
+            byline: room.byline,
           });
         });
     });

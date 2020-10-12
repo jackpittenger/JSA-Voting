@@ -4,7 +4,7 @@ const User = require("../models/User");
 const Room = require("../models/Room");
 
 const updateRoomByline = async (req, res, decoded) => {
-  if (!req.body.byline || req.body.byline.length > 120)
+  if (req.body.byline === null || req.body.byline.length > 120)
     return res.status(400).json({ error: "Byline length too long" });
   User.findOne({ token: decoded.token })
     .then((doc) => doc)
