@@ -30,7 +30,14 @@ const createRoom = async (req, res, decoded) => {
           )
           .catch(() => res.status(500).send({ error: "Error creating room" }));
       })
-      .catch(() => res.status(500).send({ error: "Error creating room" }));
+      .catch((e) =>
+        res.status(500).send({
+          error:
+            e.code === 11000
+              ? "A room with this name already exists"
+              : "Error creating room",
+        })
+      );
   });
 };
 
