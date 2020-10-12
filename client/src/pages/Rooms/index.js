@@ -116,6 +116,17 @@ export default function Room() {
                           <span style={{ color: "grey" }}>{v.abs}</span>-
                           <span style={{ color: "red" }}>{v.nay}</span>
                         </Typography>
+                        <Typography variant="body2">
+                          <span style={{ fontSize: "1.2em" }}>
+                            {v.byline ? (
+                              v.byline
+                            ) : (
+                              <em style={{ color: "grey" }}>
+                                No byline provided
+                              </em>
+                            )}
+                          </span>
+                        </Typography>
                       </Grid>
                     </Grid>
                     <Grid item>

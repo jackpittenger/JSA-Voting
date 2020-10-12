@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Button from "@material-ui/core/Button";
+
 import openSoc from "../../services/api";
+import ErrorPopup from "../../components/ErrorPopup";
+
 import TableCell from "@material-ui/core/TableCell";
+import Button from "@material-ui/core/Button";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -9,7 +12,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableBody from "@material-ui/core/TableBody";
-import ErrorPopup from "../../components/ErrorPopup";
+import TextField from "@material-ui/core/TextField";
 
 const headCells = [
   { id: "firstName", label: "First Name" },
@@ -28,6 +31,8 @@ function Room(props) {
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
+  const [byline, setByline] = useState(props.room.byline);
+  const [delay, setDelay] = useState(null);
 
   useEffect(() => {
     if (props.auth.loggedIn()) {
@@ -56,6 +61,28 @@ function Room(props) {
     }
   }, [props.auth, room]);
 
+  function handleByline(value) {
+    console.log(delay);
+    clearTimeout(delay);
+    setByline(value);
+    setDelay(
+      setTimeout(() => {
+        fetchByline(value);
+      }, 2000)
+    );
+  }
+
+  function fetchByline(value) {
+    props.auth.fetch(
+      "/api/room_byline",
+      { method: "PATCH", body: JSON.stringify({ byline: value }) },
+      function (res, status) {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        }
+      }
+    );
+  }
   function deleteRoom() {
     props.auth.fetch(
       "/api/room",
@@ -182,6 +209,17 @@ function Room(props) {
     <div>
       <h3>{room.id}</h3>
       <div>Code: {room.accessCode}</div>
+      <TextField
+        id="byline"
+        label="Byline"
+        multiline
+        rowsMax={3}
+        value={byline}
+        onChange={(e) => handleByline(e.target.value)}
+        style={{ width: "25em" }}
+      />
+      <br />
+      <br />
       <Button onClick={toggleRoom} color="primary">
         {room.open === false ? "Open Room" : "Close Room"}
       </Button>

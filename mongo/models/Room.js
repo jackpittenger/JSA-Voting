@@ -16,6 +16,7 @@ const roomSchema = new mongoose.Schema({
   },
   open: { type: Boolean, default: true },
   votingOpen: { type: Boolean, default: false },
+  byline: { type: String },
   /* Concluded Room */
   concluded: { type: Boolean, default: false },
   time: { type: Date, required: true, default: Date.now },

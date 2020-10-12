@@ -22,6 +22,7 @@ const {
   concludeRoom,
   page,
   getMaxPages,
+  updateRoomByline,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -81,6 +82,10 @@ app.get("/api/page/:page", (req, res) => {
 
 app.get("/api/max_pages", (req, res) => {
   return getMaxPages(req, res);
+});
+
+app.patch("/api/room_byline", (req, res) => {
+  return updateRoomByline(req, res);
 });
 
 if (process.env.DEPLOY === "true") {
