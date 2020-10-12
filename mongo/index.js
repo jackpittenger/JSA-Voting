@@ -33,3 +33,4 @@ module.exports.page = require("./functions/page");
 module.exports.submitForm = require("./functions/submitForm");
 module.exports.toggleOpen = require("./functions/toggleOpen");
 module.exports.toggleVoting = require("./functions/toggleVoting");
+module.exports.updateRoomByline = require("./functions/updateRoomByline");

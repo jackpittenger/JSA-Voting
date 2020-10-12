@@ -30,7 +30,6 @@ const useStyles = makeStyles(() => ({
     height: "10em",
     padding: "1.2em",
     margin: "1%",
-    flexBasis: "33%",
   },
   yea: {
     backgroundColor: "lightgreen",
@@ -115,6 +114,17 @@ export default function Room() {
                           <span style={{ color: "green" }}>{v.yea}</span>-
                           <span style={{ color: "grey" }}>{v.abs}</span>-
                           <span style={{ color: "red" }}>{v.nay}</span>
+                        </Typography>
+                        <Typography variant="body2">
+                          <span style={{ fontSize: "1.1em" }}>
+                            {v.byline ? (
+                              v.byline
+                            ) : (
+                              <em style={{ color: "grey" }}>
+                                No byline provided
+                              </em>
+                            )}
+                          </span>
                         </Typography>
                       </Grid>
                     </Grid>
