@@ -30,6 +30,7 @@ const useStyles = makeStyles(() => ({
     height: "10em",
     padding: "1.2em",
     margin: "1%",
+    wordBreak: "break-all",
   },
   yea: {
     backgroundColor: "lightgreen",
