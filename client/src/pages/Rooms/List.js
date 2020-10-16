@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import Paper from "@material-ui/core/Paper";
@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
 
 const useStyles = makeStyles(() => ({
   paperList: {
@@ -26,8 +27,8 @@ const headCells = [
   { id: "id", label: "Name" },
   { id: "byline", label: "Byline" },
   { id: "yea", label: "Yea" },
-  { id: "abs", label: "Nay" },
-  { id: "nay", label: "Abs" },
+  { id: "abs", label: "Abs" },
+  { id: "nay", label: "Nay" },
 ];
 
 export default function List(props) {
@@ -61,6 +62,17 @@ export default function List(props) {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10]}
+        rowsPerPage={10}
+        count={props.maxPages}
+        page={props.page - 1}
+        onChangePage={(_, newPage) => {
+          console.log(newPage);
+          props.setPage(newPage);
+        }}
+        component="div"
+      />
     </Paper>
   );
 }

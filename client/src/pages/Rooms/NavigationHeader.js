@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import axios from "axios";
 
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
@@ -28,20 +27,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function NavigationHeader(props) {
-  const [maxPages, setMaxPages] = useState(1);
-  const [page, setPage] = useState(1);
   const classes = useStyles();
-  const setRooms = props.setRooms;
-  useEffect(() => {
-    axios
-      .get("/api/page/" + page)
-      .then((res) => setRooms(res.data.res))
-      .catch((err) => console.error(err));
-    axios
-      .get("/api/max_pages")
-      .then((res) => setMaxPages(res.data.count))
-      .catch((err) => console.error(err));
-  }, [page, setRooms]);
+  const page = props.page;
 
   return (
     <Grid className={classes.navigationPannel} spacing={2} container>
@@ -70,7 +57,10 @@ export default function NavigationHeader(props) {
       {props.view === "card" ? (
         <Grid item className={classes.navigationGrid}>
           <Grid item>
-            <IconButton disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <IconButton
+              disabled={page === 1}
+              onClick={() => props.setPage(page - 1)}
+            >
               <NavigateBeforeIcon />
             </IconButton>
           </Grid>
@@ -79,8 +69,8 @@ export default function NavigationHeader(props) {
           </Grid>
           <Grid item>
             <IconButton
-              disabled={maxPages === page}
-              onClick={() => setPage(page + 1)}
+              disabled={Math.ceil(props.maxPages / 10) === page}
+              onClick={() => props.setPage(page + 1)}
             >
               <NavigateNextIcon />
             </IconButton>
