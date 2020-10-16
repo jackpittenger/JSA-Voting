@@ -28,7 +28,6 @@ const useStyles = makeStyles(() => ({
 
 export default function NavigationHeader(props) {
   const classes = useStyles();
-  const page = props.page;
 
   return (
     <Grid className={classes.navigationPannel} spacing={2} container>
@@ -58,19 +57,19 @@ export default function NavigationHeader(props) {
         <Grid item className={classes.navigationGrid}>
           <Grid item>
             <IconButton
-              disabled={page === 1}
-              onClick={() => props.setPage(page - 1)}
+              disabled={props.page === 0}
+              onClick={() => props.setPage(props.page - 1)}
             >
               <NavigateBeforeIcon />
             </IconButton>
           </Grid>
           <Grid className={classes.pageNumber} item>
-            Page {page}
+            Page {props.page + 1}
           </Grid>
           <Grid item>
             <IconButton
-              disabled={Math.ceil(props.maxPages / 10) === page}
-              onClick={() => props.setPage(page + 1)}
+              disabled={Math.ceil(props.maxPages / 10) === props.page}
+              onClick={() => props.setPage(props.page + 1)}
             >
               <NavigateNextIcon />
             </IconButton>

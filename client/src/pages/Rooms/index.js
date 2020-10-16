@@ -12,7 +12,7 @@ export default function Room() {
   const [rooms, setRooms] = useState([]);
   const [view, setView] = useState("card");
   const [maxPages, setMaxPages] = useState(1);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     axios

@@ -4,7 +4,7 @@ module.exports = async (req, res) => {
   Room.find({ concluded: true })
     .sort({ _id: -1 })
     .limit(10)
-    .skip((req.params.page - 1) * 10)
+    .skip(req.params.page * 10)
     .then((arr) => {
       return res.status(200).json({ res: arr, success: true });
     })

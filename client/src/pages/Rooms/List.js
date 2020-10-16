@@ -66,7 +66,7 @@ export default function List(props) {
         rowsPerPageOptions={[10]}
         rowsPerPage={10}
         count={props.maxPages}
-        page={props.page - 1}
+        page={props.page}
         onChangePage={(_, newPage) => {
           console.log(newPage);
           props.setPage(newPage);
