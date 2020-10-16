@@ -8,6 +8,7 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
 
 const useStyles = makeStyles(() => ({
   paperList: {
@@ -16,22 +17,47 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     flex: "1 1 100%",
+    textAlign: "center",
   },
 }));
+
+const headCells = [
+  { id: "time", label: "Time" },
+  { id: "id", label: "Name" },
+  { id: "byline", label: "Byline" },
+  { id: "yea", label: "Yea" },
+  { id: "abs", label: "Nay" },
+  { id: "nay", label: "Abs" },
+];
 
 export default function List(props) {
   const classes = useStyles();
   return (
     <Paper className={classes.paperList}>
+      <br />
       <Typography className={classes.title} variant="h6" component="div">
         Rooms
       </Typography>
       <TableContainer>
         <Table size="medium">
-          <TableBody>
-            <TableRow hover>
-              <TableCell>Cell one</TableCell>
+          <TableHead>
+            <TableRow>
+              {headCells.map((cell) => (
+                <TableCell key={cell.id}>{cell.label}</TableCell>
+              ))}
             </TableRow>
+          </TableHead>
+          <TableBody>
+            {props.rooms.map((room, index) => (
+              <TableRow hover key={index}>
+                <TableCell>{room.time}</TableCell>
+                <TableCell>{room.id}</TableCell>
+                <TableCell>{room.byline}</TableCell>
+                <TableCell>{room.yea}</TableCell>
+                <TableCell>{room.abs}</TableCell>
+                <TableCell>{room.nay}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
