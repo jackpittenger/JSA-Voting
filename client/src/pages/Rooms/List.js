@@ -33,13 +33,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 const headCells = [
-  { id: "time", label: "Time" },
-  { id: "id", label: "Name" },
-  { id: "byline", label: "Byline" },
-  { id: "yea", label: "Yea" },
-  { id: "abs", label: "Abs" },
-  { id: "nay", label: "Nay" },
-  { id: "vote", label: "Vote" },
+  { id: "time", label: "Time", width: "10%" },
+  { id: "id", label: "Name", width: "12.5%" },
+  { id: "byline", label: "Byline", width: "65%" },
+  { id: "yea", label: "Yea", width: "2.5%" },
+  { id: "abs", label: "Abs", width: "2.5%" },
+  { id: "nay", label: "Nay", width: "2.5%" },
+  { id: "vote", label: "Vote", width: "5%" },
 ];
 
 export default function List(props) {
@@ -55,7 +55,9 @@ export default function List(props) {
           <TableHead>
             <TableRow>
               {headCells.map((cell) => (
-                <TableCell key={cell.id}>{cell.label}</TableCell>
+                <TableCell style={{ width: cell.width }} key={cell.id}>
+                  {cell.label}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
