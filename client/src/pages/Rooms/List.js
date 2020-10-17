@@ -36,9 +36,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 const headCells = [
-  { id: "time", label: "Time", width: "10%" },
+  { id: "time", label: "Time", width: "15%" },
   { id: "id", label: "Name", width: "12.5%" },
-  { id: "byline", label: "Byline", width: "65%" },
+  { id: "byline", label: "Byline", width: "60%" },
   { id: "yea", label: "Yea", width: "2.5%" },
   { id: "abs", label: "Abs", width: "2.5%" },
   { id: "nay", label: "Nay", width: "2.5%" },
@@ -67,9 +67,9 @@ export default function List(props) {
           <TableBody>
             {props.rooms.map((room, index) => (
               <TableRow hover key={index}>
-                <TableCell>
+                <TableCell className={classes.wrap}>
                   {new Date(room.time).toLocaleString(
-                    Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    Intl.DateTimeFormat().resolvedOptions().locale,
                     {
                       year: "numeric",
                       month: "2-digit",
@@ -111,7 +111,6 @@ export default function List(props) {
         count={props.maxPages}
         page={props.page}
         onChangePage={(_, newPage) => {
-          console.log(newPage);
           props.setPage(newPage);
         }}
         component="div"

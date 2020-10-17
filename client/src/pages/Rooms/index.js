@@ -41,7 +41,16 @@ export default function Room() {
       {view === "card" ? (
         <Card rooms={rooms} />
       ) : (
-        <List rooms={rooms} page={page} maxPages={maxPages} setPage={setPage} />
+        <div>
+          <br />
+          <List
+            rooms={rooms}
+            page={page}
+            maxPages={maxPages}
+            setPage={setPage}
+          />
+          <br />
+        </div>
       )}
     </div>
   );
