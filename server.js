@@ -21,7 +21,7 @@ const {
   deleteUser,
   concludeRoom,
   page,
-  getMaxPages,
+  getTotalPages,
   updateRoomByline,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
@@ -80,8 +80,8 @@ app.get("/api/page/:page", (req, res) => {
   return page(req, res);
 });
 
-app.get("/api/max_pages", (req, res) => {
-  return getMaxPages(req, res);
+app.get("/api/total_pages", (req, res) => {
+  return getTotalPages(req, res);
 });
 
 app.patch("/api/room_byline", (req, res) => {
