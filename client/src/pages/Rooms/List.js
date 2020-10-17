@@ -30,6 +30,9 @@ const useStyles = makeStyles(() => ({
   abs: {
     backgroundColor: "lightgray",
   },
+  wrap: {
+    wordWrap: "anywhere",
+  },
 }));
 
 const headCells = [
@@ -77,8 +80,8 @@ export default function List(props) {
                     }
                   )}
                 </TableCell>
-                <TableCell>{room.id}</TableCell>
-                <TableCell>{room.byline}</TableCell>
+                <TableCell className={classes.wrap}>{room.id}</TableCell>
+                <TableCell className={classes.wrap}>{room.byline}</TableCell>
                 <TableCell style={{ color: "green" }}>{room.yea}</TableCell>
                 <TableCell style={{ color: "grey" }}>{room.abs}</TableCell>
                 <TableCell style={{ color: "red" }}>{room.nay}</TableCell>
