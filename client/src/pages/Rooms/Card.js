@@ -21,13 +21,13 @@ const useStyles = makeStyles(() => ({
     wordBreak: "break-all",
   },
   yea: {
-    backgroundColor: "lightgreen",
+    backgroundColor: "lightgreen !important",
   },
   nay: {
-    backgroundColor: "#ffcccb",
+    backgroundColor: "#ffcccb !important",
   },
   abs: {
-    backgroundColor: "lightgray",
+    backgroundColor: "lightgray !important",
   },
 }));
 
