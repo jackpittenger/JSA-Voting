@@ -8,7 +8,7 @@ const deleteUser = async (req, res, decoded) => {
   User.findOne({ token: decoded.token })
     .then((user) => user)
     .then((user) => {
-      Room.findOne({ _id: doc.room, concluded: false, owner: user._id })
+      Room.findOne({ _id: user.room, concluded: false, owner: user._id })
         .then((room) => room)
         .then((room) => {
           Voter.findOneAndDelete({
