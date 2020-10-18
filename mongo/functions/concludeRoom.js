@@ -20,8 +20,8 @@ const concludeRoom = async (req, res, decoded) => {
           room.concluded = true;
           room.time = Date.now();
           room.yea = arr[0];
-          room.nay = arr[1];
-          room.abs = arr[2];
+          room.abs = arr[1];
+          room.nay = arr[2];
           room
             .save()
             .then(() => {
