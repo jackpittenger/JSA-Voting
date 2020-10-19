@@ -17,12 +17,14 @@ const roomSchema = new mongoose.Schema({
   open: { type: Boolean, default: true },
   votingOpen: { type: Boolean, default: false },
   byline: { type: String },
+  speakers: [{ type: String }],
   /* Concluded Room */
   concluded: { type: Boolean, default: false },
   time: { type: Date, required: true, default: Date.now },
   yea: { type: Number },
   nay: { type: Number },
   abs: { type: Number },
+  bestSpeaker: { type: String },
 });
 
 module.exports = mongoose.model("Room", roomSchema);

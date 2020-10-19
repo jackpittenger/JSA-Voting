@@ -20,6 +20,7 @@ mongoose.connection.once("open", function () {
   console.log("\x1b[32m✓\x1b[0m Mongoose Open");
 });
 
+module.exports.addSpeaker = require("./functions/addSpeaker");
 module.exports.authenticateCode = require("./functions/authenticateCode");
 module.exports.concludeRoom = require("./functions/concludeRoom");
 module.exports.createRoom = require("./functions/createRoom");

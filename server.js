@@ -23,6 +23,7 @@ const {
   page,
   getTotalPages,
   updateRoomByline,
+  addSpeaker,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -32,61 +33,21 @@ app.use(cookieParser());
 require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
 
-app.post("/api/login", (req, res) => {
-  return login(req, res);
-});
-
-app.post("/api/create_user", (req, res) => {
-  return createUser(req, res);
-});
-
-app.post("/api/auth_code", (req, res) => {
-  return authenticateCode(req, res);
-});
-
-app.post("/api/create_room", (req, res) => {
-  return createRoom(req, res);
-});
-
-app.post("/api/get_room", (req, res) => {
-  return getRoom(req, res);
-});
-
-app.post("/api/submit_form", (req, res) => {
-  return submitForm(req, res);
-});
-
-app.delete("/api/room", (req, res) => {
-  return deleteRoom(req, res);
-});
-
-app.post("/api/toggle_open", (req, res) => {
-  return toggleOpen(req, res);
-});
-
-app.post("/api/toggle_voting", (req, res) => {
-  return toggleVoting(req, res);
-});
-
-app.delete("/api/delete_user", (req, res) => {
-  return deleteUser(req, res);
-});
-
-app.patch("/api/conclude_room", (req, res) => {
-  return concludeRoom(req, res);
-});
-
-app.get("/api/page/:page", (req, res) => {
-  return page(req, res);
-});
-
-app.get("/api/total_pages", (req, res) => {
-  return getTotalPages(req, res);
-});
-
-app.patch("/api/room_byline", (req, res) => {
-  return updateRoomByline(req, res);
-});
+app.post("/api/login", login);
+app.post("/api/create_user", createUser);
+app.post("/api/auth_code", authenticateCode);
+app.post("/api/create_room", createRoom);
+app.post("/api/get_room", getRoom);
+app.post("/api/submit_form", submitForm);
+app.delete("/api/room", deleteRoom);
+app.post("/api/toggle_open", toggleOpen);
+app.post("/api/toggle_voting", toggleVoting);
+app.delete("/api/delete_user", deleteUser);
+app.patch("/api/conclude_room", concludeRoom);
+app.get("/api/page/:page", page);
+app.get("/api/total_pages", getTotalPages);
+app.patch("/api/room_byline", updateRoomByline);
+app.patch("/api/add_speaker", addSpeaker);
 
 if (process.env.DEPLOY === "true") {
   app.use(express.static(path.join(__dirname, "./client/build")));
