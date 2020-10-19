@@ -5,6 +5,7 @@ import ErrorPopup from "../../components/ErrorPopup";
 
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -13,6 +14,8 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from "@material-ui/core/TextField";
+
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 
 const headCells = [
   { id: "firstName", label: "First Name" },
@@ -32,6 +35,7 @@ function Room(props) {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
   const [byline, setByline] = useState(props.room.byline || "");
+  const [speaker, setSpeaker] = useState("");
   const [delay, setDelay] = useState(null);
 
   useEffect(() => {
@@ -234,6 +238,16 @@ function Room(props) {
       <Button onClick={closeRoom} color="primary">
         Conclude
       </Button>
+      <h4>Speaker list:</h4>
+      <TextField
+        id="speaker"
+        label="Speaker Name"
+        value={speaker}
+        onChange={(e) => setSpeaker(e.traget.value)}
+      />
+      <IconButton>
+        <AddCircleOutlineIcon color="primary" />
+      </IconButton>
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
       <Paper style={{ marginLeft: "3%", marginRight: "3%" }}>
