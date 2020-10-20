@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import openSoc from "../../services/api";
 import ErrorPopup from "../../components/ErrorPopup";
@@ -14,8 +15,15 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from "@material-ui/core/TextField";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import Avatar from "@material-ui/core/Avatar";
 
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const headCells = [
   { id: "firstName", label: "First Name" },
@@ -23,6 +31,14 @@ const headCells = [
   { id: "school", label: "School" },
   { id: "vote", label: "Vote" },
 ];
+
+const useStyles = makeStyles(() => ({
+  list: {
+    backgroundColor: "#fafafa",
+    margin: "1% auto auto auto",
+    width: "30em",
+  },
+}));
 
 function Room(props) {
   const [room, setRoom] = useState({
@@ -38,6 +54,8 @@ function Room(props) {
   const [byline, setByline] = useState(props.room.byline || "");
   const [speaker, setSpeaker] = useState("");
   const [delay, setDelay] = useState(null);
+
+  const classes = useStyles();
 
   useEffect(() => {
     if (props.auth.loggedIn()) {
@@ -264,6 +282,25 @@ function Room(props) {
       <IconButton onClick={addSpeaker}>
         <AddCircleOutlineIcon color="primary" />
       </IconButton>
+      <List className={classes.list}>
+        {props.room.speakers != null
+          ? props.room.speakers.map((speaker, i) => {
+              return (
+                <ListItem key={i}>
+                  <ListItemAvatar>
+                    <Avatar />
+                  </ListItemAvatar>
+                  <ListItemText primary={speaker} />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end">
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })
+          : null}
+      </List>
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
       <Paper style={{ marginLeft: "3%", marginRight: "3%" }}>
