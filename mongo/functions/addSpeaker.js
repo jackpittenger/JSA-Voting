@@ -16,7 +16,7 @@ const addSpeaker = async (req, res, decoded) => {
         .then((room) => {
           if (!room)
             return res.status(403).json({ error: "Current room not found!" });
-          room[speakers].append(req.body.name);
+          room.speakers.push(req.body.name);
           room
             .save()
             .then(() => {

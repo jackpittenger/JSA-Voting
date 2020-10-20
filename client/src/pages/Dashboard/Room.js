@@ -31,6 +31,7 @@ function Room(props) {
     users: props.room.users,
     open: props.room.open,
     votingOpen: props.room.votingOpen,
+    speakers: props.room.speakers,
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
@@ -209,6 +210,21 @@ function Room(props) {
     return stabilizedArray.map((el) => el[0]);
   }
 
+  function addSpeaker() {
+    props.auth.fetch(
+      "/api/add_speaker",
+      { method: "POST", body: JSON.stringify({ name: speaker }) },
+      (res, status) => {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else {
+          setRoom({ ...room, speakers: room.speakers.push(speaker) });
+          setSpeaker("");
+        }
+      }
+    );
+  }
+
   return (
     <div>
       <h3>{room.id}</h3>
@@ -243,9 +259,9 @@ function Room(props) {
         id="speaker"
         label="Speaker Name"
         value={speaker}
-        onChange={(e) => setSpeaker(e.traget.value)}
+        onChange={(e) => setSpeaker(e.target.value)}
       />
-      <IconButton>
+      <IconButton onClick={addSpeaker}>
         <AddCircleOutlineIcon color="primary" />
       </IconButton>
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>

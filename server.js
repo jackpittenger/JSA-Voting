@@ -47,7 +47,7 @@ app.patch("/api/conclude_room", concludeRoom);
 app.get("/api/page/:page", page);
 app.get("/api/total_pages", getTotalPages);
 app.patch("/api/room_byline", updateRoomByline);
-app.patch("/api/add_speaker", addSpeaker);
+app.post("/api/add_speaker", addSpeaker);
 
 if (process.env.DEPLOY === "true") {
   app.use(express.static(path.join(__dirname, "./client/build")));
