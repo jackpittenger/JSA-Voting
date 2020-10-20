@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import openSoc from "../../services/api";
 import ErrorPopup from "../../components/ErrorPopup";
+import SpeakerList from "./SpeakerList";
 
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -15,15 +14,6 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from "@material-ui/core/TextField";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import DeleteIcon from "@material-ui/icons/Delete";
 
 const headCells = [
   { id: "firstName", label: "First Name" },
@@ -31,14 +21,6 @@ const headCells = [
   { id: "school", label: "School" },
   { id: "vote", label: "Vote" },
 ];
-
-const useStyles = makeStyles(() => ({
-  list: {
-    backgroundColor: "#fafafa",
-    margin: "1% auto auto auto",
-    width: "30em",
-  },
-}));
 
 function Room(props) {
   const [room, setRoom] = useState({
@@ -52,10 +34,7 @@ function Room(props) {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
   const [byline, setByline] = useState(props.room.byline || "");
-  const [speaker, setSpeaker] = useState("");
   const [delay, setDelay] = useState(null);
-
-  const classes = useStyles();
 
   useEffect(() => {
     if (props.auth.loggedIn()) {
@@ -228,21 +207,6 @@ function Room(props) {
     return stabilizedArray.map((el) => el[0]);
   }
 
-  function addSpeaker() {
-    props.auth.fetch(
-      "/api/add_speaker",
-      { method: "POST", body: JSON.stringify({ name: speaker }) },
-      (res, status) => {
-        if (status >= 400) {
-          props.createError(status, res.error);
-        } else {
-          setRoom({ ...room, speakers: room.speakers.push(speaker) });
-          setSpeaker("");
-        }
-      }
-    );
-  }
-
   return (
     <div>
       <h3>{room.id}</h3>
@@ -272,35 +236,7 @@ function Room(props) {
       <Button onClick={closeRoom} color="primary">
         Conclude
       </Button>
-      <h4>Speaker list:</h4>
-      <TextField
-        id="speaker"
-        label="Speaker Name"
-        value={speaker}
-        onChange={(e) => setSpeaker(e.target.value)}
-      />
-      <IconButton onClick={addSpeaker}>
-        <AddCircleOutlineIcon color="primary" />
-      </IconButton>
-      <List className={classes.list}>
-        {props.room.speakers != null
-          ? props.room.speakers.map((speaker, i) => {
-              return (
-                <ListItem key={i}>
-                  <ListItemAvatar>
-                    <Avatar />
-                  </ListItemAvatar>
-                  <ListItemText primary={speaker} />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            })
-          : null}
-      </List>
+      <SpeakerList room={room} setRoom={setRoom} />
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
       <Paper style={{ marginLeft: "3%", marginRight: "3%" }}>
