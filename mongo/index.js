@@ -31,6 +31,7 @@ module.exports.getRoom = require("./functions/getRoom");
 module.exports.getTotalPages = require("./functions/getTotalPages");
 module.exports.login = require("./functions/login");
 module.exports.page = require("./functions/page");
+module.exports.removeSpeaker = require("./functions/removeSpeaker");
 module.exports.submitForm = require("./functions/submitForm");
 module.exports.toggleOpen = require("./functions/toggleOpen");
 module.exports.toggleVoting = require("./functions/toggleVoting");

@@ -35,7 +35,25 @@ export default function SpeakerList(props) {
         } else {
           props.setRoom({
             ...props.room,
-            speakers: props.room.speakers.push(speaker),
+            speakers: props.room.speakers.concat(speaker),
+          });
+          setSpeaker("");
+        }
+      }
+    );
+  }
+
+  function removeSpeaker(speaker) {
+    props.auth.fetch(
+      "/api/remove_speaker",
+      { method: "DELETE", body: JSON.stringify({ name: speaker }) },
+      (res, status) => {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else {
+          props.setRoom({
+            ...props.room,
+            speakers: props.room.speakers.filter((e) => e !== speaker),
           });
           setSpeaker("");
         }
@@ -64,7 +82,10 @@ export default function SpeakerList(props) {
                   </ListItemAvatar>
                   <ListItemText primary={speaker} />
                   <ListItemSecondaryAction>
-                    <IconButton edge="end">
+                    <IconButton
+                      onClick={() => removeSpeaker(speaker)}
+                      edge="end"
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </ListItemSecondaryAction>

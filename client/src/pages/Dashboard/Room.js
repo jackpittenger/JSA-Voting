@@ -236,7 +236,7 @@ function Room(props) {
       <Button onClick={closeRoom} color="primary">
         Conclude
       </Button>
-      <SpeakerList room={room} setRoom={setRoom} />
+      <SpeakerList auth={props.auth} room={room} setRoom={setRoom} />
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
       <Paper style={{ marginLeft: "3%", marginRight: "3%" }}>
