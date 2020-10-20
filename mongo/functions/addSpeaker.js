@@ -16,6 +16,10 @@ const addSpeaker = async (req, res, decoded) => {
         .then((room) => {
           if (!room)
             return res.status(403).json({ error: "Current room not found!" });
+          if (room.speakers.indexOf(req.body.name) !== -1)
+            return res
+              .status(400)
+              .json({ error: "That speaker is already added!" });
           room.speakers.push(req.body.name);
           room
             .save()
