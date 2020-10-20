@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+
+import ErrorPopup from "../../components/ErrorPopup";
+
 import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
-import history from "../../services/history";
-import ErrorPopup from "../../components/ErrorPopup";
 
 function SubmitForm(props) {
   const [vote, setVote] = useState(null);
@@ -22,9 +23,7 @@ function SubmitForm(props) {
     if (status >= 400) {
       props.createError(status, res.error);
     } else {
-      props.auth.logout();
-      props.setIsTokenVoter(false);
-      history.push("/");
+      props.setVoted(true);
     }
   }
 

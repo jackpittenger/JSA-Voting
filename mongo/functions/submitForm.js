@@ -23,7 +23,7 @@ const submitForm = async (req, res, decoded) => {
         doc.vote = req.body.vote;
         return doc
           .save()
-          .then(() => res.status(202).json({ success: "Saved" }))
+          .then(() => res.status(202).json({ success: true }))
           .then(async () =>
             vote(
               [

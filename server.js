@@ -25,6 +25,8 @@ const {
   updateRoomByline,
   addSpeaker,
   removeSpeaker,
+  speakerVote,
+  getSpeakers,
 } = require("./mongo");
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -50,6 +52,8 @@ app.get("/api/total_pages", getTotalPages);
 app.patch("/api/room_byline", updateRoomByline);
 app.post("/api/add_speaker", addSpeaker);
 app.delete("/api/remove_speaker", removeSpeaker);
+app.post("/api/speaker_vote", speakerVote);
+app.get("/api/get_speakers", getSpeakers);
 
 if (process.env.DEPLOY === "true") {
   app.use(express.static(path.join(__dirname, "./client/build")));
