@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import TextField from "@material-ui/core/TextField";
@@ -15,8 +15,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles(() => ({
   list: {
-    backgroundColor: "#fafafa",
     margin: "1% auto auto auto",
+    backgroundColor: "#fafafa",
     width: "30em",
   },
 }));
@@ -24,6 +24,11 @@ const useStyles = makeStyles(() => ({
 export default function SpeakerList(props) {
   const classes = useStyles();
   const [speaker, setSpeaker] = useState("");
+  const [speakerVoters, setSpeakerVoters] = useState(0);
+
+  useEffect(() => {
+    setSpeakerVoters(props.room.users.filter((e) => e.speaker != null).length);
+  }, [props.room.users]);
 
   function addSpeaker() {
     props.auth.fetch(
@@ -77,8 +82,25 @@ export default function SpeakerList(props) {
       <List className={classes.list}>
         {props.room.speakers != null
           ? props.room.speakers.map((speaker, i) => {
+              const votes =
+                (props.room.users.filter((e) => e.speaker === speaker).length /
+                  speakerVoters) *
+                100;
+              console.log(speaker);
+              console.log(votes);
               return (
-                <ListItem key={i}>
+                <ListItem
+                  style={{
+                    background:
+                      "linear-gradient(to right, #3D78CC " +
+                      votes +
+                      "%, #fafafa " +
+                      100 -
+                      votes +
+                      "%)",
+                  }}
+                  key={i}
+                >
                   <ListItemAvatar>
                     <Avatar />
                   </ListItemAvatar>
