@@ -39,9 +39,10 @@ const headCells = [
   { id: "time", label: "Time", width: "15%" },
   { id: "id", label: "Name", width: "12.5%" },
   { id: "byline", label: "Byline", width: "60%" },
-  { id: "yea", label: "Yea", width: "2.5%" },
-  { id: "abs", label: "Abs", width: "2.5%" },
-  { id: "nay", label: "Nay", width: "2.5%" },
+  { id: "bestspeaker", label: "Best Speaker", width: "3%" },
+  { id: "yea", label: "Yea", width: "1.5%" },
+  { id: "abs", label: "Abs", width: "1.5%" },
+  { id: "nay", label: "Nay", width: "1.5%" },
   { id: "vote", label: "Vote", width: "5%" },
 ];
 
@@ -82,6 +83,9 @@ export default function List(props) {
                 </TableCell>
                 <TableCell className={classes.wrap}>{room.id}</TableCell>
                 <TableCell className={classes.wrap}>{room.byline}</TableCell>
+                <TableCell className={classes.wrap}>
+                  {room.bestSpeaker}
+                </TableCell>
                 <TableCell style={{ color: "green" }}>{room.yea}</TableCell>
                 <TableCell style={{ color: "grey" }}>{room.abs}</TableCell>
                 <TableCell style={{ color: "red" }}>{room.nay}</TableCell>
