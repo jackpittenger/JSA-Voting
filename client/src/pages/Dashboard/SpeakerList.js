@@ -35,7 +35,9 @@ export default function SpeakerList(props) {
         } else {
           props.setRoom({
             ...props.room,
-            speakers: props.room.speakers.concat(speaker),
+            speakers: props.room.speakers
+              ? props.room.speakers.concat(speaker)
+              : [speaker],
           });
           setSpeaker("");
         }
