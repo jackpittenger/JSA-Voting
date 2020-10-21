@@ -56,6 +56,7 @@ function SpeakerForm(props) {
     if (status >= 400) {
       props.createError(status, res.error);
     } else {
+      props.setVoted(false);
       props.auth.logout();
       props.setIsTokenVoter(false);
       history.push("/");

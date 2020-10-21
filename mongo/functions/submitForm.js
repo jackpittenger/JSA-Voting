@@ -8,7 +8,7 @@ const submitForm = async (req, res, decoded) => {
   if (
     req.body.vote !== "yea" &&
     req.body.vote !== "nay" &&
-    req.body.vote !== "abs"
+    req.body.vote !== "abstain"
   )
     return res.status(400).json({ error: "Invalid vote!" });
   Voter.findOne({

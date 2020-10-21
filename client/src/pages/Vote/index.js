@@ -22,7 +22,11 @@ export default function Vote() {
             auth={Auth}
           />
         ) : (
-          <SpeakerForm setIsTokenVoter={setIsTokenVoter} auth={Auth} />
+          <SpeakerForm
+            setIsTokenVoter={setIsTokenVoter}
+            setVoted={setVoted}
+            auth={Auth}
+          />
         )
       ) : (
         <NameForm setIsTokenVoter={setIsTokenVoter} auth={Auth} />
