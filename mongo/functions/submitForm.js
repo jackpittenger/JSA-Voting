@@ -5,6 +5,12 @@ const Room = require("../models/Room");
 const Voter = require("../models/Voter");
 
 const submitForm = async (req, res, decoded) => {
+  if (
+    req.body.vote !== "yea" &&
+    req.body.vote !== "nay" &&
+    req.body.vote !== "abs"
+  )
+    return res.status(400).json({ error: "Invalid vote!" });
   Voter.findOne({
     firstName: decoded.firstName,
     code: decoded.code,

@@ -26,15 +26,24 @@ function SpeakerForm(props) {
   const [speaker, setSpeaker] = useState(null);
   const [speakers, setSpeakers] = useState(null);
   const createError = props.createError;
+  const setIsTokenVoter = props.setIsTokenVoter;
   const classes = useStyles();
 
   useEffect(() => {
     props.auth.fetch("/api/get_speakers", { method: "GET" }, (res, status) => {
       if (status >= 400) createError(status, res.error);
-      else setSpeakers(res.speakers);
+      else {
+        if (res.speakers.length === 0) {
+          props.auth.logout();
+          setIsTokenVoter(false);
+          history.push("/");
+        } else {
+          setSpeakers(res.speakers);
+        }
+      }
     });
-  }, [props.auth, createError]);
-  console.log(speakers);
+  }, [props.auth, createError, setIsTokenVoter]);
+
   function submit() {
     props.auth.fetch(
       "/api/speaker_vote",

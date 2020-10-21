@@ -38,8 +38,8 @@ const useStyles = makeStyles(() => ({
 const headCells = [
   { id: "time", label: "Time", width: "15%" },
   { id: "id", label: "Name", width: "12.5%" },
-  { id: "byline", label: "Byline", width: "60%" },
-  { id: "bestspeaker", label: "Best Speaker", width: "3%" },
+  { id: "byline", label: "Byline", width: "50%" },
+  { id: "bestspeaker", label: "Best Speaker", width: "10%" },
   { id: "yea", label: "Yea", width: "1.5%" },
   { id: "abs", label: "Abs", width: "1.5%" },
   { id: "nay", label: "Nay", width: "1.5%" },

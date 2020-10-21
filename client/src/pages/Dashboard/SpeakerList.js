@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import TextField from "@material-ui/core/TextField";
@@ -24,11 +24,6 @@ const useStyles = makeStyles(() => ({
 export default function SpeakerList(props) {
   const classes = useStyles();
   const [speaker, setSpeaker] = useState("");
-  const [speakerVoters, setSpeakerVoters] = useState(0);
-
-  useEffect(() => {
-    setSpeakerVoters(props.room.users.filter((e) => e.speaker != null).length);
-  }, [props.room.users]);
 
   function addSpeaker() {
     props.auth.fetch(
@@ -67,6 +62,7 @@ export default function SpeakerList(props) {
       }
     );
   }
+
   return (
     <div>
       <h4>Speaker list:</h4>
@@ -82,22 +78,20 @@ export default function SpeakerList(props) {
       <List className={classes.list}>
         {props.room.speakers != null
           ? props.room.speakers.map((speaker, i) => {
+              const speakerVoters = props.room.users.filter(
+                (e) => e.speaker != null
+              ).length;
               const votes =
                 (props.room.users.filter((e) => e.speaker === speaker).length /
                   speakerVoters) *
                 100;
-              console.log(speaker);
-              console.log(votes);
               return (
                 <ListItem
                   style={{
                     background:
-                      "linear-gradient(to right, #3D78CC " +
+                      "linear-gradient(to right, #39ACE3 " +
                       votes +
-                      "%, #fafafa " +
-                      100 -
-                      votes +
-                      "%)",
+                      "%, #fafafa 0%)",
                   }}
                   key={i}
                 >

@@ -51,6 +51,7 @@ function Room(props) {
             o.school === data[2]
           ) {
             users[i].vote = data[3];
+            if (data[4]) users[i].speaker = data[4];
             return true;
           }
           return false;

@@ -1,4 +1,5 @@
 const verifyJwt = require("./helpers/verifyJwt");
+const vote = require("../../middleware/socket").vote;
 
 const Voter = require("../models/Voter");
 const Room = require("../models/Room");
@@ -36,13 +37,14 @@ const speakerVote = async (req, res, decoded) => {
                 decoded.lastName,
                 decoded.school,
                 decoded.vote,
-                req.body.speaker,
+                req.body.name,
               ],
               await Room.findOne({ concluded: false, accessCode: decoded.code })
             )
           );
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         res.status(401).json({ error: "Voter not found!" });
       });
   });
