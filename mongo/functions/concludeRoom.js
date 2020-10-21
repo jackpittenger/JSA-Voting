@@ -12,16 +12,25 @@ const concludeRoom = async (req, res, decoded) => {
         .then((room) => room)
         .then((room) => {
           let arr = [0, 0, 0];
+          let speakers = {};
           for (let i = 0; i < room.users.length; i++) {
             if (room.users[i].vote === "yea") arr[0]++;
             if (room.users[i].vote === "abstain") arr[1]++;
             if (room.users[i].vote === "nay") arr[2]++;
+            speakers[room.users[i].speaker] =
+              speakers[room.users[i].speaker] != null
+                ? speakers[room.users[i].speaker]++
+                : 1;
           }
+
           room.concluded = true;
           room.time = Date.now();
           room.yea = arr[0];
           room.abs = arr[1];
           room.nay = arr[2];
+          room.bestSpeaker = Object.keys(speakers).reduce((a, b) =>
+            speakers[a] > speakers[b] ? a : b
+          );
           room
             .save()
             .then(() => {

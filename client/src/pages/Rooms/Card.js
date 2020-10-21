@@ -47,7 +47,7 @@ export default function Card(props) {
                         {v.id}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        ID: {v._id}
+                        Best Speaker: {v.bestSpeaker}
                       </Typography>
                       <Typography variant="subtitle1">
                         <span style={{ color: "green" }}>{v.yea}</span>-

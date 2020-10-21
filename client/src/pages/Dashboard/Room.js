@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import openSoc from "../../services/api";
 import ErrorPopup from "../../components/ErrorPopup";
+import SpeakerList from "./SpeakerList";
 
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
@@ -28,6 +29,7 @@ function Room(props) {
     users: props.room.users,
     open: props.room.open,
     votingOpen: props.room.votingOpen,
+    speakers: props.room.speakers,
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("firstName");
@@ -49,6 +51,7 @@ function Room(props) {
             o.school === data[2]
           ) {
             users[i].vote = data[3];
+            if (data[4]) users[i].speaker = data[4];
             return true;
           }
           return false;
@@ -234,6 +237,12 @@ function Room(props) {
       <Button onClick={closeRoom} color="primary">
         Conclude
       </Button>
+      <SpeakerList
+        createError={props.createError}
+        auth={props.auth}
+        room={room}
+        setRoom={setRoom}
+      />
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
       <h3>Users:</h3>
       <Paper style={{ marginLeft: "3%", marginRight: "3%" }}>

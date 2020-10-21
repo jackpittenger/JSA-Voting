@@ -28,5 +28,7 @@ module.exports.newVoter = (payload, owner) =>
 module.exports.vote = (payload, owner) => {
   sockets
     .filter((c) => c[1]._id.toString() === owner.owner.toString())
-    .forEach((v) => v[0].emit("vote", payload));
+    .forEach((v) => {
+      v[0].emit("vote", payload);
+    });
 };

@@ -21,6 +21,7 @@ const getRoom = async (req, res, decoded) => {
             open: room.open,
             votingOpen: room.votingOpen,
             byline: room.byline,
+            speakers: room.speakers,
           });
         });
     });
