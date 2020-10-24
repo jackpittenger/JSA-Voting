@@ -1,6 +1,9 @@
+const verifyRoomsOpen = require("./helpers/verifyRoomsOpen");
+const checkRoomsOpen = require("./helpers/checkRoomsOpen");
+
 const Room = require("../models/Room");
 
-module.exports = async (req, res) => {
+const page = async (req, res) => {
   Room.find({ concluded: true })
     .sort({ _id: -1 })
     .limit(10)
@@ -12,3 +15,5 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: "Failure getting page" });
     });
 };
+
+module.exports = checkRoomsOpen(verifyRoomsOpen(page));
