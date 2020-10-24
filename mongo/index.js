@@ -22,6 +22,7 @@ mongoose.connection.once("open", function () {
 
 module.exports.addSpeaker = require("./functions/addSpeaker");
 module.exports.authenticateCode = require("./functions/authenticateCode");
+module.exports.clearRooms = require("./functions/clearRooms");
 module.exports.concludeRoom = require("./functions/concludeRoom");
 module.exports.createRoom = require("./functions/createRoom");
 module.exports.createUser = require("./functions/createUser");
