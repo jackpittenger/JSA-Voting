@@ -10,7 +10,7 @@ const getSpeakers = async (req, res, decoded) => {
     lastName: decoded.lastName,
     school: decoded.school,
   }).then((doc) => {
-    if (doc.speaker != null)
+    if (doc == null || doc.speaker != null)
       return res
         .status(403)
         .json({ error: "You've already voted for a best speaker!" });

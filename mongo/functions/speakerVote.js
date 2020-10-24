@@ -33,10 +33,10 @@ const speakerVote = async (req, res, decoded) => {
           .then(async () =>
             vote(
               [
-                decoded.firstName,
-                decoded.lastName,
-                decoded.school,
-                decoded.vote,
+                doc.firstName,
+                doc.lastName,
+                doc.school,
+                doc.vote,
                 req.body.name,
               ],
               await Room.findOne({ concluded: false, accessCode: decoded.code })

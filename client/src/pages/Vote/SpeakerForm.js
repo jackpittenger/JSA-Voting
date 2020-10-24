@@ -27,6 +27,7 @@ function SpeakerForm(props) {
   const [speakers, setSpeakers] = useState(null);
   const createError = props.createError;
   const setIsTokenVoter = props.setIsTokenVoter;
+  const setVoted = props.setVoted;
   const classes = useStyles();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ function SpeakerForm(props) {
       if (status >= 400) createError(status, res.error);
       else {
         if (res.speakers.length === 0) {
+          setVoted(false);
           props.auth.logout();
           setIsTokenVoter(false);
           history.push("/");
@@ -42,7 +44,7 @@ function SpeakerForm(props) {
         }
       }
     });
-  }, [props.auth, createError, setIsTokenVoter]);
+  }, [props.auth, setVoted, createError, setIsTokenVoter]);
 
   function submit() {
     props.auth.fetch(

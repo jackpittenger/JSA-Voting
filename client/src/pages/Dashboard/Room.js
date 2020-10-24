@@ -44,7 +44,7 @@ function Room(props) {
       );
       io.on("vote", (data) => {
         let users = room.users;
-        users.find((o, i) => {
+        let result = users.find((o, i) => {
           if (
             o.firstName === data[0] &&
             o.lastName === data[1] &&
@@ -56,6 +56,20 @@ function Room(props) {
           }
           return false;
         });
+        if (!result) {
+          setRoom({
+            ...room,
+            users: [
+              ...room.users,
+              {
+                firstName: data[0],
+                lastName: [1],
+                school: data[2],
+                vote: data[3],
+              },
+            ],
+          });
+        }
         setRoom({ ...room, users: users });
       });
       return () => {
