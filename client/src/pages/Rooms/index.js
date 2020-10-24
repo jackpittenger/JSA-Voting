@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 
 import Header from "../../components/Header";
 import NavigationHeader from "./NavigationHeader";
@@ -15,15 +14,16 @@ export default function Room() {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    axios
-      .get("/api/page/" + page)
-      .then((res) => setRooms(res.data.res))
-      .catch((err) => console.error(err));
-    axios
-      .get("/api/total_pages")
-      .then((res) => setMaxPages(res.data.count))
-      .catch((err) => console.error(err));
-  }, [page, setMaxPages, setRooms]);
+    Auth.fetch("/api/page/" + page, { method: "GET" }, (res, status) => {
+      if (status >= 400) return console.error(res.error);
+      setRooms(res.res);
+    });
+    Auth.fetch("/api/total_pages", { method: "GET" }, (res, status) => {
+      if (status >= 400) return console.error(res.error);
+      setMaxPages(res.count);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   return (
     <div>
