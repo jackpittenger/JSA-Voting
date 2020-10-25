@@ -17,10 +17,11 @@ const concludeRoom = async (req, res, decoded) => {
             if (room.users[i].vote === "yea") arr[0]++;
             if (room.users[i].vote === "abstain") arr[1]++;
             if (room.users[i].vote === "nay") arr[2]++;
-            speakers[room.users[i].speaker] =
-              speakers[room.users[i].speaker] != null
-                ? speakers[room.users[i].speaker]++
-                : 1;
+            if (speakers[room.users[i].speaker] != null) {
+              speakers[room.users[i].speaker]++;
+            } else {
+              speakers[room.users[i].speaker] = 1;
+            }
           }
 
           room.concluded = true;
