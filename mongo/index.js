@@ -22,6 +22,7 @@ mongoose.connection.once("open", function () {
 
 module.exports.addSpeaker = require("./functions/addSpeaker");
 module.exports.authenticateCode = require("./functions/authenticateCode");
+module.exports.clearRooms = require("./functions/clearRooms");
 module.exports.concludeRoom = require("./functions/concludeRoom");
 module.exports.createRoom = require("./functions/createRoom");
 module.exports.createUser = require("./functions/createUser");
@@ -33,6 +34,8 @@ module.exports.getTotalPages = require("./functions/getTotalPages");
 module.exports.login = require("./functions/login");
 module.exports.page = require("./functions/page");
 module.exports.removeSpeaker = require("./functions/removeSpeaker");
+module.exports.roomsOpen = require("./functions/roomsOpen");
+module.exports.roomsToggle = require("./functions/roomsToggle");
 module.exports.speakerVote = require("./functions/speakerVote");
 module.exports.submitForm = require("./functions/submitForm");
 module.exports.toggleOpen = require("./functions/toggleOpen");
