@@ -4,7 +4,19 @@ const checkRoomsOpen = require("./helpers/checkRoomsOpen");
 const Room = require("../models/Room");
 
 const page = async (req, res) => {
-  Room.find({ concluded: true })
+  Room.find(
+    { concluded: true },
+    {
+      _id: 0,
+      id: 1,
+      yea: 1,
+      nay: 1,
+      abs: 1,
+      bestSpeaker: 1,
+      byline: 1,
+      time: 1,
+    }
+  )
     .sort({ _id: -1 })
     .limit(10)
     .skip(req.params.page * 10)
