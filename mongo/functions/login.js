@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
       if (doc.pin === req.body.pin) {
         let payload = { token: req.body.token, permission: doc.permission };
         let jwtToken = jwt.sign(payload, process.env.SECRET, {
-          expiresIn: "1h",
+          expiresIn: "3h",
         });
         res.status(202).send({ token: jwtToken, message: "Success" });
       } else

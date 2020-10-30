@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
             };
             newVoter(payload, room.owner);
             let jwtToken = jwt.sign(payload, process.env.SECRET, {
-              expiresIn: "1h",
+              expiresIn: "3h",
             });
             return res
               .status(201)
