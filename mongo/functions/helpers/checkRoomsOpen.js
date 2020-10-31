@@ -7,6 +7,6 @@ module.exports = (cb) => {
       .then((doc) => {
         cb(req, res, doc != null ? doc.roomsOpen : false);
       })
-      .catch(res.status(500).json({ error: "Error getting config" }));
+      .catch(() => res.status(500).json({ error: "Error getting config" }));
   };
 };
