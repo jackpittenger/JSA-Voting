@@ -72,6 +72,13 @@ function NameForm(props) {
 
   return (
     <form className={classes.form}>
+      <h1 style={{ marginTop: "0", fontFamily: "Muli", color: "#333" }}>
+        JOIN A ROOM
+      </h1>
+      <h3 style={{ color: "#333" }}>
+        Enter your information along with the room code provided by your
+        moderator
+      </h3>
       <div>
         <FormControl className={classes.formControl}>
           <TextField

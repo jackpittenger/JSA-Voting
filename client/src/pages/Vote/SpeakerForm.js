@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import history from "../../services/history";
 
-import FormLabel from "@material-ui/core/FormLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
@@ -67,9 +66,12 @@ function SpeakerForm(props) {
 
   return (
     <form style={{ paddingTop: 15 }}>
+      <h1 style={{ marginTop: "0", fontFamily: "Muli", color: "#333" }}>
+        VOTE FOR BEST SPEAKER
+      </h1>
+      <h3 style={{ color: "#333" }}>Who do you think was the best?</h3>
       <div>
         <FormControl>
-          <FormLabel>Vote for Best Speaker</FormLabel>
           <List className={classes.list}>
             {speakers != null
               ? speakers.map((v, i) => {
