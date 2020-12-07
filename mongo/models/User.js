@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   token: { type: String, unique: true, required: true },
+  convention: { type: mongoose.Schema.Types.ObjectId, ref: "Convention" },
   pin: { type: String, required: true },
   permission: { type: Number, required: true },
   /*

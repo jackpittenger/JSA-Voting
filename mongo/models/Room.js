@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
+  convention: { type: mongoose.Schema.Types.ObjectId, ref: "Convention" },
   users: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -9,11 +10,6 @@ const roomSchema = new mongoose.Schema({
     },
   ],
   accessCode: { type: String, required: true },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
   open: { type: Boolean, default: true },
   votingOpen: { type: Boolean, default: false },
   byline: { type: String },
