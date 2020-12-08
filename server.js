@@ -8,7 +8,8 @@ const io = require("socket.io")();
 const cookieParser = require("cookie-parser");
 
 const app = express();
-const {
+const db = require("./db");
+/*const {
   authenticateCode,
   addSpeaker,
   clearRooms,
@@ -31,6 +32,7 @@ const {
   toggleVoting,
   updateRoomByline,
 } = require("./mongo");
+*/
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
@@ -39,6 +41,7 @@ app.use(cookieParser());
 require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
 
+/*
 app.get("/api/get_speakers", getSpeakers);
 app.get("/api/page/:page", page);
 app.get("/api/rooms_open", roomsOpen);
@@ -63,7 +66,7 @@ app.delete("/api/clear_rooms", clearRooms);
 app.delete("/api/delete_user", deleteUser);
 app.delete("/api/remove_speaker", removeSpeaker);
 app.delete("/api/room", deleteRoom);
-
+*/
 if (process.env.DEPLOY === "true") {
   app.use(express.static(path.join(__dirname, "./client/build")));
   app.get("*", (_, res) => {

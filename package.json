@@ -23,6 +23,7 @@
     "express": "latest",
     "jsonwebtoken": "latest",
     "mongoose": "^5.9.14",
+    "pg": "^8.5.1",
     "pretty-quick": "^2.0.1",
     "socket.io": "^2.3.0"
   },
