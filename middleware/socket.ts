@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../mongo/models/User");
+//const User = require("../mongo/models/User");
 let sockets = [];
 
 module.exports.setup = (io) =>
@@ -8,10 +8,11 @@ module.exports.setup = (io) =>
       jwt.verify(data, process.env.SECRET, (err, decoded) => {
         if (err || decoded.permission < 1)
           return client.emit("unauthorized", () => client.disconnect());
-        User.findOne({ token: decoded.token })
+        /*       User.findOne({ token: decoded.token })
           .then((usr) => usr)
           .then((usr) => sockets.push([client, usr]))
           .catch((err) => console.error(err));
+   */
       });
     });
     client.on(
