@@ -1,4 +1,6 @@
-module.exports = (pool) => {
+import { Pool, QueryResult } from "pg";
+
+export default function (pool: Pool) {
   // Account Table
   pool.query(
     `CREATE TABLE IF NOT EXISTS ACCOUNT (
@@ -9,6 +11,7 @@ module.exports = (pool) => {
 	)`,
     handleRes
   );
+
   // Voter Table
   pool.query(
     `CREATE TABLE IF NOT EXISTS VOTER (
@@ -51,8 +54,8 @@ module.exports = (pool) => {
 	)`,
     handleRes
   );
-};
+}
 
-const handleRes = (err, _) => {
+function handleRes(err: Error, _: QueryResult<any>) {
   if (err) console.error("Error creating table: ", err);
-};
+}
