@@ -1,14 +1,16 @@
 require("dotenv").config();
-const express = require("express");
-const bodyParser = require("body-parser");
-const path = require("path");
-const fs = require("fs");
-const https = require("https");
-const io = require("socket.io")();
-const cookieParser = require("cookie-parser");
+import express from "express";
+import bodyParser from "body-parser";
+import path from "path";
+import fs from "fs";
+import https from "https";
+import socket from "socket.io";
+import cookieParser from "cookie-parser";
 
+const io = socket();
 const app = express();
-const db = require("./db");
+import db from "./db";
+const pool = db();
 /*const {
   authenticateCode,
   addSpeaker,
@@ -40,6 +42,11 @@ io.origins("*:*");
 app.use(cookieParser());
 require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
+
+import Room from "./routes/room";
+const room = new Room(pool);
+
+app.use("/api/room", room.setup());
 
 /*
 app.get("/api/get_speakers", getSpeakers);

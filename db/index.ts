@@ -11,6 +11,7 @@ pool.on("error", (err: Error) => {
   console.error("Postgress Error: ", err);
 });
 
-(() => {
+export default function () {
   setup(pool);
-})();
+  return pool;
+}
