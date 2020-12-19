@@ -1,6 +1,8 @@
 import { Router, Response } from "express";
 import { Pool } from "pg";
 
+import pin from "./helpers/pin";
+
 import { Request, Query, Params } from "../types/post";
 import { RoomPostBody } from "../types/room";
 
@@ -30,7 +32,7 @@ class Room {
         this.pool
           .query(
             "INSERT INTO ROOM(NAME, CONVENTION, ACCESS_CODE) VALUES($1, $2, $3) RETURNING id;",
-            [req.body.name, "Unimplemented", "0000001"]
+            [req.body.name, "Unimplemented", pin(7)]
           )
           .then((result) => res.status(200).json({ result: result }))
           .catch((err) => res.status(500).json({ error: err }));
