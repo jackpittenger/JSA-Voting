@@ -34,7 +34,7 @@ class Room {
             "INSERT INTO ROOM(NAME, CONVENTION, ACCESS_CODE) VALUES($1, $2, $3) RETURNING id;",
             [req.body.name, "Unimplemented", pin(7)]
           )
-          .then((result) => res.status(200).json({ result: result }))
+          .then((result) => res.status(201).json({ result: result.rows }))
           .catch((err) => res.status(500).json({ error: err }));
       }
     );
