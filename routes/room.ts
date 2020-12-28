@@ -38,11 +38,11 @@ class Room {
           .catch((err) => res.status(500).json({ error: err }));
       }
     );
-    this.router.patch("conclude", (req: Request, res: Response) => {});
-    this.router.patch("byline", (req: Request, res: Response) => {});
-    this.router.patch("toggle", (req: Request, res: Response) => {});
+    this.router.patch("/conclude", (req: Request, res: Response) => {});
+    this.router.patch("/byline", (req: Request, res: Response) => {});
+    this.router.patch("/toggle", (req: Request, res: Response) => {});
     this.router.delete("", (req: Request, res: Response) => {});
-    this.router.delete("all", (req: Request, res: Response) => {});
+    this.router.delete("/all", (req: Request, res: Response) => {});
     return this.router;
   }
 }

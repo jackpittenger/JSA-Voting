@@ -11,30 +11,7 @@ const io = socket();
 const app = express();
 import db from "./db";
 const pool = db();
-/*const {
-  authenticateCode,
-  addSpeaker,
-  clearRooms,
-  concludeRoom,
-  createRoom,
-  createUser,
-  deleteRoom,
-  deleteUser,
-  getRoom,
-  getSpeakers,
-  getTotalPages,
-  login,
-  page,
-  removeSpeaker,
-  roomsOpen,
-  roomsToggle,
-  speakerVote,
-  submitForm,
-  toggleOpen,
-  toggleVoting,
-  updateRoomByline,
-} = require("./mongo");
-*/
+
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
 
@@ -63,7 +40,7 @@ app.post("/api/auth_code", authenticateCode);
 .app.post("/api/create_room", createRoom);
 .app.post("/api/create_user", createUser);
 .app.post("/api/get_room", getRoom);
-app.post("/api/login", login);
+.app.post("/api/login", login);
 app.post("/api/speaker_vote", speakerVote);
 app.post("/api/submit_form", submitForm);
 app.post("/api/toggle_open", toggleOpen);

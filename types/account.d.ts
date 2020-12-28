@@ -1,9 +1,14 @@
 import { Request } from "./post";
 
-export interface AccountPostBody {
+export interface AccountDeleteBody {
   token: string;
 }
 
-export interface AccountDeleteBody {
+export interface AccountLoginBody {
+  token: string;
+  pin: string;
+}
+
+export interface AccountPostBody {
   token: string;
 }
