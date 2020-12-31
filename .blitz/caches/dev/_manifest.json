@@ -1,0 +1,19 @@
+{
+  "keys": {
+    "/home/saddy/Projects/JSA-Voting/app/auth/components/LoginForm.tsx": "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/components/LoginForm.tsx",
+    "/home/saddy/Projects/JSA-Voting/app/_resolvers/auth/mutations/login.ts": "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/_resolvers/auth/mutations/login.ts",
+    "/home/saddy/Projects/JSA-Voting/pages/api/auth/mutations/login.ts": "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/pages/api/auth/mutations/login.ts",
+    "/home/saddy/Projects/JSA-Voting/app/auth/mutations/login.ts": "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/mutations/login.client.ts",
+    "/home/saddy/Projects/JSA-Voting/app/auth/validations.ts": "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/validations.ts",
+    "/home/saddy/Projects/JSA-Voting/app/layouts/Layout.tsx": "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/layouts/Layout.tsx"
+  },
+  "values": {
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/components/LoginForm.tsx": "/home/saddy/Projects/JSA-Voting/app/auth/components/LoginForm.tsx",
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/_resolvers/auth/mutations/login.ts": "/home/saddy/Projects/JSA-Voting/app/_resolvers/auth/mutations/login.ts",
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/pages/api/auth/mutations/login.ts": "/home/saddy/Projects/JSA-Voting/pages/api/auth/mutations/login.ts",
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/mutations/login.ts": "/home/saddy/Projects/JSA-Voting/app/auth/mutations/login.ts",
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/mutations/login.client.ts": "/home/saddy/Projects/JSA-Voting/app/auth/mutations/login.ts",
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/auth/validations.ts": "/home/saddy/Projects/JSA-Voting/app/auth/validations.ts",
+    "/home/saddy/Projects/JSA-Voting/.blitz/caches/dev/app/layouts/Layout.tsx": "/home/saddy/Projects/JSA-Voting/app/layouts/Layout.tsx"
+  }
+}
