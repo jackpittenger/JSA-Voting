@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --------------------------------------
+
+model Account {
+  id		 Int	     @default(autoincrement()) @id
+  createdAt	 DateTime    @default(now())
+  token		 String	     @unique
+  pin		 String	   
+  role		 Role	     @default(MOD)
+  convention	 Convention  @relation(references: [id])
+}
+
+model Voter {
+  id		 Int	   @default(autoincrement()) @id
+  createdAt	 DateTime  @default(now())
+  firstName	 String	   
+  lastName	 String
+  school	 String
+  room		 Room      @relation(references: [id])
+  vote		 Vote
+  speaker	 String
+}
+
+model Convention {
+  id		 Int	   @default(autoincrement())  @id
+  createdAt	 DateTime  @default(now())
+  roomsOpen	 Boolean   @default(false)
+}
+
+model Room {
+  id		 Int	     @default(autoincrement()) @id
+  name		 String	   
+  convention	 Convention  @relation(references: [id])
+  accessCode	 String	     @unique
+  open		 Boolean     @default(true)
+  votingOpen	 Boolean     @default(false)
+  byline	 String
+  speakers	 String[]
+  concluded	 Boolean     @default(false)
+  yea		 Int	     @default(0)
+  nay		 Int	     @default(0)
+  abs		 Int	     @default(0)
+  bestSpeaker	 String	
+}
+
+enum Role {
+  MOD
+  ADMIN
+  DEV
+}
+
+enum Vote {
+  YEA
+  NAY
+  ABS
+}
