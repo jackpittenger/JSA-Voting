@@ -1,17 +1,16 @@
 import { Router, Response } from "express";
-import { Pool } from "pg";
-
 import pin from "./helpers/pin";
 
+import type { PrismaClient } from "@prisma/client";
 import { Request, Query, Params } from "../types/post";
 import { RoomPostBody } from "../types/room";
 
 class Room {
   router: Router;
-  pool: Pool;
-  constructor(pool: Pool) {
+  prisma: PrismaClient;
+  constructor(prisma: PrismaClient) {
     this.router = Router();
-    this.pool = pool;
+    this.prisma = prisma;
   }
 
   setup(): Router {
@@ -20,7 +19,7 @@ class Room {
     });
     this.router.post(
       "",
-      (req: Request<RoomPostBody, Query, Params>, res: Response) => {
+      async (req: Request<RoomPostBody, Query, Params>, res: Response) => {
         if (
           !req.body.name ||
           req.body.name.length > 48 ||
@@ -29,13 +28,23 @@ class Room {
           return res.status(400).json({
             error: "Missing 'name', which must be between 1 and 48 characters",
           });
-        this.pool
-          .query(
-            "INSERT INTO ROOM(NAME, CONVENTION, ACCESS_CODE) VALUES($1, $2, $3) RETURNING id;",
-            [req.body.name, "Unimplemented", pin(7)]
-          )
-          .then((result) => res.status(201).json({ result: result.rows }))
-          .catch((err) => res.status(500).json({ error: err }));
+        try {
+          const room = await this.prisma.room.create({
+            data: {
+              name: req.body.name,
+              accessCode: pin(7),
+              Convention: {
+                connect: {
+                  id: 1,
+                },
+              },
+            },
+          });
+          res.status(201).json({ result: room });
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ error: err });
+        }
       }
     );
     this.router.patch("/conclude", (req: Request, res: Response) => {});

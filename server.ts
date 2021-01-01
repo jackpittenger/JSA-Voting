@@ -6,11 +6,11 @@ import fs from "fs";
 import https from "https";
 import socket from "socket.io";
 import cookieParser from "cookie-parser";
+import { PrismaClient } from "@prisma/client";
 
 const io = socket();
 const app = express();
-import db from "./db";
-const pool = db();
+const prisma = new PrismaClient();
 
 const privateKey = fs.readFileSync("server.key", "utf8");
 const certificate = fs.readFileSync("server.crt", "utf8");
@@ -23,8 +23,8 @@ app.use(bodyParser.json());
 import Room from "./routes/room";
 import Account from "./routes/account";
 
-const room = new Room(pool);
-const account = new Account(pool);
+const room = new Room(prisma);
+const account = new Account(prisma);
 
 app.use("/api/room", room.setup());
 app.use("/api/account", account.setup());

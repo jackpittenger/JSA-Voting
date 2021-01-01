@@ -1,11 +1,11 @@
 import { Router, Response } from "express";
-import { Pool } from "pg";
 import jwt from "jsonwebtoken";
 
 import auth from "./middleware/auth";
 
 import pin from "./helpers/pin";
 
+import type { PrismaClient } from "@prisma/client";
 import { Request, Query, Params } from "../types/post";
 import {
   AccountDeleteBody,
@@ -15,17 +15,16 @@ import {
 
 class Account {
   router: Router;
-  pool: Pool;
-  constructor(pool: Pool) {
+  prisma: PrismaClient;
+  constructor(prisma: PrismaClient) {
     this.router = Router();
-    this.pool = pool;
+    this.prisma = prisma;
   }
 
   setup(): Router {
     this.router.post(
       "",
-      auth(3),
-      (req: Request<AccountPostBody, Query, Params>, res: Response) => {
+      async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
         if (
           !req.body.token ||
           req.body.token.length > 48 ||
@@ -34,19 +33,32 @@ class Account {
           return res.status(400).json({
             error: "Missing 'token', which must be between 1 and 48 characters",
           });
-        this.pool
-          .query(
-            "INSERT INTO ACCOUNT(TOKEN, CONVENTION, PIN, PERMISSIONS) VALUES ($1, $2, $3, $4) RETURNING TOKEN,PIN,PERMISSIONS",
-            [req.body.token, "Unimplemented", pin(7), 0]
-          )
-          .then((result) => res.status(201).json({ result: result.rows }))
-          .catch((err) => res.status(500).json({ error: err }));
+        try {
+          const account = await this.prisma.account.create({
+            data: {
+              token: req.body.token,
+              pin: pin(7),
+              Convention: {
+                connect: {
+                  id: 1,
+                },
+              },
+            },
+            select: {
+              token: true,
+              pin: true,
+            },
+          });
+          res.status(201).json(account);
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ error: err });
+        }
       }
     );
     this.router.delete(
       "",
-      auth(3),
-      (req: Request<AccountDeleteBody, Query, Params>, res: Response) => {
+      async (req: Request<AccountDeleteBody, Query, Params>, res: Response) => {
         if (
           !req.body.token ||
           req.body.token.length > 48 ||
@@ -55,19 +67,22 @@ class Account {
           return res.status(400).json({
             error: "Missing 'token', which must be between 1 and 48 characters",
           });
-        this.pool
-          .query("DELETE FROM ACCOUNT WHERE TOKEN=$1", [req.body.token])
-          .then((result) => {
-            if (result.rowCount == 0)
-              return res.status(404).json({ error: "User not found" });
-            return res.status(204).send();
-          })
-          .catch((err) => res.status(500).json({ error: err }));
+        try {
+          await this.prisma.account.delete({
+            where: {
+              token: req.body.token,
+            },
+          });
+          return res.status(204).send();
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ error: err });
+        }
       }
     );
     this.router.post(
       "/login",
-      (req: Request<AccountLoginBody, Query, Params>, res: Response) => {
+      async (req: Request<AccountLoginBody, Query, Params>, res: Response) => {
         if (
           !req.body.token ||
           req.body.token.length > 48 ||
@@ -80,27 +95,35 @@ class Account {
           return res.status(400).json({
             error: "Missing 'pin', which must be 7 characters",
           });
-        this.pool
-          .query("SELECT * FROM ACCOUNT WHERE TOKEN=$1 AND PIN=$2", [
-            req.body.token,
-            req.body.pin,
-          ])
-          .then((result) => {
-            if (!result.rows[0]) {
-              return res.status(400).json({ error: "Incorrect token/pin!" });
-            }
-            const token = jwt.sign(
-              {
-                token: result.rows[0].token,
-                convention: result.rows[0].convention,
-                permissions: result.rows[0].permissions,
-              },
-              process.env.SECRET,
-              { expiresIn: "7d" }
-            );
-            return res.status(200).json({ token: token });
-          })
-          .catch((err) => res.status(500).json({ error: err }));
+        try {
+          const account = await this.prisma.account.findUnique({
+            where: {
+              token: req.body.token,
+            },
+            select: {
+              token: true,
+              pin: true,
+              conventionId: true,
+              role: true,
+            },
+          });
+          if (!account || account.pin !== req.body.pin) {
+            return res.status(400).json({ error: "Incorrect token/pin!" });
+          }
+          const token = jwt.sign(
+            {
+              token: account.token,
+              conventionId: account.conventionId,
+              role: account.role,
+            },
+            process.env.SECRET,
+            { expiresIn: "7d" }
+          );
+          return res.status(200).json({ token: token });
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ error: err });
+        }
       }
     );
     return this.router;
