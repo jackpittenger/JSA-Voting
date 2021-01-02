@@ -6,9 +6,11 @@ import { errorWrapper } from "./middleware/errors";
 
 import pin from "./helpers/pin";
 
+import { Role } from "../types/enums";
+
 import type { PrismaClient } from "@prisma/client";
-import { Request, Query, Params } from "../types/post";
-import {
+import type { Request, Query, Params } from "../types/post";
+import type {
   AccountDeleteBody,
   AccountLoginBody,
   AccountPostBody,
@@ -25,6 +27,7 @@ class Account {
   setup(): Router {
     this.router.post(
       "",
+      auth(Role.ADMIN),
       errorWrapper(
         async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
           if (
