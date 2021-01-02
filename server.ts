@@ -8,6 +8,8 @@ import socket from "socket.io";
 import cookieParser from "cookie-parser";
 import { PrismaClient } from "@prisma/client";
 
+import { errorHandler } from "./routes/middleware/errors";
+
 const io = socket();
 const app = express();
 const prisma = new PrismaClient();
@@ -29,6 +31,7 @@ const account = new Account(prisma);
 app.use("/api/room", room.setup());
 app.use("/api/account", account.setup());
 
+app.use(errorHandler);
 /*
 app.get("/api/get_speakers", getSpeakers);
 app.get("/api/page/:page", page);

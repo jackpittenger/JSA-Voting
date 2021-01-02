@@ -1,4 +1,7 @@
 import { Router, Response } from "express";
+
+import { errorWrapper } from "./middleware/errors";
+
 import pin from "./helpers/pin";
 
 import type { PrismaClient } from "@prisma/client";
@@ -14,21 +17,25 @@ class Room {
   }
 
   setup(): Router {
-    this.router.get("", (req: Request, res: Response) => {
-      return res.status(200).send();
-    });
+    this.router.get(
+      "",
+      errorWrapper((req: Request, res: Response) => {
+        return res.status(200).send();
+      })
+    );
     this.router.post(
       "",
-      async (req: Request<RoomPostBody, Query, Params>, res: Response) => {
-        if (
-          !req.body.name ||
-          req.body.name.length > 48 ||
-          req.body.name.length < 1
-        )
-          return res.status(400).json({
-            error: "Missing 'name', which must be between 1 and 48 characters",
-          });
-        try {
+      errorWrapper(
+        async (req: Request<RoomPostBody, Query, Params>, res: Response) => {
+          if (
+            !req.body.name ||
+            req.body.name.length > 48 ||
+            req.body.name.length < 1
+          )
+            return res.status(400).json({
+              error:
+                "Missing 'name', which must be between 1 and 48 characters",
+            });
           const room = await this.prisma.room.create({
             data: {
               name: req.body.name,
@@ -41,11 +48,8 @@ class Room {
             },
           });
           res.status(201).json({ result: room });
-        } catch (err) {
-          console.error(err);
-          return res.status(500).json({ error: err });
         }
-      }
+      )
     );
     this.router.patch("/conclude", (req: Request, res: Response) => {});
     this.router.patch("/byline", (req: Request, res: Response) => {});

@@ -2,6 +2,7 @@ import { Router, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import auth from "./middleware/auth";
+import { errorWrapper } from "./middleware/errors";
 
 import pin from "./helpers/pin";
 
@@ -24,16 +25,17 @@ class Account {
   setup(): Router {
     this.router.post(
       "",
-      async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
-        if (
-          !req.body.token ||
-          req.body.token.length > 48 ||
-          req.body.token.length < 1
-        )
-          return res.status(400).json({
-            error: "Missing 'token', which must be between 1 and 48 characters",
-          });
-        try {
+      errorWrapper(
+        async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
+          if (
+            !req.body.token ||
+            req.body.token.length > 48 ||
+            req.body.token.length < 1
+          )
+            return res.status(400).json({
+              error:
+                "Missing 'token', which must be between 1 and 48 characters",
+            });
           const account = await this.prisma.account.create({
             data: {
               token: req.body.token,
@@ -50,52 +52,54 @@ class Account {
             },
           });
           res.status(201).json(account);
-        } catch (err) {
-          console.error(err);
-          res.status(500).json({ error: err });
         }
-      }
+      )
     );
     this.router.delete(
       "",
-      async (req: Request<AccountDeleteBody, Query, Params>, res: Response) => {
-        if (
-          !req.body.token ||
-          req.body.token.length > 48 ||
-          req.body.token.length < 1
-        )
-          return res.status(400).json({
-            error: "Missing 'token', which must be between 1 and 48 characters",
-          });
-        try {
+      errorWrapper(
+        async (
+          req: Request<AccountDeleteBody, Query, Params>,
+          res: Response
+        ) => {
+          if (
+            !req.body.token ||
+            req.body.token.length > 48 ||
+            req.body.token.length < 1
+          )
+            return res.status(400).json({
+              error:
+                "Missing 'token', which must be between 1 and 48 characters",
+            });
           await this.prisma.account.delete({
             where: {
               token: req.body.token,
             },
           });
           return res.status(204).send();
-        } catch (err) {
-          console.error(err);
-          return res.status(500).json({ error: err });
         }
-      }
+      )
     );
     this.router.post(
       "/login",
-      async (req: Request<AccountLoginBody, Query, Params>, res: Response) => {
-        if (
-          !req.body.token ||
-          req.body.token.length > 48 ||
-          req.body.token.length < 1
-        )
-          return res.status(400).json({
-            error: "Missing 'token', which must be between 1 and 48 characters",
-          });
-        if (!req.body.pin || req.body.pin.length != 7)
-          return res.status(400).json({
-            error: "Missing 'pin', which must be 7 characters",
-          });
-        try {
+      errorWrapper(
+        async (
+          req: Request<AccountLoginBody, Query, Params>,
+          res: Response
+        ) => {
+          if (
+            !req.body.token ||
+            req.body.token.length > 48 ||
+            req.body.token.length < 1
+          )
+            return res.status(400).json({
+              error:
+                "Missing 'token', which must be between 1 and 48 characters",
+            });
+          if (!req.body.pin || req.body.pin.length != 7)
+            return res.status(400).json({
+              error: "Missing 'pin', which must be 7 characters",
+            });
           const account = await this.prisma.account.findUnique({
             where: {
               token: req.body.token,
@@ -120,11 +124,8 @@ class Account {
             { expiresIn: "7d" }
           );
           return res.status(200).json({ token: token });
-        } catch (err) {
-          console.error(err);
-          res.status(500).json({ error: err });
         }
-      }
+      )
     );
     return this.router;
   }
