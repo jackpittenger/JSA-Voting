@@ -1,4 +1,4 @@
-import { Router, Response } from "express";
+import { Router } from "express";
 import jwt from "jsonwebtoken";
 
 import auth from "./middleware/auth";
@@ -9,6 +9,7 @@ import pin from "./helpers/pin";
 import { Role } from "../types/enums";
 
 import type { PrismaClient } from "@prisma/client";
+import type { Response } from "express";
 import type { Request, Query, Params } from "../types/post";
 import type {
   AccountDeleteBody,
@@ -16,7 +17,7 @@ import type {
   AccountPostBody,
 } from "../types/account";
 
-class Account {
+export default class Account {
   router: Router;
   prisma: PrismaClient;
   constructor(prisma: PrismaClient) {
@@ -133,5 +134,3 @@ class Account {
     return this.router;
   }
 }
-
-export default Account;

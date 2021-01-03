@@ -1,5 +1,3 @@
-import { Request } from "./post";
-
 export interface AccountDeleteBody {
   token: string;
 }

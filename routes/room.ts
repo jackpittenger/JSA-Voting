@@ -5,10 +5,10 @@ import { errorWrapper } from "./middleware/errors";
 import pin from "./helpers/pin";
 
 import type { PrismaClient } from "@prisma/client";
-import { Request, Query, Params } from "../types/post";
-import { RoomPostBody } from "../types/room";
+import type { Request, Query, Params } from "../types/post";
+import type { RoomPostBody } from "../types/room";
 
-class Room {
+export default class Room {
   router: Router;
   prisma: PrismaClient;
   constructor(prisma: PrismaClient) {
@@ -59,5 +59,3 @@ class Room {
     return this.router;
   }
 }
-
-export default Room;

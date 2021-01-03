@@ -22,14 +22,17 @@ app.use(cookieParser());
 //require("./middleware/socket").setup(io);
 app.use(bodyParser.json());
 
-import Room from "./routes/room";
 import Account from "./routes/account";
+import Convention from "./routes/convention";
+import Room from "./routes/room";
 
-const room = new Room(prisma);
 const account = new Account(prisma);
+const convention = new Convention(prisma);
+const room = new Room(prisma);
 
-app.use("/api/room", room.setup());
 app.use("/api/account", account.setup());
+app.use("/api/convention", convention.setup());
+app.use("/api/room", room.setup());
 
 app.use(errorHandler);
 /*
