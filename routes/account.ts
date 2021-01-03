@@ -55,7 +55,7 @@ export default class Account {
               pin: true,
             },
           });
-          res.status(201).json(account);
+          return res.status(201).json(account);
         }
       )
     );

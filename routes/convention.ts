@@ -6,7 +6,8 @@ import { BadRequest, NotFound } from "./middleware/errors";
 
 import { Role } from "../types/enums";
 
-import type { Request, Query } from "../types/post";
+import type { Request, Query, Params } from "../types/post";
+import type { ConventionPostBody } from "../types/convention";
 import type { PrismaClient } from "@prisma/client";
 import type { Response } from "express";
 import type { GetParams } from "../types/convention";
@@ -38,6 +39,34 @@ export default class Convention {
           });
           if (!convention) throw new NotFound("No convention found!");
           res.status(200).json({ convention: convention });
+        }
+      )
+    );
+    this.router.post(
+      "",
+      errorWrapper(
+        async (
+          req: Request<ConventionPostBody, Query, Params>,
+          res: Response
+        ) => {
+          if (
+            !req.body.name ||
+            req.body.name.length > 72 ||
+            req.body.name.length < 1
+          ) {
+            throw new BadRequest(
+              "Name 'name' is required, between 1-72 characters"
+            );
+          }
+          const convention = await this.prisma.convention.create({
+            data: {
+              name: req.body.name,
+            },
+            select: {
+              name: true,
+            },
+          });
+          return res.status(201).json(convention);
         }
       )
     );

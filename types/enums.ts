@@ -2,6 +2,7 @@
 export enum Role {
   MOD,
   ADMIN,
+  MANAGER,
   DEV,
 }
 

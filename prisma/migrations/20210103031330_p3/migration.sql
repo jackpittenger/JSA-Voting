@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('MOD', 'ADMIN', 'DEV');
+CREATE TYPE "Role" AS ENUM ('MOD', 'ADMIN', 'MANAGER', 'DEV');
 
 -- CreateEnum
 CREATE TYPE "Vote" AS ENUM ('YEA', 'NAY', 'ABS');
@@ -19,8 +19,10 @@ CREATE TABLE "Account" (
 -- CreateTable
 CREATE TABLE "Convention" (
 "id" SERIAL,
+    "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "roomsOpen" BOOLEAN NOT NULL DEFAULT false,
+    "concluded" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );
@@ -60,6 +62,9 @@ CREATE TABLE "Voter" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account.token_unique" ON "Account"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Convention.name_unique" ON "Convention"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Room.accessCode_unique" ON "Room"("accessCode");
