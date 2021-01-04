@@ -18,9 +18,7 @@ function Header(props) {
 
     props.auth
       .login(token, pin)
-      .then(() => {
-        history.push("/dashboard/");
-      })
+      .then(props.logIn)
       .catch((err) => {
         props.createError(err.response.status, err.response.data.error);
       });

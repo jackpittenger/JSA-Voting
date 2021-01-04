@@ -9,22 +9,34 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 
-function Admin(props) {
+import type AuthService from "../../services/AuthService";
+
+type Props = {
+  auth: AuthService;
+  createDialog: Function;
+  createError: Function;
+};
+
+function Admin(props: Props) {
   const [roomsOpen, setRoomsOpen] = useState(false);
   useEffect(() => {
     axios.get("/api/rooms_open").then((res) => setRoomsOpen(res.data.open));
   }, []);
 
   function toggleRoomsOpen() {
-    props.auth.fetch("/api/rooms_toggle", { method: "PATCH" }, (_, status) => {
-      if (status >= 400)
-        return props.createError(status, "Failed toggling rooms");
-      props.createDialog(
-        "Success!",
-        "Room results turned " + (roomsOpen ? "off" : "on")
-      );
-      setRoomsOpen(!roomsOpen);
-    });
+    props.auth.fetch(
+      "/api/rooms_toggle",
+      { method: "PATCH" },
+      (_: any, status: number) => {
+        if (status >= 400)
+          return props.createError(status, "Failed toggling rooms");
+        props.createDialog(
+          "Success!",
+          "Room results turned " + (roomsOpen ? "off" : "on")
+        );
+        setRoomsOpen(!roomsOpen);
+      }
+    );
   }
 
   return (

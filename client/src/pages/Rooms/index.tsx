@@ -1,33 +1,43 @@
 import React, { useState, useEffect } from "react";
 
-import Header from "../../components/Header";
 import NavigationHeader from "./NavigationHeader";
 import Card from "./Card";
 import List from "./List";
-import AuthService from "../../services/AuthService";
 
-export default function Room() {
-  const Auth = new AuthService();
+import type AuthService from "../../services/AuthService";
+
+type Props = {
+  auth: AuthService;
+};
+
+export default function Room(props: Props) {
   const [rooms, setRooms] = useState([]);
   const [view, setView] = useState("card");
   const [maxPages, setMaxPages] = useState(1);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    Auth.fetch("/api/page/" + page, { method: "GET" }, (res, status) => {
-      if (status >= 400) return console.error(res.error);
-      setRooms(res.res);
-    });
-    Auth.fetch("/api/total_pages", { method: "GET" }, (res, status) => {
-      if (status >= 400) return console.error(res.error);
-      setMaxPages(res.count);
-    });
+    props.auth.fetch(
+      "/api/page/" + page,
+      { method: "GET" },
+      (res: any, status: number) => {
+        if (status >= 400) return console.error(res.error);
+        setRooms(res.res);
+      }
+    );
+    props.auth.fetch(
+      "/api/total_pages",
+      { method: "GET" },
+      (res: any, status: number) => {
+        if (status >= 400) return console.error(res.error);
+        setMaxPages(res.count);
+      }
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   return (
     <div>
-      <Header auth={Auth} />
       <br />
       <NavigationHeader
         view={view}

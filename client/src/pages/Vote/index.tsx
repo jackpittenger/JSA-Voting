@@ -1,35 +1,37 @@
 import React, { useState } from "react";
 import "./App.css";
 
-import Header from "../../components/Header";
 import NameForm from "./NameForm";
 import SpeakerForm from "./SpeakerForm";
 import SubmitForm from "./SubmitForm";
-import AuthService from "../../services/AuthService";
 
-export default function Vote() {
-  const Auth = new AuthService();
-  const [isTokenVoter, setIsTokenVoter] = useState(Auth.setIsTokenVoter);
+import type AuthService from "../../services/AuthService";
+
+type Props = {
+  auth: AuthService;
+};
+
+export default function Vote(props: Props) {
+  const [isTokenVoter, setIsTokenVoter] = useState(props.auth.isTokenVoter());
   const [voted, setVoted] = useState(false);
   return (
-    <div className="App">
-      <Header auth={Auth} />
+    <div>
       {isTokenVoter ? (
         !voted ? (
           <SubmitForm
             setIsTokenVoter={setIsTokenVoter}
             setVoted={setVoted}
-            auth={Auth}
+            auth={props.auth}
           />
         ) : (
           <SpeakerForm
             setIsTokenVoter={setIsTokenVoter}
             setVoted={setVoted}
-            auth={Auth}
+            auth={props.auth}
           />
         )
       ) : (
-        <NameForm setIsTokenVoter={setIsTokenVoter} auth={Auth} />
+        <NameForm setIsTokenVoter={setIsTokenVoter} auth={props.auth} />
       )}
     </div>
   );
