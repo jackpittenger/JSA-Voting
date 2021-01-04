@@ -21,6 +21,22 @@ export default class Convention {
   }
   setup(): Router {
     this.router.get(
+      "/list",
+      errorWrapper(async (_req: Request, res: Response) => {
+        const list = await this.prisma.convention.findMany({
+          where: {
+            concluded: false,
+          },
+          select: {
+            name: true,
+            createdAt: true,
+            roomsOpen: true,
+          },
+        });
+        res.status(200).json({ conventions: list });
+      })
+    );
+    this.router.get(
       "/name/:name",
       errorWrapper(
         async (req: Request<Body, Query, GetParams>, res: Response) => {
