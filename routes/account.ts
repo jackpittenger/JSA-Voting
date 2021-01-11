@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 import auth from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
+import { BadRequest, NotFound } from "./middleware/errors";
 
 import pin from "./helpers/pin";
 
@@ -36,10 +37,9 @@ export default class Account {
             req.body.token.length > 48 ||
             req.body.token.length < 1
           )
-            return res.status(400).json({
-              error:
-                "Missing 'token', which must be between 1 and 48 characters",
-            });
+            throw new BadRequest(
+              "Missing 'token', which must be between 1 and 48 characters"
+            );
           const account = await this.prisma.account.create({
             data: {
               token: req.body.token,
@@ -71,10 +71,9 @@ export default class Account {
             req.body.token.length > 48 ||
             req.body.token.length < 1
           )
-            return res.status(400).json({
-              error:
-                "Missing 'token', which must be between 1 and 48 characters",
-            });
+            throw new BadRequest(
+              "Missing 'token', which must be between 1 and 48 characters"
+            );
           await this.prisma.account.delete({
             where: {
               token: req.body.token,
