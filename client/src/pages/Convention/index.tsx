@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import Layout from "../../layout";
+
 import history from "../../services/history";
 
 import Button from "@material-ui/core/Button";
@@ -29,7 +31,7 @@ function Convention(props: Props) {
     [props.auth]
   );
   return (
-    <div>
+    <Layout auth={props.auth}>
       <h1 style={{ textAlign: "center" }}>
         Welcome JSAer{" "}
         <span role="img" aria-label="Wave">
@@ -60,7 +62,7 @@ function Convention(props: Props) {
       ) : (
         <div>No active conventions!</div>
       )}
-    </div>
+    </Layout>
   );
 }
 

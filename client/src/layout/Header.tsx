@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { useStateContext } from "../routes/state";
+
 import history from "../services/history";
 
 import LoginForm from "../components/LoginForm";
@@ -14,11 +16,14 @@ import type AuthService from "../services/AuthService";
 
 type Props = {
   auth: AuthService;
+  location: any;
 };
 
 export default function Header(props: Props) {
   const [formEnabled, setFormEnabled] = useState(false);
   const [loggedIn, setLoggedIn] = useState(props.auth.loggedIn());
+
+  const { state, dispatch } = useStateContext();
 
   function logIn() {
     setFormEnabled(false);
@@ -46,6 +51,19 @@ export default function Header(props: Props) {
                 </Typography>
               </Button>
             </Grid>
+            {state.roomsOpen &&
+            window.location.pathname.startsWith("/convention") ? (
+              <Grid item style={{ marginLeft: "auto", marginRight: "inherit" }}>
+                <Button
+                  onClick={() => {
+                    history.push(window.location.pathname + "/rooms");
+                  }}
+                  color="inherit"
+                >
+                  RESULTS
+                </Button>
+              </Grid>
+            ) : null}
             {loggedIn ? (
               <Grid item style={{ marginLeft: "auto", marginRight: "inherit" }}>
                 <Button

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import Layout from "../../layout";
+
 import NavigationHeader from "./NavigationHeader";
 import Card from "./Card";
 import List from "./List";
@@ -37,7 +39,7 @@ export default function Room(props: Props) {
   }, [page]);
 
   return (
-    <div>
+    <Layout auth={props.auth}>
       <br />
       <NavigationHeader
         view={view}
@@ -62,6 +64,6 @@ export default function Room(props: Props) {
           <br />
         </div>
       )}
-    </div>
+    </Layout>
   );
 }

@@ -1,15 +1,21 @@
 import React from "react";
 
-type Props = {};
+import Layout from "../../layout";
 
-export default function NotFound(_props: Props) {
+import AuthService from "../../services/AuthService";
+
+type Props = {
+  auth: AuthService;
+};
+
+export default function NotFound(props: Props) {
   return (
-    <div>
+    <Layout auth={props.auth}>
       <h1 style={{ textAlign: "center" }}>
         404
         <br />
         Not Found
       </h1>
-    </div>
+    </Layout>
   );
 }

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import Layout from "../../layout";
+
 import DashboardHeader from "../../layout/DashboardHeader";
 
 import withAuth from "../../services/withAuth";
@@ -22,7 +24,7 @@ function Dashboard(props: Props) {
   const path = props.location.pathname.split("/");
   const mode = path[path.length - 1];
   return (
-    <div>
+    <Layout auth={props.auth}>
       <DashboardHeader auth={props.auth} />
       {mode === "dashboard" || mode.length === 0 ? (
         <Mod auth={props.auth} />
@@ -33,7 +35,7 @@ function Dashboard(props: Props) {
       {mode === "dev" && (role === "ADMIN" || role === "DEV") ? (
         <Dev auth={props.auth} />
       ) : null}
-    </div>
+    </Layout>
   );
 }
 

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
+import Layout from "../../layout";
+
+import { useStateContext } from "../../routes/state";
+import { ActionType } from "../../routes/reducer";
+
 import NameForm from "./NameForm";
 import SpeakerForm from "./SpeakerForm";
 import SubmitForm from "./SubmitForm";
@@ -16,6 +21,9 @@ type Props = {
 export default function Vote(props: Props) {
   const [isTokenVoter, setIsTokenVoter] = useState(props.auth.isTokenVoter());
   const [voted, setVoted] = useState(false);
+
+  const { state, dispatch } = useStateContext();
+
   useEffect(
     function () {
       const arr = props.location.pathname.split("/");
@@ -27,12 +35,18 @@ export default function Vote(props: Props) {
       ) {
         if (status > 299) return props.history.push("/404");
         console.log(res);
+        // @ts-ignore
+        dispatch({
+          type: res.convention.roomsOpen
+            ? ActionType.ROOMS_OPEN
+            : ActionType.ROOMS_CLOSED,
+        });
       });
     },
     [props.auth, props.location.pathname, props.history]
   );
   return (
-    <div>
+    <Layout auth={props.auth}>
       {isTokenVoter ? (
         !voted ? (
           <SubmitForm
@@ -50,6 +64,6 @@ export default function Vote(props: Props) {
       ) : (
         <NameForm setIsTokenVoter={setIsTokenVoter} auth={props.auth} />
       )}
-    </div>
+    </Layout>
   );
 }
