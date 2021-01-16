@@ -1,5 +1,7 @@
 import { Router } from "express";
 
+import paramValid from "./helpers/paramValid";
+
 import auth from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 import { BadRequest, NotFound } from "./middleware/errors";
@@ -40,9 +42,7 @@ export default class Convention {
       "/name/:name",
       errorWrapper(
         async (req: Request<Body, Query, GetParams>, res: Response) => {
-          if (!req.params || !req.params.name) {
-            throw new BadRequest("Missing 'name'!");
-          }
+          paramValid(req.params.name, 1, 72, "name");
           const convention = await this.prisma.convention.findUnique({
             where: {
               name: req.params.name,
@@ -65,15 +65,7 @@ export default class Convention {
           req: Request<ConventionPostBody, Query, Params>,
           res: Response
         ) => {
-          if (
-            !req.body.name ||
-            req.body.name.length > 72 ||
-            req.body.name.length < 1
-          ) {
-            throw new BadRequest(
-              "Name 'name' is required, between 1-72 characters"
-            );
-          }
+          paramValid(req.body.name, 1, 72, "name");
           const convention = await this.prisma.convention.create({
             data: {
               name: req.body.name,

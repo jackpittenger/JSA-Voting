@@ -1,6 +1,8 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 
+import paramValid from "./helpers/paramValid";
+
 import auth from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 import { BadRequest, NotFound } from "./middleware/errors";
@@ -32,14 +34,7 @@ export default class Account {
       auth(Role.ADMIN),
       errorWrapper(
         async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
-          if (
-            !req.body.token ||
-            req.body.token.length > 48 ||
-            req.body.token.length < 1
-          )
-            throw new BadRequest(
-              "Missing 'token', which must be between 1 and 48 characters"
-            );
+          paramValid(req.body.token, 1, 48, "token");
           const account = await this.prisma.account.create({
             data: {
               token: req.body.token,
@@ -66,14 +61,7 @@ export default class Account {
           req: Request<AccountDeleteBody, Query, Params>,
           res: Response
         ) => {
-          if (
-            !req.body.token ||
-            req.body.token.length > 48 ||
-            req.body.token.length < 1
-          )
-            throw new BadRequest(
-              "Missing 'token', which must be between 1 and 48 characters"
-            );
+          paramValid(req.body.token, 1, 48, "token");
           await this.prisma.account.delete({
             where: {
               token: req.body.token,
@@ -90,19 +78,8 @@ export default class Account {
           req: Request<AccountLoginBody, Query, Params>,
           res: Response
         ) => {
-          if (
-            !req.body.token ||
-            req.body.token.length > 48 ||
-            req.body.token.length < 1
-          )
-            return res.status(400).json({
-              error:
-                "Missing 'token', which must be between 1 and 48 characters",
-            });
-          if (!req.body.pin || req.body.pin.length != 7)
-            return res.status(400).json({
-              error: "Missing 'pin', which must be 7 characters",
-            });
+          paramValid(req.body.token, 1, 48, "token");
+          paramValid(req.body.pin, 7, 7, "pin");
           const account = await this.prisma.account.findUnique({
             where: {
               token: req.body.token,

@@ -22,7 +22,7 @@ export default function Vote(props: Props) {
   const [isTokenVoter, setIsTokenVoter] = useState(props.auth.isTokenVoter());
   const [voted, setVoted] = useState(false);
 
-  const { state, dispatch } = useStateContext();
+  const { dispatch } = useStateContext();
 
   useEffect(
     function () {
@@ -43,7 +43,7 @@ export default function Vote(props: Props) {
         });
       });
     },
-    [props.auth, props.location.pathname, props.history]
+    [props.auth, props.location.pathname, props.history, dispatch]
   );
   return (
     <Layout auth={props.auth}>

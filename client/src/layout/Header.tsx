@@ -16,14 +16,13 @@ import type AuthService from "../services/AuthService";
 
 type Props = {
   auth: AuthService;
-  location: any;
 };
 
 export default function Header(props: Props) {
   const [formEnabled, setFormEnabled] = useState(false);
   const [loggedIn, setLoggedIn] = useState(props.auth.loggedIn());
 
-  const { state, dispatch } = useStateContext();
+  const { state } = useStateContext();
 
   function logIn() {
     setFormEnabled(false);

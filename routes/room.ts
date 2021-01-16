@@ -2,6 +2,7 @@ import { Router, Response } from "express";
 
 import { errorWrapper } from "./middleware/errors";
 
+import paramValid from "./helpers/paramValid";
 import pin from "./helpers/pin";
 
 import type { PrismaClient } from "@prisma/client";
@@ -27,15 +28,7 @@ export default class Room {
       "",
       errorWrapper(
         async (req: Request<RoomPostBody, Query, Params>, res: Response) => {
-          if (
-            !req.body.name ||
-            req.body.name.length > 48 ||
-            req.body.name.length < 1
-          )
-            return res.status(400).json({
-              error:
-                "Missing 'name', which must be between 1 and 48 characters",
-            });
+          paramValid(req.body.name, 1, 48, "name");
           const room = await this.prisma.room.create({
             data: {
               name: req.body.name,
