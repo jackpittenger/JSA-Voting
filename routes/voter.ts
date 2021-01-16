@@ -33,9 +33,11 @@ export default class Voter {
             },
             select: {
               id: true,
+              open: true,
             },
           });
           if (!room) throw new BadRequest("Invalid code!");
+          if (!room.open) throw new BadRequest("This room isn't open!");
           const exists = await this.prisma.voter.findFirst({
             where: {
               firstName: req.body.firstName,
