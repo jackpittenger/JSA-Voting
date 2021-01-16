@@ -39,13 +39,13 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ) {
-  console.error("ERROR in handler: " + err.stack);
   if (err instanceof GeneralError) {
     return res.status(err.getCode()).json({
       error: err.message,
     });
   }
 
+  console.error("ERROR in handler: " + err.stack);
   return res.status(500).json({
     error: err.message,
   });
