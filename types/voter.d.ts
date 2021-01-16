@@ -4,3 +4,7 @@ export interface VoterPostBody {
   school: string;
   code: string;
 }
+
+export interface VotePostBody {
+  vote: string;
+}

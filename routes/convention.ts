@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import paramValid from "./helpers/paramValid";
+import { paramValid } from "./helpers/paramValid";
 
 import auth from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";

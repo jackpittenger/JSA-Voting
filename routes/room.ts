@@ -2,7 +2,7 @@ import { Router, Response } from "express";
 
 import { errorWrapper } from "./middleware/errors";
 
-import paramValid from "./helpers/paramValid";
+import { paramValid } from "./helpers/paramValid";
 import pin from "./helpers/pin";
 
 import type { PrismaClient } from "@prisma/client";

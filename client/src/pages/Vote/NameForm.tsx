@@ -8,6 +8,8 @@ import TextField from "@material-ui/core/TextField";
 
 import ErrorPopup from "../../components/ErrorPopup";
 
+import type AuthService from "../../services/AuthService";
+
 const useStyles = makeStyles(() => ({
   form: {
     paddingTop: 35,
@@ -29,7 +31,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function NameForm(props) {
+type Props = {
+  setIsTokenVoter: Function;
+  createError: Function;
+  auth: AuthService;
+};
+
+function NameForm(props: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [school, setSchool] = useState("");
@@ -55,11 +63,11 @@ function NameForm(props) {
 
   function submitCode() {
     axios
-      .post("/api/auth_code", {
-        first_name: firstName,
-        code: code,
-        last_name: lastName,
+      .post("/api/voter", {
+        firstName: firstName,
+        lastName: lastName,
         school: school,
+        code: code,
       })
       .then((res) => {
         props.auth.setToken(res.data.token);

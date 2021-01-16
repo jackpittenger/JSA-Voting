@@ -1,7 +1,7 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 
-import paramValid from "./helpers/paramValid";
+import { paramValid } from "./helpers/paramValid";
 
 import auth from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";

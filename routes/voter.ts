@@ -1,13 +1,13 @@
 import { Router, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import paramValid from "./helpers/paramValid";
+import { paramValid, paramValidEnum } from "./helpers/paramValid";
 
 import { errorWrapper, BadRequest } from "./middleware/errors";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
-import type { VoterPostBody } from "../types/voter";
+import type { VotePostBody, VoterPostBody } from "../types/voter";
 
 export default class Voter {
   router: Router;
@@ -81,7 +81,14 @@ export default class Voter {
         }
       )
     );
-
+    this.router.post(
+      "/vote",
+      errorWrapper(
+        async (req: Request<VotePostBody, Query, Params>, res: Response) => {
+          paramValidEnum(req.body.vote, "vote", ["yea", "nay", "abs"]);
+        }
+      )
+    );
     return this.router;
   }
 }
