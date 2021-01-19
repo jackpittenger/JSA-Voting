@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { paramValid } from "./helpers/paramValid";
 
-import auth from "./middleware/auth";
+import { roleVerify } from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 import { BadRequest, NotFound } from "./middleware/errors";
 
@@ -31,7 +31,7 @@ export default class Account {
   setup(): Router {
     this.router.post(
       "",
-      auth(Role.ADMIN),
+      roleVerify(Role.ADMIN),
       errorWrapper(
         async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
           paramValid(req.body.token, 1, 48, "token");

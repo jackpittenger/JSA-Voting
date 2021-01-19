@@ -1,13 +1,16 @@
 import { Router, Response } from "express";
 import jwt from "jsonwebtoken";
 
+import { Vote } from "@prisma/client";
+
 import { paramValid, paramValidEnum } from "./helpers/paramValid";
 
+import { passToken } from "./middleware/auth";
 import { errorWrapper, BadRequest } from "./middleware/errors";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
-import type { VotePostBody, VoterPostBody } from "../types/voter";
+import type { VotePostBody, VoterPostBody, VoterToken } from "../types/voter";
 
 export default class Voter {
   router: Router;
@@ -63,6 +66,7 @@ export default class Voter {
               Room: {
                 select: {
                   name: true,
+                  accessCode: true,
                 },
               },
             },
@@ -83,9 +87,49 @@ export default class Voter {
     );
     this.router.post(
       "/vote",
+      passToken,
       errorWrapper(
         async (req: Request<VotePostBody, Query, Params>, res: Response) => {
-          paramValidEnum(req.body.vote, "vote", ["yea", "nay", "abs"]);
+          paramValidEnum(req.body.vote, "vote", ["YEA", "NAY", "ABS"]);
+          //@ts-ignore
+          const token: VoterToken = req.token;
+          const room = await this.prisma.room.findUnique({
+            where: {
+              accessCode: token.room.accessCode,
+            },
+            select: {
+              id: true,
+              votingOpen: true,
+            },
+          });
+          if (!room) throw new BadRequest("Invalid room!");
+          if (!room.votingOpen)
+            throw new BadRequest(
+              "Room not open for voting! Wait for your moderator"
+            );
+          const voter = await this.prisma.voter.findFirst({
+            where: {
+              firstName: token.firstName,
+              lastName: token.lastName,
+              school: token.school,
+              roomId: room.id,
+            },
+            select: {
+              id: true,
+              vote: true,
+            },
+          });
+          if (voter.vote !== null)
+            throw new BadRequest("You've already voted!");
+          await this.prisma.voter.update({
+            where: {
+              id: voter.id,
+            },
+            data: {
+              vote: Vote[req.body.vote],
+            },
+          });
+          res.status(200).json({ success: true });
         }
       )
     );

@@ -11,6 +11,10 @@ export class GeneralError extends Error {
     if (this instanceof BadRequest) {
       return 400;
     }
+    if (this instanceof Unauthorized) {
+      return 401;
+    }
+
     if (this instanceof NotFound) {
       return 404;
     }
@@ -18,6 +22,7 @@ export class GeneralError extends Error {
   }
 }
 
+export class Unauthorized extends GeneralError {}
 export class BadRequest extends GeneralError {}
 export class NotFound extends GeneralError {}
 

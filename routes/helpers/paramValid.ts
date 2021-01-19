@@ -17,7 +17,7 @@ export function paramValidEnum(
   desc: string,
   enumStrings: String[]
 ) {
-  if (!value || enumStrings.indexOf(value) !== -1)
+  if (!value || enumStrings.indexOf(value) === -1)
     throwError(`Missing/invalid '${desc}'!`);
 }
 

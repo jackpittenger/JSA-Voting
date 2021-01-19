@@ -44,22 +44,11 @@ app.get("/api/page/:page", page);
 app.get("/api/rooms_open", roomsOpen);
 app.get("/api/total_pages", getTotalPages);
 app.post("/api/add_speaker", addSpeaker);
-app.post("/api/auth_code", authenticateCode);
-.app.post("/api/create_room", createRoom);
-.app.post("/api/create_user", createUser);
-.app.post("/api/get_room", getRoom);
-.app.post("/api/login", login);
 app.post("/api/speaker_vote", speakerVote);
 app.post("/api/submit_form", submitForm);
 app.post("/api/toggle_open", toggleOpen);
 app.post("/api/toggle_voting", toggleVoting);
-.app.patch("/api/conclude_room", concludeRoom);
-.app.patch("/api/room_byline", updateRoomByline);
-.app.patch("/api/rooms_toggle", roomsToggle);
-.app.delete("/api/clear_rooms", clearRooms);
-.app.delete("/api/delete_user", deleteUser);
 app.delete("/api/remove_speaker", removeSpeaker);
-.app.delete("/api/room", deleteRoom);
 */
 if (process.env.DEPLOY === "true") {
   app.use(express.static(path.join(__dirname, "./client/build")));
