@@ -8,7 +8,7 @@ import { ActionType } from "../../routes/reducer";
 
 import NameForm from "./NameForm";
 import SpeakerForm from "./SpeakerForm";
-import SubmitForm from "./SubmitForm";
+import VoteForm from "./VoteForm";
 
 import type AuthService from "../../services/AuthService";
 
@@ -49,7 +49,7 @@ export default function Vote(props: Props) {
     <Layout auth={props.auth}>
       {isTokenVoter ? (
         !voted ? (
-          <SubmitForm
+          <VoteForm
             setIsTokenVoter={setIsTokenVoter}
             setVoted={setVoted}
             auth={props.auth}

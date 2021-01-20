@@ -13,6 +13,8 @@ import Avatar from "@material-ui/core/Avatar";
 
 import ErrorPopup from "../../components/ErrorPopup";
 
+import type AuthService from "../../services/AuthService";
+
 const useStyles = makeStyles(() => ({
   list: {
     backgroundColor: "#fafafa",
@@ -21,28 +23,39 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function SpeakerForm(props) {
-  const [speaker, setSpeaker] = useState(null);
-  const [speakers, setSpeakers] = useState(null);
+type Props = {
+  auth: AuthService;
+  createError: Function;
+  setIsTokenVoter: Function;
+  setVoted: Function;
+};
+
+function SpeakerForm(props: Props) {
+  const [speaker, setSpeaker] = useState("");
+  const [speakers, setSpeakers] = useState<string[]>([]);
   const createError = props.createError;
   const setIsTokenVoter = props.setIsTokenVoter;
   const setVoted = props.setVoted;
   const classes = useStyles();
 
   useEffect(() => {
-    props.auth.fetch("/api/get_speakers", { method: "GET" }, (res, status) => {
-      if (status >= 400) createError(status, res.error);
-      else {
-        if (res.speakers.length === 0) {
-          setVoted(false);
-          props.auth.logout();
-          setIsTokenVoter(false);
-          history.push("/");
-        } else {
-          setSpeakers(res.speakers);
+    props.auth.fetch(
+      "/api/get_speakers",
+      { method: "GET" },
+      (res: { error?: string; speakers: string[] }, status: number) => {
+        if (status >= 400) createError(status, res.error);
+        else {
+          if (res.speakers.length === 0) {
+            setVoted(false);
+            props.auth.logout();
+            setIsTokenVoter(false);
+            history.push("/");
+          } else {
+            setSpeakers(res.speakers);
+          }
         }
       }
-    });
+    );
   }, [props.auth, setVoted, createError, setIsTokenVoter]);
 
   function submit() {
@@ -53,7 +66,7 @@ function SpeakerForm(props) {
     );
   }
 
-  function processReturn(res, status) {
+  function processReturn(res: { error?: string }, status: number) {
     if (status >= 400) {
       props.createError(status, res.error);
     } else {

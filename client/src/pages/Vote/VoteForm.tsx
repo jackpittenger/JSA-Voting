@@ -8,17 +8,25 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
 
-function SubmitForm(props) {
-  const [vote, setVote] = useState(null);
+import type AuthService from "../../services/AuthService";
+
+type Props = {
+  auth: AuthService;
+  createError: Function;
+  setVoted: Function;
+};
+
+function VoteForm(props: Props) {
+  const [vote, setVote] = useState("");
   function submit() {
     props.auth.fetch(
-      "/api/submit_form",
+      "/api/voter/vote",
       { method: "POST", body: JSON.stringify({ vote: vote }) },
       processReturn
     );
   }
 
-  function processReturn(res, status) {
+  function processReturn(res: { error: string }, status: number) {
     if (status >= 400) {
       props.createError(status, res.error);
     } else {
@@ -41,13 +49,9 @@ function SubmitForm(props) {
             value={vote}
             onChange={(e) => setVote(e.target.value)}
           >
-            <FormControlLabel value="yea" control={<Radio />} label="Yea" />
-            <FormControlLabel value="nay" control={<Radio />} label="Nay" />
-            <FormControlLabel
-              value="abstain"
-              control={<Radio />}
-              label="Abstain"
-            />
+            <FormControlLabel value="YEA" control={<Radio />} label="Yea" />
+            <FormControlLabel value="NAY" control={<Radio />} label="Nay" />
+            <FormControlLabel value="ABS" control={<Radio />} label="Abstain" />
           </RadioGroup>
         </FormControl>
         <div>
@@ -60,4 +64,4 @@ function SubmitForm(props) {
   );
 }
 
-export default ErrorPopup(SubmitForm);
+export default ErrorPopup(VoteForm);
