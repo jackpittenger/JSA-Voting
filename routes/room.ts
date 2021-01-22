@@ -1,5 +1,6 @@
 import { Router, Response } from "express";
 
+import { passToken } from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 
 import { paramValid } from "./helpers/paramValid";
@@ -8,6 +9,7 @@ import pin from "./helpers/pin";
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
 import type { RoomPostBody } from "../types/room";
+import type { VoterToken } from "../types/voter";
 
 export default class Room {
   router: Router;
@@ -40,9 +42,28 @@ export default class Room {
               },
             },
           });
-          res.status(201).json({ result: room });
+          return res.status(201).json({ result: room });
         }
       )
+    );
+    this.router.get(
+      "/speakers",
+      passToken,
+      async (req: Request, res: Response) => {
+        //@ts-ignore
+        const token: VoterToken = req.token;
+        const room = await this.prisma.room.findUnique({
+          where: {
+            accessCode: token.room.accessCode,
+          },
+          select: {
+            id: true,
+            speakers: true,
+          },
+        });
+        if (!room.id) return res.status(400).json({ error: "Room not found!" });
+        return res.status(200).json({ speakers: room.speakers });
+      }
     );
     this.router.patch("/conclude", (req: Request, res: Response) => {});
     this.router.patch("/byline", (req: Request, res: Response) => {});
