@@ -10,7 +10,12 @@ import { errorWrapper, BadRequest } from "./middleware/errors";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
-import type { VotePostBody, VoterPostBody, VoterToken } from "../types/voter";
+import type {
+  SpeakerPostBody,
+  VotePostBody,
+  VoterPostBody,
+  VoterToken,
+} from "../types/voter";
 
 export default class Voter {
   router: Router;
@@ -127,6 +132,51 @@ export default class Voter {
             },
             data: {
               vote: Vote[req.body.vote],
+            },
+          });
+          res.status(200).json({ success: true });
+        }
+      )
+    );
+    this.router.post(
+      "/speaker",
+      passToken,
+      errorWrapper(
+        async (req: Request<SpeakerPostBody, Query, Params>, res: Response) => {
+          //@ts-ignore
+          const token: VoterToken = req.token;
+          const room = await this.prisma.room.findUnique({
+            where: {
+              accessCode: token.room.accessCode,
+            },
+            select: {
+              id: true,
+              votingOpen: true,
+              speakers: true,
+            },
+          });
+          paramValidEnum(req.body.speaker, "speaker", room.speakers);
+          if (!room.votingOpen) throw new BadRequest("Voting not open!");
+          const voter = await this.prisma.voter.findFirst({
+            where: {
+              firstName: token.firstName,
+              lastName: token.lastName,
+              school: token.school,
+              roomId: room.id,
+            },
+            select: {
+              id: true,
+              speaker: true,
+            },
+          });
+          if (voter.speaker !== null)
+            throw new BadRequest("You've already selected a speaker!");
+          await this.prisma.voter.update({
+            where: {
+              id: voter.id,
+            },
+            data: {
+              speaker: req.body.speaker,
             },
           });
           res.status(200).json({ success: true });

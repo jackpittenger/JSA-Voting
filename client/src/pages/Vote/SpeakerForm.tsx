@@ -40,7 +40,7 @@ function SpeakerForm(props: Props) {
 
   useEffect(() => {
     props.auth.fetch(
-      "/api/get_speakers",
+      "/api/room/speakers",
       { method: "GET" },
       (res: { error?: string; speakers: string[] }, status: number) => {
         if (status >= 400) createError(status, res.error);
@@ -60,21 +60,19 @@ function SpeakerForm(props: Props) {
 
   function submit() {
     props.auth.fetch(
-      "/api/speaker_vote",
-      { method: "POST", body: JSON.stringify({ name: speaker }) },
-      processReturn
+      "/api/voter/speaker",
+      { method: "POST", body: JSON.stringify({ speaker: speaker }) },
+      (res: { error?: string }, status: number) => {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else {
+          props.setVoted(false);
+          props.auth.logout();
+          props.setIsTokenVoter(false);
+          history.push("/");
+        }
+      }
     );
-  }
-
-  function processReturn(res: { error?: string }, status: number) {
-    if (status >= 400) {
-      props.createError(status, res.error);
-    } else {
-      props.setVoted(false);
-      props.auth.logout();
-      props.setIsTokenVoter(false);
-      history.push("/");
-    }
   }
 
   return (

@@ -22,3 +22,7 @@ export interface VoterToken {
   iat: number;
   exp: number;
 }
+
+export interface SpeakerPostBody {
+  speaker: string;
+}
