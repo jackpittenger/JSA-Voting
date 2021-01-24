@@ -39,6 +39,11 @@ export default function Header(props: Props) {
             alignItems="center"
             container
             spacing={4}
+            style={{
+              justifyContent: "center",
+              marginTop: "0",
+              marginBottom: "0",
+            }}
           >
             <Grid item>
               <Button onClick={() => history.push("/")}>
@@ -50,44 +55,58 @@ export default function Header(props: Props) {
                 </Typography>
               </Button>
             </Grid>
-            {state.roomsOpen &&
-            window.location.pathname.startsWith("/convention") ? (
-              <Grid item style={{ marginLeft: "auto", marginRight: "inherit" }}>
+            <Grid
+              item
+              alignItems="center"
+              container
+              spacing={3}
+              style={{
+                marginLeft: "auto",
+                width: "auto",
+                padding: "0",
+                marginRight: "0",
+                justifyContent: "center",
+              }}
+            >
+              {state.roomsOpen &&
+              window.location.pathname.startsWith("/convention") ? (
+                <Grid item style={{ marginRight: "inherit" }}>
+                  <Button
+                    onClick={() => {
+                      history.push(window.location.pathname + "/rooms");
+                    }}
+                    color="inherit"
+                  >
+                    RESULTS
+                  </Button>
+                </Grid>
+              ) : null}
+              {loggedIn ? (
+                <Grid item style={{ marginRight: "inherit" }}>
+                  <Button
+                    onClick={() => {
+                      history.push("/dashboard");
+                    }}
+                    color="inherit"
+                  >
+                    Dashboard
+                  </Button>
+                </Grid>
+              ) : null}
+              <Grid item style={{ marginRight: "inherit" }}>
                 <Button
-                  onClick={() => {
-                    history.push(window.location.pathname + "/rooms");
-                  }}
+                  onClick={() =>
+                    loggedIn
+                      ? (props.auth.logout(),
+                        setLoggedIn(false),
+                        history.push("/"))
+                      : setFormEnabled(true)
+                  }
                   color="inherit"
                 >
-                  RESULTS
+                  {loggedIn ? "Logout" : "Login"}
                 </Button>
               </Grid>
-            ) : null}
-            {loggedIn ? (
-              <Grid item style={{ marginLeft: "auto", marginRight: "inherit" }}>
-                <Button
-                  onClick={() => {
-                    history.push("/dashboard");
-                  }}
-                  color="inherit"
-                >
-                  Dashboard
-                </Button>
-              </Grid>
-            ) : null}
-            <Grid item>
-              <Button
-                onClick={() =>
-                  loggedIn
-                    ? (props.auth.logout(),
-                      setLoggedIn(false),
-                      history.push("/"))
-                    : setFormEnabled(true)
-                }
-                color="inherit"
-              >
-                {loggedIn ? "Logout" : "Login"}
-              </Button>
             </Grid>
           </Grid>
         </Toolbar>
