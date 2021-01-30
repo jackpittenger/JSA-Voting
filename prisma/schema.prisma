@@ -13,8 +13,8 @@ model Account {
   token        String     @unique
   pin          String
   role         Role       @default(MOD)
-  conventionId Int
-  Convention   Convention @relation(fields: [conventionId], references: [id])
+  conventionId Int?
+  Convention   Convention? @relation(fields: [conventionId], references: [id])
 }
 
 model Convention {

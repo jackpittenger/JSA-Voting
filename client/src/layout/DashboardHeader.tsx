@@ -4,15 +4,20 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import history from "../services/history";
 
-export default function DashboardHeader(props) {
-  const permission = props.auth.getProfile().permission;
+type Props = {
+  nRole: number;
+};
+
+export default function DashboardHeader(props: Props) {
   return (
     <AppBar style={{ backgroundColor: "#3D78CC" }} position="static">
       <Toolbar>
-        <Button onClick={() => history.push("/dashboard")} color="inherit">
-          Mod
-        </Button>
-        {permission >= 2 ? (
+        {props.nRole >= 1 ? (
+          <Button onClick={() => history.push("/dashboard")} color="inherit">
+            Mod
+          </Button>
+        ) : null}
+        {props.nRole >= 2 ? (
           <Button
             onClick={() => history.push("/dashboard/admin")}
             color="inherit"
@@ -20,7 +25,15 @@ export default function DashboardHeader(props) {
             Admin
           </Button>
         ) : null}
-        {permission >= 3 ? (
+        {props.nRole >= 3 ? (
+          <Button
+            onClick={() => history.push("/dashboard/manager")}
+            color="inherit"
+          >
+            Manager
+          </Button>
+        ) : null}
+        {props.nRole >= 4 ? (
           <Button
             onClick={() => history.push("/dashboard/dev")}
             color="inherit"
