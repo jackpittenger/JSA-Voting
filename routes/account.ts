@@ -1,9 +1,9 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 
-import { paramValid } from "./helpers/paramValid";
+import { paramValid, paramValidEnum } from "./helpers/paramValid";
 
-import { roleVerify } from "./middleware/auth";
+import { passToken, roleVerify } from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 import { BadRequest, NotFound } from "./middleware/errors";
 
@@ -31,17 +31,23 @@ export default class Account {
   setup(): Router {
     this.router.post(
       "",
-      roleVerify(Role.ADMIN),
+      passToken,
       errorWrapper(
         async (req: Request<AccountPostBody, Query, Params>, res: Response) => {
-          paramValid(req.body.token, 1, 48, "token");
+          paramValid(req.body.token, 5, 24, "token");
+          if (!req.body.type) throw new BadRequest("Missing/invalid 'type'!");
+          paramValidEnum(req.body.type.toString(), "type", Object.values(Role));
+          console.log(req.body._token.role);
+          if (req.body._token.role <= req.body.type)
+            throw new BadRequest("Not high enough permissions!");
           const account = await this.prisma.account.create({
             data: {
               token: req.body.token,
               pin: pin(7),
+              role: req.body.type,
               Convention: {
                 connect: {
-                  id: 1,
+                  id: req.body._token.conventionId,
                 },
               },
             },

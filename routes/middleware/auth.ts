@@ -19,8 +19,7 @@ export function roleVerify(role: Role) {
 }
 
 export function passToken(req: Request, _res: Response, next: NextFunction) {
-  //@ts-ignore
-  req.token = getToken(req);
+  req.body._token = getToken(req);
   next();
 }
 

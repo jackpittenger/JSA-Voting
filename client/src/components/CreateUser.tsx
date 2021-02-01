@@ -6,7 +6,16 @@ import ErrorPopup from "./ErrorPopup";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
-function CreateUser(props) {
+import type AuthService from "../services/AuthService";
+
+type Props = {
+  auth: AuthService;
+  createError: Function;
+  createDialog: Function;
+  type: string;
+};
+
+function CreateUser(props: Props) {
   const [name, setName] = useState("");
   const [nameValid, setNameValid] = useState(false);
   const [buttonValid, setButtonValid] = useState(false);
@@ -21,7 +30,7 @@ function CreateUser(props) {
 
   function createUser() {
     props.auth.fetch(
-      "/api/create_user",
+      "/api/account",
       {
         method: "POST",
         body: JSON.stringify({ name: name, type: props.type }),
@@ -30,7 +39,7 @@ function CreateUser(props) {
     );
   }
 
-  function givePin(result, status) {
+  function givePin(result: { pin: number }, status: number) {
     if (status >= 400)
       return props.createError(status, "Failed creating a new user");
     props.createDialog(

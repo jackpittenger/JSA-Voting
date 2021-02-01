@@ -50,8 +50,7 @@ export default class Room {
       "/speakers",
       passToken,
       async (req: Request, res: Response) => {
-        //@ts-ignore
-        const token: VoterToken = req.token;
+        const token: VoterToken = req.body._token;
         const room = await this.prisma.room.findUnique({
           where: {
             accessCode: token.room.accessCode,

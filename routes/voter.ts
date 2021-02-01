@@ -96,11 +96,9 @@ export default class Voter {
       errorWrapper(
         async (req: Request<VotePostBody, Query, Params>, res: Response) => {
           paramValidEnum(req.body.vote, "vote", ["YEA", "NAY", "ABS"]);
-          //@ts-ignore
-          const token: VoterToken = req.token;
           const room = await this.prisma.room.findUnique({
             where: {
-              accessCode: token.room.accessCode,
+              accessCode: req.body._token.room.accessCode,
             },
             select: {
               id: true,
@@ -114,9 +112,9 @@ export default class Voter {
             );
           const voter = await this.prisma.voter.findFirst({
             where: {
-              firstName: token.firstName,
-              lastName: token.lastName,
-              school: token.school,
+              firstName: req.body._token.firstName,
+              lastName: req.body._token.lastName,
+              school: req.body._token.school,
               roomId: room.id,
             },
             select: {

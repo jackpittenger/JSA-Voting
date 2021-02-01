@@ -9,6 +9,7 @@ export interface VoterPostBody {
 
 export interface VotePostBody {
   vote: Vote;
+  _token: VoterToken;
 }
 
 export interface VoterToken {
@@ -25,4 +26,5 @@ export interface VoterToken {
 
 export interface SpeakerPostBody {
   speaker: string;
+  _token: VoterToken;
 }
