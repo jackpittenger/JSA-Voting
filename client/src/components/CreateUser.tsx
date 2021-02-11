@@ -33,7 +33,7 @@ function CreateUser(props: Props) {
       "/api/account",
       {
         method: "POST",
-        body: JSON.stringify({ name: name, type: props.type }),
+        body: JSON.stringify({ token: name, type: props.type }),
       },
       givePin
     );

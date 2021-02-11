@@ -44,7 +44,7 @@ function Admin(props: Props) {
       <Paper>
         Admin
         <br />
-        <CreateUser auth={props.auth} type={"mod"} />
+        <CreateUser auth={props.auth} type={"MOD"} />
         <br />
         <hr style={{ width: "25em", color: "#8080805c" }} />
         {roomsOpen ? (

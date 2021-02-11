@@ -17,14 +17,32 @@ type Props = {
 };
 
 function Manager(props: Props) {
+  function removeRooms() {
+    props.auth.fetch(
+      "/api/clear_rooms",
+      { method: "DELETE" },
+      (_: {}, status: number) => {
+        if (status >= 400)
+          return props.createError(status, "Failed toggling rooms");
+        props.createDialog("Success!", "All rooms deleted");
+      }
+    );
+  }
+
   return (
     <Grid container direction="column" justify="center" alignItems="stretch">
       <Paper>
         Manager
         <br />
-        <CreateUser auth={props.auth} type={"admin"} />
+        <CreateUser auth={props.auth} type={"ADMIN"} />
         <br />
         <hr style={{ width: "25em", color: "#8080805c" }} />
+        <div>
+          Delete all concluded rooms
+          <Button onClick={removeRooms} color="secondary">
+            Remove rooms
+          </Button>
+        </div>
         <br />
       </Paper>
     </Grid>

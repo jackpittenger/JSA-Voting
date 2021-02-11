@@ -60,6 +60,7 @@ export default class Convention {
     );
     this.router.post(
       "",
+      roleVerify(Role.DEV),
       errorWrapper(
         async (
           req: Request<ConventionPostBody, Query, Params>,
