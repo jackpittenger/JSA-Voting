@@ -2,14 +2,14 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 
 import { paramValid, paramValidEnum } from "./helpers/paramValid";
-
-import { passToken, roleVerify } from "./middleware/auth";
-import { errorWrapper } from "./middleware/errors";
-import { BadRequest, NotFound } from "./middleware/errors";
-
 import pin from "./helpers/pin";
+import { roleEnumToNum } from "./helpers/enumToNum";
 
-import { Role } from "../types/enums";
+import { passToken } from "./middleware/auth";
+import { errorWrapper } from "./middleware/errors";
+import { BadRequest } from "./middleware/errors";
+
+import { Role } from "@prisma/client";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Response } from "express";
@@ -37,8 +37,10 @@ export default class Account {
           paramValid(req.body.token, 5, 24, "token");
           if (!req.body.type) throw new BadRequest("Missing/invalid 'type'!");
           paramValidEnum(req.body.type.toString(), "type", Object.values(Role));
-          console.log(req.body._token.role);
-          if (req.body._token.role <= req.body.type)
+
+          if (
+            roleEnumToNum(req.body._token.role) <= roleEnumToNum(req.body.type)
+          )
             throw new BadRequest("Not high enough permissions!");
           const account = await this.prisma.account.create({
             data: {
@@ -62,12 +64,37 @@ export default class Account {
     );
     this.router.delete(
       "",
+      passToken,
       errorWrapper(
         async (
           req: Request<AccountDeleteBody, Query, Params>,
           res: Response
         ) => {
+          /*
+           * 1. Confirm token is valid
+           * 2. Retrieve user - (confirm exists)
+           * 3. Compare permission levels
+           * 4. Delete if higher & allowed to delete
+           */
           paramValid(req.body.token, 1, 48, "token");
+          if (roleEnumToNum(req.body._token.role) == roleEnumToNum(Role.MOD))
+            throw new BadRequest("Invalid request!");
+          const attacked = await this.prisma.account.findUnique({
+            where: {
+              token: req.body.token,
+            },
+            select: {
+              id: true,
+              role: true,
+            },
+          });
+          if (
+            attacked == null ||
+            roleEnumToNum(req.body._token.role) <= roleEnumToNum(attacked.role)
+          ) {
+            // Explicity give vague warning to avoid enumeration
+            throw new BadRequest("Invalid request!");
+          }
           await this.prisma.account.delete({
             where: {
               token: req.body.token,

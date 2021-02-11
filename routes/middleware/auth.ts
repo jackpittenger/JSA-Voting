@@ -2,7 +2,7 @@ import { verify } from "jsonwebtoken";
 
 import { Unauthorized } from "./errors";
 
-import { Role } from "../../types/enums";
+import { Role } from "@prisma/client";
 
 import type { Request, Response, NextFunction } from "express";
 import type { Token } from "../../types/jwt";

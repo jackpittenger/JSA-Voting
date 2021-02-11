@@ -1,8 +1,9 @@
-import { Role } from "./enums";
+import { Role } from "@prisma/client";
 import { Token } from "./jwt";
 
 export interface AccountDeleteBody {
   token: string;
+  _token: Token;
 }
 
 export interface AccountLoginBody {

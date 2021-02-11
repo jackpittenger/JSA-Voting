@@ -6,7 +6,7 @@ import { roleVerify } from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 import { BadRequest, NotFound } from "./middleware/errors";
 
-import { Role } from "../types/enums";
+import { Role } from "@prisma/client";
 
 import type { Request, Query, Params } from "../types/post";
 import type { ConventionPostBody } from "../types/convention";
