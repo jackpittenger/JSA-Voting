@@ -46,7 +46,7 @@ function Dashboard(props: Props) {
         <Mod auth={props.auth} />
       ) : null}
       {mode === "admin" && nRole >= 2 ? <Admin auth={props.auth} /> : null}
-      {mode == "manager" && nRole >= 3 ? <Manager auth={props.auth} /> : null}
+      {mode === "manager" && nRole >= 3 ? <Manager auth={props.auth} /> : null}
       {mode === "dev" && nRole >= 4 ? <Dev auth={props.auth} /> : null}
     </Layout>
   );
