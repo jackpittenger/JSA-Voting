@@ -66,7 +66,7 @@ export default class Convention {
           req: Request<ConventionPostBody, Query, Params>,
           res: Response
         ) => {
-          paramValid(req.body.name, 1, 72, "name");
+          paramValid(req.body.name, 5, 72, "name");
           const convention = await this.prisma.convention.create({
             data: {
               name: req.body.name,
