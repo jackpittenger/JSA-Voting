@@ -6,9 +6,9 @@ import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 
-import ErrorPopup from "../../components/ErrorPopup";
+import ErrorPopup from "components/ErrorPopup";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 const useStyles = makeStyles(() => ({
   form: {

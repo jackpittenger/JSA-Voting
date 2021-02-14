@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
-import Layout from "../../layout";
+import Layout from "layout";
 
-import { useStateContext } from "../../routes/state";
-import { ActionType } from "../../routes/reducer";
+import { useStateContext } from "routes/state";
+import { ActionType } from "routes/reducer";
 
 import NameForm from "./NameForm";
 import SpeakerForm from "./SpeakerForm";
 import VoteForm from "./VoteForm";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Props = {
   auth: AuthService;

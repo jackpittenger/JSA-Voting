@@ -1,10 +1,12 @@
 import { Router, Response } from "express";
 
-import { passToken } from "./middleware/auth";
+import { passToken, roleVerify } from "./middleware/auth";
 import { errorWrapper } from "./middleware/errors";
 
 import { paramValid } from "./helpers/paramValid";
 import pin from "./helpers/pin";
+
+import { Role } from "@prisma/client";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
@@ -28,6 +30,8 @@ export default class Room {
     );
     this.router.post(
       "",
+      roleVerify(Role.MOD),
+      passToken,
       errorWrapper(
         async (req: Request<RoomPostBody, Query, Params>, res: Response) => {
           paramValid(req.body.name, 1, 48, "name");
@@ -38,6 +42,11 @@ export default class Room {
               Convention: {
                 connect: {
                   id: 1,
+                },
+              },
+              Creator: {
+                connect: {
+                  token: req.body._token.token,
                 },
               },
             },

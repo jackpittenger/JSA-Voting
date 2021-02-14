@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import Layout from "../../layout";
+import Layout from "layout";
 
 import NavigationHeader from "./NavigationHeader";
 import Card from "./Card";
 import List from "./List";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Props = {
   auth: AuthService;

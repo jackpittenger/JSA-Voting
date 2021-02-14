@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import { useStateContext } from "../routes/state";
+import { useStateContext } from "routes/state";
 
-import history from "../services/history";
+import history from "services/history";
 
-import LoginForm from "../components/LoginForm";
+import LoginForm from "components/LoginForm";
 
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
@@ -12,7 +12,7 @@ import Grid from "@material-ui/core/Grid";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
-import type AuthService from "../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Props = {
   auth: AuthService;

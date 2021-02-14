@@ -1,8 +1,8 @@
 import React from "react";
 
-import Layout from "../../layout";
+import Layout from "layout";
 
-import AuthService from "../../services/AuthService";
+import AuthService from "services/AuthService";
 
 type Props = {
   auth: AuthService;

@@ -1,14 +1,14 @@
 import React from "react";
 
-import CreateUser from "../../components/CreateUser";
-import ErrorPopup from "../../components/ErrorPopup";
-import withDialog from "../../components/withDialog";
+import CreateUser from "components/CreateUser";
+import ErrorPopup from "components/ErrorPopup";
+import withDialog from "components/withDialog";
 
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Props = {
   auth: AuthService;

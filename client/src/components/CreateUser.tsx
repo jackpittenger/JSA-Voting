@@ -5,7 +5,7 @@ import ErrorPopup from "./ErrorPopup";
 
 import ButtonTextSingleInput from "./ButtonTextSingleInput";
 
-import type AuthService from "../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Props = {
   auth: AuthService;

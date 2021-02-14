@@ -2,7 +2,7 @@ import React from "react";
 
 import Header from "./Header";
 
-import type AuthService from "../services/AuthService";
+import type AuthService from "services/AuthService";
 import type { ReactNode } from "react";
 
 type Props = {

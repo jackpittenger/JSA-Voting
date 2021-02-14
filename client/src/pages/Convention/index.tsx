@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 
-import Layout from "../../layout";
+import Layout from "layout";
 
-import history from "../../services/history";
+import history from "services/history";
 
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Convention = {
   name: string;

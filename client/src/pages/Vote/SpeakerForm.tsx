@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import history from "../../services/history";
+import history from "services/history";
 
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
@@ -11,9 +11,9 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 
-import ErrorPopup from "../../components/ErrorPopup";
+import ErrorPopup from "components/ErrorPopup";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 const useStyles = makeStyles(() => ({
   list: {

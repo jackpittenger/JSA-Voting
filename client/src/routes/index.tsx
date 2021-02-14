@@ -3,14 +3,14 @@ import { Router, Route, Switch } from "react-router-dom";
 
 import { StateProvider } from "./state";
 
-import AuthService from "../services/AuthService";
+import AuthService from "services/AuthService";
 
-import Dashboard from "../pages/Dashboard";
-import Vote from "../pages/Vote";
-import Convention from "../pages/Convention";
-import NotFound from "../pages/NotFound";
-import Rooms from "../pages/Rooms";
-import history from "../services/history";
+import Dashboard from "pages/Dashboard";
+import Vote from "pages/Vote";
+import Convention from "pages/Convention";
+import NotFound from "pages/NotFound";
+import Rooms from "pages/Rooms";
+import history from "services/history";
 
 export default function Routes() {
   const auth = new AuthService();

@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 
-import Layout from "../../layout";
+import Layout from "layout";
 
-import DashboardHeader from "../../layout/DashboardHeader";
+import DashboardHeader from "layout/DashboardHeader";
 
-import withAuth from "../../services/withAuth";
+import withAuth from "services/withAuth";
 
 import Mod from "./Mod";
 import Admin from "./Admin";
 import Manager from "./Manager";
 import Dev from "./Dev";
 
-import type AuthService from "../../services/AuthService";
+import type AuthService from "services/AuthService";
 
 type Props = {
   location: {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import openSoc from "../../services/api";
-import ErrorPopup from "../../components/ErrorPopup";
+import openSoc from "services/api";
+import ErrorPopup from "components/ErrorPopup";
 import SpeakerList from "./SpeakerList";
 
 import TableCell from "@material-ui/core/TableCell";

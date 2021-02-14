@@ -43,6 +43,8 @@ model Room {
   conventionId Int
   Convention   Convention @relation(fields: [conventionId], references: [id])
   Voter        Voter[]
+  creatorId    Int
+  Creator      Account    @relation(fields: [creatorId], references: [id])
 }
 
 model Voter {

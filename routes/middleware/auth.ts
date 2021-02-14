@@ -2,6 +2,8 @@ import { verify } from "jsonwebtoken";
 
 import { Unauthorized } from "./errors";
 
+import { roleEnumToNum } from "../helpers/enumToNum";
+
 import { Role } from "@prisma/client";
 
 import type { Request, Response, NextFunction } from "express";
@@ -12,7 +14,7 @@ export function roleVerify(role: Role) {
     //@ts-ignore
     const decoded: Token = getToken(req);
     const drole: Role = (<any>Role)[decoded.role];
-    if (role > drole)
+    if (roleEnumToNum(role) > roleEnumToNum(drole))
       throw new Unauthorized("You don't have high enough permissions!");
     return next();
   };
