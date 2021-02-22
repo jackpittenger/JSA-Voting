@@ -1,7 +1,7 @@
 import { Router, Response } from "express";
 
 import { passToken, roleVerify } from "./middleware/auth";
-import { errorWrapper } from "./middleware/errors";
+import { BadRequest, errorWrapper } from "./middleware/errors";
 
 import { paramValid } from "./helpers/paramValid";
 import pin from "./helpers/pin";
@@ -10,7 +10,7 @@ import { Role } from "@prisma/client";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
-import type { RoomPostBody } from "../types/room";
+import type { RoomListBody, RoomListParams, RoomPostBody } from "../types/room";
 import type { VoterToken } from "../types/voter";
 
 export default class Room {
@@ -27,6 +27,39 @@ export default class Room {
       errorWrapper((req: Request, res: Response) => {
         return res.status(200).send();
       })
+    );
+    this.router.get(
+      "/list/:convention/:per/:page",
+      roleVerify(Role.MOD),
+      passToken,
+      errorWrapper(
+        async (
+          req: Request<RoomListBody, Query, RoomListParams>,
+          res: Response
+        ) => {
+          if (parseInt(req.params.per) < 0 || parseInt(req.params.per) > 50)
+            throw new BadRequest("Improper number of per!");
+          if (
+            req.body._token.role !== Role.DEV &&
+            req.body._token.conventionId.toString() !== req.params.convention
+          )
+            throw new BadRequest("Improper convention access!");
+          const rooms = await this.prisma.room.findMany({
+            where: {
+              Convention: {
+                id: parseInt(req.params.convention),
+              },
+            },
+            select: {
+              name: true,
+              accessCode: true,
+            },
+            take: parseInt(req.params.per),
+            skip: parseInt(req.params.per) * parseInt(req.params.page),
+          });
+          return res.status(200).json(rooms);
+        }
+      )
     );
     this.router.post(
       "",

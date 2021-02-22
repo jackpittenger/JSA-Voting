@@ -2,6 +2,7 @@ import React from "react";
 
 import ErrorPopup from "components/ErrorPopup";
 import ButtonTextSingleInput from "components/ButtonTextSingleInput";
+import SelectRoom from "components/SelectRoom";
 
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -40,6 +41,14 @@ function Mod(props: Props) {
             maxLength={48}
           />
         </div>
+        <hr />
+        <SelectRoom
+          auth={props.auth}
+          updateRoom={() => {
+            {
+            }
+          }}
+        />
       </Paper>
     </Grid>
   );
