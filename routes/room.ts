@@ -37,25 +37,31 @@ export default class Room {
           req: Request<RoomListBody, Query, RoomListParams>,
           res: Response
         ) => {
-          if (parseInt(req.params.per) < 0 || parseInt(req.params.per) > 50)
+          paramValid(req.params.per, 1, 50, "per");
+          paramValid(req.params.convention, 1, 1000000, "convention");
+          paramValid(req.params.page, 1, 10000, "page");
+          const per = parseInt(req.params.per);
+          const convention = parseInt(req.params.convention);
+          const page = parseInt(req.params.page);
+          if (per < 0 || per > 50)
             throw new BadRequest("Improper number of per!");
           if (
             req.body._token.role !== Role.DEV &&
-            req.body._token.conventionId.toString() !== req.params.convention
+            req.body._token.conventionId !== convention
           )
             throw new BadRequest("Improper convention access!");
           const rooms = await this.prisma.room.findMany({
             where: {
               Convention: {
-                id: parseInt(req.params.convention),
+                id: convention,
               },
             },
             select: {
               name: true,
               accessCode: true,
             },
-            take: parseInt(req.params.per),
-            skip: parseInt(req.params.per) * parseInt(req.params.page),
+            take: per,
+            skip: per * page,
           });
           return res.status(200).json(rooms);
         }
