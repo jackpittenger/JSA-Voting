@@ -10,7 +10,13 @@ import { Role } from "@prisma/client";
 
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
-import type { RoomListBody, RoomListParams, RoomPostBody } from "../types/room";
+import type {
+  RoomGetBody,
+  RoomGetParams,
+  RoomListBody,
+  RoomListParams,
+  RoomPostBody,
+} from "../types/room";
 import type { VoterToken } from "../types/voter";
 
 export default class Room {
@@ -27,6 +33,49 @@ export default class Room {
       errorWrapper((req: Request, res: Response) => {
         return res.status(200).send();
       })
+    );
+    this.router.get(
+      "/id/:id",
+      roleVerify(Role.MOD),
+      passToken,
+      errorWrapper(
+        async (
+          req: Request<RoomGetBody, Query, RoomGetParams>,
+          res: Response
+        ) => {
+          paramValid(req.params.id, 1, 30, "id");
+          const room = await this.prisma.room.findUnique({
+            where: {
+              id: parseInt(req.params.id),
+            },
+            select: {
+              id: true,
+              accessCode: true,
+              open: true,
+              votingOpen: true,
+              byline: true,
+              speakers: true,
+              Voter: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  school: true,
+                  vote: true,
+                  speaker: true,
+                },
+              },
+              conventionId: true,
+            },
+          });
+          if (
+            req.body._token.role !== Role.DEV &&
+            req.body._token.conventionId !== room.conventionId
+          )
+            throw new BadRequest("Improper convention access!");
+          if (room === null) throw new BadRequest("Invalid ID!");
+          return res.status(200).json(room);
+        }
+      )
     );
     this.router.get(
       "/list/:convention/:per/:page",
@@ -57,6 +106,7 @@ export default class Room {
               },
             },
             select: {
+              id: true,
               name: true,
               accessCode: true,
             },

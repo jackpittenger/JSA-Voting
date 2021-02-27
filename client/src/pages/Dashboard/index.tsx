@@ -7,6 +7,7 @@ import DashboardHeader from "layout/DashboardHeader";
 import withAuth from "services/withAuth";
 
 import Mod from "./Mod";
+import Room from "./Room";
 import Admin from "./Admin";
 import Manager from "./Manager";
 import Dev from "./Dev";
@@ -45,6 +46,7 @@ function Dashboard(props: Props) {
       {mode === "dashboard" || mode.length === 0 ? (
         <Mod auth={props.auth} />
       ) : null}
+      {mode === "room" ? <Room auth={props.auth} /> : null}
       {mode === "admin" && nRole >= 2 ? <Admin auth={props.auth} /> : null}
       {mode === "manager" && nRole >= 3 ? <Manager auth={props.auth} /> : null}
       {mode === "dev" && nRole >= 4 ? <Dev auth={props.auth} /> : null}

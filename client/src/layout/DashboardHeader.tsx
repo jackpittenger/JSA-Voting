@@ -12,35 +12,43 @@ export default function DashboardHeader(props: Props) {
   return (
     <AppBar style={{ backgroundColor: "#3D78CC" }} position="static">
       <Toolbar>
-        {props.nRole >= 1 ? (
+        {props.nRole >= 1 && (
           <Button onClick={() => history.push("/dashboard")} color="inherit">
             Mod
           </Button>
-        ) : null}
-        {props.nRole >= 2 ? (
+        )}
+        {props.nRole >= 1 && (
+          <Button
+            onClick={() => history.push("/dashboard/room")}
+            color="inherit"
+          >
+            Room
+          </Button>
+        )}
+        {props.nRole >= 2 && (
           <Button
             onClick={() => history.push("/dashboard/admin")}
             color="inherit"
           >
             Admin
           </Button>
-        ) : null}
-        {props.nRole >= 3 ? (
+        )}
+        {props.nRole >= 3 && (
           <Button
             onClick={() => history.push("/dashboard/manager")}
             color="inherit"
           >
             Manager
           </Button>
-        ) : null}
-        {props.nRole >= 4 ? (
+        )}
+        {props.nRole >= 4 && (
           <Button
             onClick={() => history.push("/dashboard/dev")}
             color="inherit"
           >
             Dev
           </Button>
-        ) : null}
+        )}
       </Toolbar>
     </AppBar>
   );
