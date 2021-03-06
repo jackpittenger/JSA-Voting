@@ -48,7 +48,7 @@ function Room(props: Props) {
   const [delay, setDelay] = useState(0);
 
   useEffect(() => {
-    updateRoom("3");
+    updateRoom("2");
   }, [props.auth]);
 
   useEffect(() => {
@@ -178,39 +178,6 @@ function Room(props: Props) {
         <span style={{ color: "grey" }}>{arr[1]}</span> /{" "}
         <span style={{ color: "red" }}>{arr[2]}</span>
       </div>
-    );
-  }
-
-  function deleteVoter(first: string, last: string, school: string) {
-    props.auth.fetch(
-      "/api/delete_user",
-      {
-        method: "DELETE",
-        body: JSON.stringify({
-          first: first,
-          last: last,
-          school: school,
-          code: room.accessCode,
-        }),
-      },
-      (res: { error: string; success: boolean }, status: number) => {
-        if (status >= 400) {
-          props.createError(status, res.error);
-        } else {
-          if (res.success) {
-            let arr = room.users.filter((val) => {
-              if (
-                val.firstName === first &&
-                val.lastName === last &&
-                val.school === school
-              )
-                return false;
-              return true;
-            });
-            setRoom({ ...room, users: arr });
-          }
-        }
-      }
     );
   }
 
