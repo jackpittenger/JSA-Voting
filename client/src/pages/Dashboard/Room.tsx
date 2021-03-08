@@ -1,39 +1,24 @@
 import React, { useState, useEffect } from "react";
 
-import openSoc from "services/api";
-import ErrorPopup from "components/ErrorPopup";
 import SpeakerList from "./SpeakerList";
+
+import openSoc from "services/api";
+
+import ErrorPopup from "components/ErrorPopup";
+import RoomTable from "components/RoomTable";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
 import type AuthService from "services/AuthService";
+import type { Room, Voter } from "types/roomDashboard";
 
 type Props = {
   auth: AuthService;
   createError: Function;
 };
 
-type Room = {
-  id: number;
-  Voter: Voter[];
-  speakers: string[];
-  accessCode: string;
-  open: boolean;
-  votingOpen: boolean;
-  byline: string;
-  conventionId: number;
-};
-
-type Voter = {
-  firstName: string;
-  lastName: string;
-  school: string;
-  vote: string;
-  speaker: string;
-};
-
-function Room(props: Props) {
+function RoomDashboard(props: Props) {
   const baseRoom: Room = {
     id: -1,
     Voter: [],
@@ -130,6 +115,7 @@ function Room(props: Props) {
       }
     );
   }
+
   function deleteRoom() {
     props.auth.fetch(
       "/api/room",
@@ -143,7 +129,7 @@ function Room(props: Props) {
   }
 
   function toggleRoom() {
-    props.auth.fetch("/api/toggle_open", { method: "POST" }, function (
+    props.auth.fetch("/api/room/toggle/open", { method: "PATCH" }, function (
       res: { error: string },
       status: number
     ) {
@@ -168,9 +154,9 @@ function Room(props: Props) {
     let arr = [0, 0, 0];
     console.log(room);
     for (let i = 0; i < room.Voter.length; i++) {
-      if (room.Voter[i].vote === "yea") arr[0]++;
-      if (room.Voter[i].vote === "abstain") arr[1]++;
-      if (room.Voter[i].vote === "nay") arr[2]++;
+      if (room.Voter[i].vote === "YEA") arr[0]++;
+      if (room.Voter[i].vote === "ABS") arr[1]++;
+      if (room.Voter[i].vote === "NAY") arr[2]++;
     }
     return (
       <div>
@@ -192,6 +178,38 @@ function Room(props: Props) {
     });
   }
 
+  function deleteUser(first: string, last: string, school: string) {
+    props.auth.fetch(
+      "/api/delete_user",
+      {
+        method: "DELETE",
+        body: JSON.stringify({
+          first: first,
+          last: last,
+          school: school,
+          code: room.accessCode,
+        }),
+      },
+      (res: { success: boolean; error: string }, status: number) => {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else {
+          if (res.success) {
+            let arr = room.Voter.filter((val) => {
+              if (
+                val.firstName === first &&
+                val.lastName === last &&
+                val.school === school
+              )
+                return false;
+              return true;
+            });
+            setRoom({ ...room, Voter: arr });
+          }
+        }
+      }
+    );
+  }
   return (
     <div>
       <h3>{room.id}</h3>
@@ -228,8 +246,9 @@ function Room(props: Props) {
         setRoom={setRoom}
       />
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
+      <RoomTable room={room} deleteUser={deleteUser} />
     </div>
   );
 }
 
-export default ErrorPopup(Room);
+export default ErrorPopup(RoomDashboard);

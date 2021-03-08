@@ -147,7 +147,7 @@ export default class Room {
     this.router.get(
       "/speakers",
       passToken,
-      async (req: Request, res: Response) => {
+      errorWrapper(async (req: Request, res: Response) => {
         const token: VoterToken = req.body._token;
         const room = await this.prisma.room.findUnique({
           where: {
@@ -160,11 +160,19 @@ export default class Room {
         });
         if (!room.id) return res.status(400).json({ error: "Room not found!" });
         return res.status(200).json({ speakers: room.speakers });
-      }
+      })
     );
     this.router.patch("/conclude", (req: Request, res: Response) => {});
     this.router.patch("/byline", (req: Request, res: Response) => {});
-    this.router.patch("/toggle", (req: Request, res: Response) => {});
+    this.router.patch(
+      "/toggle/open",
+      roleVerify(Role.MOD),
+      passToken,
+      errorWrapper(async (req: Request, res: Response) => {
+        return res.status(200).json({ success: true });
+      })
+    );
+    this.router.patch("/toggle/voting", (req: Request, res: Response) => {});
     this.router.delete("", (req: Request, res: Response) => {});
     this.router.delete("/all", (req: Request, res: Response) => {});
     return this.router;
