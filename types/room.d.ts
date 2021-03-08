@@ -23,3 +23,8 @@ export interface RoomListParams extends Params {
 export interface RoomGetParams extends Params {
   id: string;
 }
+
+export interface RoomPatchBody {
+  _token: Token;
+  id: string;
+}

@@ -3,6 +3,7 @@ import { Router, Response } from "express";
 import { passToken, roleVerify } from "./middleware/auth";
 import { BadRequest, errorWrapper } from "./middleware/errors";
 
+import conventionAccess from "./helpers/conventionAccess";
 import { paramValid } from "./helpers/paramValid";
 import pin from "./helpers/pin";
 
@@ -15,6 +16,7 @@ import type {
   RoomGetParams,
   RoomListBody,
   RoomListParams,
+  RoomPatchBody,
   RoomPostBody,
 } from "../types/room";
 import type { VoterToken } from "../types/voter";
@@ -67,11 +69,7 @@ export default class Room {
               conventionId: true,
             },
           });
-          if (
-            req.body._token.role !== Role.DEV &&
-            req.body._token.conventionId !== room.conventionId
-          )
-            throw new BadRequest("Improper convention access!");
+          conventionAccess(req.body._token, room.conventionId);
           if (room === null) throw new BadRequest("Invalid ID!");
           return res.status(200).json(room);
         }
@@ -168,11 +166,62 @@ export default class Room {
       "/toggle/open",
       roleVerify(Role.MOD),
       passToken,
-      errorWrapper(async (req: Request, res: Response) => {
-        return res.status(200).json({ success: true });
-      })
+      errorWrapper(
+        async (req: Request<RoomPatchBody, Query, Params>, res: Response) => {
+          const id = parseInt(req.body.id);
+          const room = await this.prisma.room.findUnique({
+            where: {
+              id: id,
+            },
+            select: {
+              conventionId: true,
+              open: true,
+            },
+          });
+          if (!room) throw new BadRequest("Invalid room!");
+          conventionAccess(req.body._token, room.conventionId);
+          await this.prisma.room.update({
+            where: {
+              id: id,
+            },
+            data: {
+              open: !room.open,
+            },
+          });
+          return res.status(200).json({ success: true });
+        }
+      )
     );
-    this.router.patch("/toggle/voting", (req: Request, res: Response) => {});
+    this.router.patch(
+      "/toggle/voting",
+      roleVerify(Role.MOD),
+      passToken,
+      errorWrapper(
+        async (req: Request<RoomPatchBody, Query, Params>, res: Response) => {
+          const id = parseInt(req.body.id);
+          const room = await this.prisma.room.findUnique({
+            where: {
+              id: id,
+            },
+            select: {
+              conventionId: true,
+              votingOpen: true,
+            },
+          });
+          if (!room) throw new BadRequest("Invalid room!");
+          conventionAccess(req.body._token, room.conventionId);
+          await this.prisma.room.update({
+            where: {
+              id: id,
+            },
+            data: {
+              votingOpen: !room.votingOpen,
+            },
+          });
+          return res.status(200).json({ success: true });
+        }
+      )
+    );
     this.router.delete("", (req: Request, res: Response) => {});
     this.router.delete("/all", (req: Request, res: Response) => {});
     return this.router;

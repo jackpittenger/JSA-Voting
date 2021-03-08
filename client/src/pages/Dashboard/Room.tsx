@@ -129,30 +129,31 @@ function RoomDashboard(props: Props) {
   }
 
   function toggleRoom() {
-    props.auth.fetch("/api/room/toggle/open", { method: "PATCH" }, function (
-      res: { error: string },
-      status: number
-    ) {
-      if (status >= 400) {
-        props.createError(status, res.error);
-      } else setRoom({ ...room, open: !room.open });
-    });
+    props.auth.fetch(
+      "/api/room/toggle/open",
+      { method: "PATCH", body: JSON.stringify({ id: room.id }) },
+      function (res: { error: string }, status: number) {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else setRoom({ ...room, open: !room.open });
+      }
+    );
   }
 
   function toggleVoting() {
-    props.auth.fetch("/api/toggle_voting", { method: "POST" }, function (
-      res: { error: string },
-      status: number
-    ) {
-      if (status >= 400) {
-        props.createError(status, res.error);
-      } else setRoom({ ...room, votingOpen: !room.votingOpen });
-    });
+    props.auth.fetch(
+      "/api/room/toggle/voting",
+      { method: "PATCH", body: JSON.stringify({ id: room.id }) },
+      function (res: { error: string }, status: number) {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else setRoom({ ...room, votingOpen: !room.votingOpen });
+      }
+    );
   }
 
   function renderVotes() {
     let arr = [0, 0, 0];
-    console.log(room);
     for (let i = 0; i < room.Voter.length; i++) {
       if (room.Voter[i].vote === "YEA") arr[0]++;
       if (room.Voter[i].vote === "ABS") arr[1]++;
@@ -210,6 +211,7 @@ function RoomDashboard(props: Props) {
       }
     );
   }
+
   return (
     <div>
       <h3>{room.id}</h3>
