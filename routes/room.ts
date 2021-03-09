@@ -2,6 +2,7 @@ import { Router, Response } from "express";
 
 import { passToken, roleVerify } from "./middleware/auth";
 import { BadRequest, errorWrapper } from "./middleware/errors";
+import passConventionRoom from "./middleware/passConventionRoom";
 
 import conventionAccess from "./helpers/conventionAccess";
 import { paramValid } from "./helpers/paramValid";
@@ -16,7 +17,7 @@ import type {
   RoomGetParams,
   RoomListBody,
   RoomListParams,
-  RoomPatchBody,
+  RoomIdBody,
   RoomPostBody,
 } from "../types/room";
 import type { VoterToken } from "../types/voter";
@@ -30,12 +31,6 @@ export default class Room {
   }
 
   setup(): Router {
-    this.router.get(
-      "",
-      errorWrapper((req: Request, res: Response) => {
-        return res.status(200).send();
-      })
-    );
     this.router.get(
       "/id/:id",
       roleVerify(Role.MOD),
@@ -59,6 +54,7 @@ export default class Room {
               speakers: true,
               Voter: {
                 select: {
+                  id: true,
                   firstName: true,
                   lastName: true,
                   school: true,
@@ -160,32 +156,41 @@ export default class Room {
         return res.status(200).json({ speakers: room.speakers });
       })
     );
-    this.router.patch("/conclude", (req: Request, res: Response) => {});
+    this.router.patch(
+      "/conclude",
+      roleVerify(Role.MOD),
+      passToken,
+      passConventionRoom(this.prisma, { conventionId: true, concluded: true }),
+      errorWrapper(
+        async (req: Request<RoomIdBody, Query, Params>, res: Response) => {
+          if (req.body.room.concluded)
+            throw new BadRequest("Room is already concluded!");
+          await this.prisma.room.update({
+            where: {
+              id: req.body._id,
+            },
+            data: {
+              concluded: true,
+            },
+          });
+          return res.status(200).json({ success: true });
+        }
+      )
+    );
     this.router.patch("/byline", (req: Request, res: Response) => {});
     this.router.patch(
       "/toggle/open",
       roleVerify(Role.MOD),
       passToken,
+      passConventionRoom(this.prisma, { conventionId: true, open: true }),
       errorWrapper(
-        async (req: Request<RoomPatchBody, Query, Params>, res: Response) => {
-          const id = parseInt(req.body.id);
-          const room = await this.prisma.room.findUnique({
-            where: {
-              id: id,
-            },
-            select: {
-              conventionId: true,
-              open: true,
-            },
-          });
-          if (!room) throw new BadRequest("Invalid room!");
-          conventionAccess(req.body._token, room.conventionId);
+        async (req: Request<RoomIdBody, Query, Params>, res: Response) => {
           await this.prisma.room.update({
             where: {
-              id: id,
+              id: req.body._id,
             },
             data: {
-              open: !room.open,
+              open: !req.body.room.open,
             },
           });
           return res.status(200).json({ success: true });
@@ -196,33 +201,43 @@ export default class Room {
       "/toggle/voting",
       roleVerify(Role.MOD),
       passToken,
+      passConventionRoom(this.prisma, { conventionId: true, votingOpen: true }),
       errorWrapper(
-        async (req: Request<RoomPatchBody, Query, Params>, res: Response) => {
-          const id = parseInt(req.body.id);
-          const room = await this.prisma.room.findUnique({
-            where: {
-              id: id,
-            },
-            select: {
-              conventionId: true,
-              votingOpen: true,
-            },
-          });
-          if (!room) throw new BadRequest("Invalid room!");
-          conventionAccess(req.body._token, room.conventionId);
+        async (req: Request<RoomIdBody, Query, Params>, res: Response) => {
           await this.prisma.room.update({
             where: {
-              id: id,
+              id: req.body._id,
             },
             data: {
-              votingOpen: !room.votingOpen,
+              votingOpen: !req.body.room.votingOpen,
             },
           });
           return res.status(200).json({ success: true });
         }
       )
     );
-    this.router.delete("", (req: Request, res: Response) => {});
+    this.router.delete(
+      "",
+      roleVerify(Role.MOD),
+      passToken,
+      passConventionRoom(this.prisma, { conventionId: true }),
+      errorWrapper(
+        async (req: Request<RoomIdBody, Query, Params>, res: Response) => {
+          const deleteVoters = this.prisma.voter.deleteMany({
+            where: {
+              roomId: req.body._id,
+            },
+          });
+          const deleteRoom = this.prisma.room.delete({
+            where: {
+              id: req.body._id,
+            },
+          });
+          await this.prisma.$transaction([deleteVoters, deleteRoom]);
+          res.status(200).json({ success: true });
+        }
+      )
+    );
     this.router.delete("/all", (req: Request, res: Response) => {});
     return this.router;
   }

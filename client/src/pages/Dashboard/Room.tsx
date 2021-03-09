@@ -33,7 +33,7 @@ function RoomDashboard(props: Props) {
   const [delay, setDelay] = useState(0);
 
   useEffect(() => {
-    updateRoom("2");
+    updateRoom("3");
   }, [props.auth]);
 
   useEffect(() => {
@@ -45,11 +45,7 @@ function RoomDashboard(props: Props) {
       io.on("vote", (data: Voter) => {
         let users = room.Voter;
         let result = users.find((o, i) => {
-          if (
-            o.firstName === data.firstName &&
-            o.lastName === data.lastName &&
-            o.school === data.school
-          ) {
+          if (o.id === data.id) {
             users[i].vote = data.vote;
             if (data.speaker) users[i].speaker = data.speaker;
             return true;
@@ -62,6 +58,7 @@ function RoomDashboard(props: Props) {
             Voter: [
               ...room.Voter,
               {
+                id: data.id,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 school: data.school,
@@ -119,7 +116,7 @@ function RoomDashboard(props: Props) {
   function deleteRoom() {
     props.auth.fetch(
       "/api/room",
-      { method: "DELETE", body: JSON.stringify({ room: room.id }) },
+      { method: "DELETE", body: JSON.stringify({ id: room.id }) },
       (res: { error: string }, status: number) => {
         if (status >= 400) {
           props.createError(status, res.error);
@@ -169,26 +166,25 @@ function RoomDashboard(props: Props) {
   }
 
   function closeRoom() {
-    props.auth.fetch("/api/conclude_room", { method: "PATCH" }, function (
-      res: { error: string },
-      status: number
-    ) {
-      if (status >= 400) {
-        props.createError(status, res.error);
-      } else setRoom(baseRoom);
-    });
+    props.auth.fetch(
+      "/api/room/conclude",
+      { method: "PATCH", body: JSON.stringify({ id: room.id }) },
+      function (res: { error: string }, status: number) {
+        if (status >= 400) {
+          props.createError(status, res.error);
+        } else setRoom(baseRoom);
+      }
+    );
   }
 
-  function deleteUser(first: string, last: string, school: string) {
+  function deleteUser(id: string) {
     props.auth.fetch(
-      "/api/delete_user",
+      "/api/voter",
       {
         method: "DELETE",
         body: JSON.stringify({
-          first: first,
-          last: last,
-          school: school,
-          code: room.accessCode,
+          id: room.id,
+          voterId: id,
         }),
       },
       (res: { success: boolean; error: string }, status: number) => {
@@ -197,13 +193,7 @@ function RoomDashboard(props: Props) {
         } else {
           if (res.success) {
             let arr = room.Voter.filter((val) => {
-              if (
-                val.firstName === first &&
-                val.lastName === last &&
-                val.school === school
-              )
-                return false;
-              return true;
+              return val.id !== id;
             });
             setRoom({ ...room, Voter: arr });
           }

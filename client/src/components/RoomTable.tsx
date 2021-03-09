@@ -107,9 +107,7 @@ function RoomTable(props: Props) {
                   </TableCell>
                   <TableCell>
                     <Button
-                      onClick={() =>
-                        props.deleteUser(x.firstName, x.lastName, x.school)
-                      }
+                      onClick={() => props.deleteUser(x.id)}
                       color="secondary"
                     >
                       Remove

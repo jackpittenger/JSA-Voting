@@ -1,5 +1,6 @@
 import { Params } from "./post";
 import { Token } from "./jwt";
+import { Room } from "@prisma/client";
 
 export interface RoomGetBody {
   _token: Token;
@@ -24,7 +25,15 @@ export interface RoomGetParams extends Params {
   id: string;
 }
 
-export interface RoomPatchBody {
+export interface RoomIdBody {
+  _token: Token;
+  _id: number;
+  room: Room;
+}
+
+export interface ConventionRoomBody {
   _token: Token;
   id: string;
+  _id: number;
+  room: Room;
 }

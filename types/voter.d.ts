@@ -1,4 +1,5 @@
-import type { Vote } from "@prisma/client";
+import type { Vote, Room } from "@prisma/client";
+import type { Token } from "./jwt";
 
 export interface VoterPostBody {
   firstName: string;
@@ -27,4 +28,11 @@ export interface VoterToken {
 export interface SpeakerPostBody {
   speaker: string;
   _token: VoterToken;
+}
+
+export interface VoterDeleteBody {
+  _token: Token;
+  _id: number;
+  room: Room;
+  voterId: string;
 }

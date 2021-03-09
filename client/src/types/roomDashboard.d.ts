@@ -10,6 +10,7 @@ export type Room = {
 };
 
 export type Voter = {
+  id: string;
   firstName: string;
   lastName: string;
   school: string;
