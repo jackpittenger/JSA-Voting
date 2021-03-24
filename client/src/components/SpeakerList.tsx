@@ -79,6 +79,39 @@ export default function SpeakerList(props: Props) {
     );
   }
 
+  function renderSpeakers() {
+    const speakerVoters = props.room.Voter.filter(
+      (e) => e.speaker != null && props.room.speakers.indexOf(e.speaker) !== -1
+    ).length;
+    return props.room.speakers.map((speaker, i) =>
+      renderSpeaker(speakerVoters, speaker, i)
+    );
+  }
+
+  function renderSpeaker(speakerVoters: number, speaker: string, i: number) {
+    const len = props.room.Voter.filter((e) => e.speaker === speaker).length;
+    const votes = len === 0 ? 0 : (len / speakerVoters) * 100;
+    return (
+      <ListItem
+        style={{
+          background:
+            "linear-gradient(to right, #39ACE3 " + votes + "%, #fafafa 0%)",
+        }}
+        key={i}
+      >
+        <ListItemAvatar>
+          <Avatar />
+        </ListItemAvatar>
+        <ListItemText primary={speaker} />
+        <ListItemSecondaryAction>
+          <IconButton onClick={() => removeSpeaker(speaker)} edge="end">
+            <DeleteIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  }
+
   return (
     <div>
       <h4>Speaker list:</h4>
@@ -92,43 +125,7 @@ export default function SpeakerList(props: Props) {
         <AddCircleOutlineIcon color="primary" />
       </IconButton>
       <List className={classes.list}>
-        {props.room.speakers != null
-          ? props.room.speakers.map((speaker, i) => {
-              const speakerVoters = props.room.Voter.filter(
-                (e) =>
-                  e.speaker != null &&
-                  props.room.speakers.indexOf(e.speaker) !== -1
-              ).length;
-              const votes =
-                (props.room.Voter.filter((e) => e.speaker === speaker).length /
-                  speakerVoters) *
-                100;
-              return (
-                <ListItem
-                  style={{
-                    background:
-                      "linear-gradient(to right, #39ACE3 " +
-                      votes +
-                      "%, #fafafa 0%)",
-                  }}
-                  key={i}
-                >
-                  <ListItemAvatar>
-                    <Avatar />
-                  </ListItemAvatar>
-                  <ListItemText primary={speaker} />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      onClick={() => removeSpeaker(speaker)}
-                      edge="end"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            })
-          : null}
+        {props.room.speakers != null && renderSpeakers()}
       </List>
     </div>
   );

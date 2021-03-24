@@ -237,7 +237,7 @@ function RoomDashboard(props: Props) {
         setRoom={setRoom}
       />
       <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
-      <RoomTable room={room} deleteUser={deleteUser} />
+      <RoomTable Voter={room.Voter} deleteUser={deleteUser} />
     </div>
   );
 }

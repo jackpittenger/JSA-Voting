@@ -12,7 +12,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableBody from "@material-ui/core/TableBody";
 
-import type { Room, Voter } from "types/roomDashboard";
+import type { Voter } from "types/roomDashboard";
 
 const headCells = [
   { id: "firstName", label: "First Name" },
@@ -22,7 +22,7 @@ const headCells = [
 ];
 
 type Props = {
-  room: Room;
+  Voter: Voter[];
   deleteUser: Function;
 };
 
@@ -87,7 +87,7 @@ function RoomTable(props: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sort(props.room.Voter).map((x: Voter, i: number) => {
+            {sort(props.Voter).map((x: Voter, i: number) => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                   <TableCell>{x.firstName}</TableCell>
