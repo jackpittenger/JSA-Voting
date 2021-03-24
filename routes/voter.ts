@@ -145,11 +145,9 @@ export default class Voter {
       passToken,
       errorWrapper(
         async (req: Request<SpeakerPostBody, Query, Params>, res: Response) => {
-          //@ts-ignore
-          const token: VoterToken = req.token;
           const room = await this.prisma.room.findUnique({
             where: {
-              accessCode: token.room.accessCode,
+              accessCode: req.body._token.room.accessCode,
             },
             select: {
               id: true,
@@ -161,9 +159,9 @@ export default class Voter {
           if (!room.votingOpen) throw new BadRequest("Voting not open!");
           const voter = await this.prisma.voter.findFirst({
             where: {
-              firstName: token.firstName,
-              lastName: token.lastName,
-              school: token.school,
+              firstName: req.body._token.firstName,
+              lastName: req.body._token.lastName,
+              school: req.body._token.school,
               roomId: room.id,
             },
             select: {

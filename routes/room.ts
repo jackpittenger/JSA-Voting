@@ -19,6 +19,8 @@ import type {
   RoomListParams,
   RoomIdBody,
   RoomPostBody,
+  RoomSpeakerPostBody,
+  RoomSpeakerDeleteBody,
 } from "../types/room";
 import type { VoterToken } from "../types/voter";
 
@@ -178,6 +180,68 @@ export default class Room {
       )
     );
     this.router.patch("/byline", (req: Request, res: Response) => {});
+    this.router.post(
+      "/speaker",
+      roleVerify(Role.MOD),
+      passToken,
+      passConventionRoom(this.prisma, {
+        conventionId: true,
+        concluded: true,
+        speakers: true,
+      }),
+      errorWrapper(
+        async (
+          req: Request<RoomSpeakerPostBody, Query, Params>,
+          res: Response
+        ) => {
+          if (req.body.room.concluded)
+            throw new BadRequest("Room is already concluded!");
+          if (
+            req.body.room.speakers.findIndex(
+              (item) => req.body.name.toLowerCase() === item.toLowerCase()
+            ) !== -1
+          )
+            throw new BadRequest("Speaker already added!");
+          await this.prisma.room.update({
+            where: { id: req.body._id },
+            data: { speakers: req.body.room.speakers.concat(req.body.name) },
+          });
+          return res.status(200).json({ success: true });
+        }
+      )
+    );
+    this.router.delete(
+      "/speaker",
+      roleVerify(Role.MOD),
+      passToken,
+      passConventionRoom(this.prisma, {
+        conventionId: true,
+        concluded: true,
+        speakers: true,
+      }),
+      errorWrapper(
+        async (
+          req: Request<RoomSpeakerDeleteBody, Query, Params>,
+          res: Response
+        ) => {
+          if (req.body.room.concluded)
+            throw new BadRequest("Room is already concluded!");
+          const index = req.body.room.speakers.indexOf(req.body.name);
+          if (index === -1) throw new BadRequest("Speaker doesn't exist!");
+          req.body.room.speakers.splice(index, 1);
+          await this.prisma.room.update({
+            where: {
+              id: req.body._id,
+            },
+            data: {
+              speakers: req.body.room.speakers,
+            },
+          });
+          return res.status(200).json({ success: true });
+        }
+      )
+    );
+
     this.router.patch(
       "/toggle/open",
       roleVerify(Role.MOD),

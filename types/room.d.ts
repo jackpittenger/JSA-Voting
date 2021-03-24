@@ -33,7 +33,21 @@ export interface RoomIdBody {
 
 export interface ConventionRoomBody {
   _token: Token;
+  _id: number;
   id: string;
+  room: Room;
+}
+
+export interface RoomSpeakerPostBody {
+  _token: Token;
   _id: number;
   room: Room;
+  name: string;
+}
+
+export interface RoomSpeakerDeleteBody {
+  _token: Token;
+  _id: number;
+  room: Room;
+  name: string;
 }

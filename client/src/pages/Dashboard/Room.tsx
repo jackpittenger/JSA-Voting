@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-import SpeakerList from "./SpeakerList";
-
 import openSoc from "services/api";
 
 import ErrorPopup from "components/ErrorPopup";
 import RoomTable from "components/RoomTable";
+import SpeakerList from "components/SpeakerList";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";

@@ -13,6 +13,9 @@ import Avatar from "@material-ui/core/Avatar";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 
+import type AuthService from "services/AuthService";
+import type { Room, Voter } from "types/roomDashboard";
+
 const useStyles = makeStyles(() => ({
   list: {
     margin: "1% auto auto auto",
@@ -21,15 +24,25 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function SpeakerList(props) {
+type Props = {
+  auth: AuthService;
+  room: Room;
+  createError: Function;
+  setRoom: Function;
+};
+
+export default function SpeakerList(props: Props) {
   const classes = useStyles();
   const [speaker, setSpeaker] = useState("");
 
   function addSpeaker() {
     props.auth.fetch(
-      "/api/add_speaker",
-      { method: "POST", body: JSON.stringify({ name: speaker }) },
-      (res, status) => {
+      "/api/room/speaker",
+      {
+        method: "POST",
+        body: JSON.stringify({ id: props.room.id, name: speaker }),
+      },
+      (res: { error: string }, status: number) => {
         if (status >= 400) {
           props.createError(status, res.error);
         } else {
@@ -45,11 +58,14 @@ export default function SpeakerList(props) {
     );
   }
 
-  function removeSpeaker(speaker) {
+  function removeSpeaker(speaker: string) {
     props.auth.fetch(
-      "/api/remove_speaker",
-      { method: "DELETE", body: JSON.stringify({ name: speaker }) },
-      (res, status) => {
+      "/api/room/speaker",
+      {
+        method: "DELETE",
+        body: JSON.stringify({ id: props.room.id, name: speaker }),
+      },
+      (res: { error: string }, status: number) => {
         if (status >= 400) {
           props.createError(status, res.error);
         } else {
@@ -78,11 +94,13 @@ export default function SpeakerList(props) {
       <List className={classes.list}>
         {props.room.speakers != null
           ? props.room.speakers.map((speaker, i) => {
-              const speakerVoters = props.room.users.filter(
-                (e) => e.speaker != null
+              const speakerVoters = props.room.Voter.filter(
+                (e) =>
+                  e.speaker != null &&
+                  props.room.speakers.indexOf(e.speaker) !== -1
               ).length;
               const votes =
-                (props.room.users.filter((e) => e.speaker === speaker).length /
+                (props.room.Voter.filter((e) => e.speaker === speaker).length /
                   speakerVoters) *
                 100;
               return (
