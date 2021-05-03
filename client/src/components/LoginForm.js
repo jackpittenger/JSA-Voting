@@ -6,7 +6,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import history from "../services/history";
+import history from "services/history";
 import ErrorPopup from "./ErrorPopup";
 
 function Header(props) {
@@ -18,9 +18,7 @@ function Header(props) {
 
     props.auth
       .login(token, pin)
-      .then(() => {
-        history.push("/dashboard/");
-      })
+      .then(props.logIn)
       .catch((err) => {
         props.createError(err.response.status, err.response.data.error);
       });

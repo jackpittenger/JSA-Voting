@@ -8,7 +8,7 @@ export default class AuthService {
   }
 
   login(token, pin) {
-    return axios.post(`/api/login`, { token, pin }).then((res) => {
+    return axios.post(`/api/account/login`, { token, pin }).then((res) => {
       this.setToken(res.data.token);
     });
   }
@@ -16,9 +16,7 @@ export default class AuthService {
   loggedIn() {
     const token = this.getToken();
     return (
-      !!token &&
-      !this.isTokenExpired(token) &&
-      "permission" in this.getProfile()
+      !!token && !this.isTokenExpired(token) && "role" in this.getProfile()
     );
   }
 
@@ -34,9 +32,7 @@ export default class AuthService {
   isTokenVoter() {
     const token = this.getToken();
     return (
-      !!token &&
-      !this.isTokenExpired(token) &&
-      !("permission" in this.getProfile())
+      !!token && !this.isTokenExpired(token) && !("role" in this.getProfile())
     );
   }
 

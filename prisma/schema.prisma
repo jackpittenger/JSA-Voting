@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  token        String     @unique
+  pin          String
+  role         Role       @default(MOD)
+  conventionId Int?
+  Convention   Convention? @relation(fields: [conventionId], references: [id])
+}
+
+model Convention {
+  id        Int       @id @default(autoincrement())
+  name	    String    @unique
+  createdAt DateTime  @default(now())
+  roomsOpen Boolean   @default(false)
+  concluded Boolean   @default(false)
+  Account   Account[]
+  Room      Room[]
+}
+
+model Room {
+  id           Int        @id @default(autoincrement())
+  name         String
+  accessCode   String     @unique
+  open         Boolean    @default(true)
+  votingOpen   Boolean    @default(false)
+  byline       String	  @default("A JSA Room")
+  speakers     String[]
+  concluded    Boolean    @default(false)
+  yea          Int        @default(0)
+  nay          Int        @default(0)
+  abs          Int        @default(0)
+  bestSpeaker  String?
+  conventionId Int
+  Convention   Convention @relation(fields: [conventionId], references: [id])
+  Voter        Voter[]
+  creatorId    Int
+  Creator      Account    @relation(fields: [creatorId], references: [id])
+}
+
+model Voter {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  firstName String
+  lastName  String
+  school    String
+  vote      Vote?
+  speaker   String?
+  roomId    Int
+  Room      Room     @relation(fields: [roomId], references: [id])
+}
+
+enum Role {
+  MOD
+  ADMIN
+  MANAGER
+  DEV
+}
+
+enum Vote {
+  YEA
+  NAY
+  ABS
+}
