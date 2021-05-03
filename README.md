@@ -1,13 +1,10 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/realsaddy/jsa-voting/badge)](https://www.codefactor.io/repository/github/realsaddy/jsa-voting) [![Maintainability](https://api.codeclimate.com/v1/badges/1748ed66ae369a918939/maintainability)](https://codeclimate.com/github/realSaddy/JSA-Voting/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/1748ed66ae369a918939/test_coverage)](https://codeclimate.com/github/realSaddy/JSA-Voting/test_coverage) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=586S5KMWTQRM4&source=url)
-
 # JSA-Voting
 
 JSA Voting is a responsive web application built on the MERN stack that allows room-based voting targeted at public debates. It features real-time updating, SSL/WSS, and room locking.
 
 ---
-
 # .env
-
 ```
 DB_HOST=
 DB_USER=

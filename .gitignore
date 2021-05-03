@@ -249,5 +249,5 @@ modules.xml
 server.crt
 server.key
 build/
-dist/
+
 # End of https://www.gitignore.io/api/git,node,react,webstorm+all
