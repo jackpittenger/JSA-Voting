@@ -10,7 +10,10 @@ type Props = {
 
 export default function DashboardHeader(props: Props) {
   return (
-    <AppBar style={{ backgroundColor: "#3D78CC" }} position="static">
+    <AppBar
+      style={{ backgroundColor: "#3D78CC", marginBottom: "1em" }}
+      position="static"
+    >
       <Toolbar>
         {props.nRole >= 1 && (
           <Button onClick={() => history.push("/dashboard")} color="inherit">

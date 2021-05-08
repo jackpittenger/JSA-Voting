@@ -8,11 +8,11 @@ import SpeakerList from "components/SpeakerList";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-
-import Skeleton from "@material-ui/lab/Skeleton";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import type AuthService from "services/AuthService";
 import type { Room, Voter } from "types/roomDashboard";
+import SelectRoom from "components/SelectRoom";
 
 type Props = {
   auth: AuthService;
@@ -34,9 +34,7 @@ function RoomDashboard(props: Props) {
   const [room, setRoom] = useState(baseRoom);
   const [delay, setDelay] = useState(0);
 
-  useEffect(() => {
-    updateRoom("3");
-  }, [props.auth]);
+  useEffect(() => {}, [props.auth]);
 
   useEffect(() => {
     if (props.auth.loggedIn()) {
@@ -88,6 +86,7 @@ function RoomDashboard(props: Props) {
         props.createError(status, res.error);
       } else {
         setRoom(res);
+        setLoading(false);
       }
     });
   }
@@ -206,47 +205,10 @@ function RoomDashboard(props: Props) {
 
   return (
     <div>
+      <SelectRoom auth={props.auth} updateRoom={updateRoom}></SelectRoom>
       {loading ? (
         <div>
-          <h3>
-            <Skeleton width={20} />
-          </h3>
-          <div>
-            <Skeleton width={"12em"} />
-          </div>
-          <TextField
-            id="byline"
-            label="Byline"
-            multiline
-            rowsMax={3}
-            value={room.byline}
-            onChange={(e) => handleByline(e.target.value)}
-            error={room.byline.length > 120}
-            helperText="Maxmimum of 120 characters"
-            style={{ width: "25em" }}
-          />
-          <br />
-          <br />
-          <Button onClick={toggleRoom} color="primary">
-            {room.open === false ? "Open Room" : "Close Room"}
-          </Button>
-          <Button onClick={toggleVoting} color="default">
-            {room.votingOpen === false ? "Open for Voting" : "Close Voting"}
-          </Button>
-          <Button onClick={deleteRoom} color="secondary">
-            Delete Room
-          </Button>
-          <Button onClick={closeRoom} color="primary">
-            Conclude
-          </Button>
-          <SpeakerList
-            createError={props.createError}
-            auth={props.auth}
-            room={room}
-            setRoom={setRoom}
-          />
-          <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
-          <RoomTable Voter={room.Voter} deleteUser={deleteUser} />
+          <CircularProgress />
         </div>
       ) : (
         <div>
