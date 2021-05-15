@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import type AuthService from "services/AuthService";
 import {
@@ -8,17 +8,17 @@ import {
   DialogContent,
   DialogActions,
   makeStyles,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableHead,
 } from "@material-ui/core";
+import MaterialTable from "material-table";
+
+import Check from "@material-ui/icons/Check";
+import Close from "@material-ui/icons/Close";
 
 type RoomQueried = {
+  id: number;
   name: string;
   accessCode: string;
+  concluded: boolean;
 };
 
 type Props = {
@@ -32,29 +32,22 @@ const useStyles = makeStyles({
   },
 });
 
+const columns = [
+  { title: "Name", field: "name" },
+  { title: "Access Code", field: "accessCode" },
+  {
+    title: "Concluded",
+    field: "concluded",
+    render: (rowData: RoomQueried) =>
+      rowData.concluded ? <Check /> : <Close />,
+  },
+];
+
 function SelectRoom(props: Props) {
   const classes = useStyles();
 
-  const defaultSelectable: RoomQueried[] = [];
+  const convention = 1;
   const [open, setOpen] = useState(false);
-  const [selectableRooms, setSelectableRooms] = useState(defaultSelectable);
-  const [convention, setConvention] = useState(1);
-  const [per, setPer] = useState(10);
-  const [page, setPage] = useState(0);
-
-  useEffect(() => {
-    props.auth.fetch(
-      "/api/room/list/" + convention + "/" + per + "/" + page,
-      {
-        method: "GET",
-      },
-      (result: RoomQueried[], status: number) => {
-        if (status < 400) {
-          setSelectableRooms(result);
-        }
-      }
-    );
-  }, [props.auth, per, convention, page]);
 
   function handleClickOpen() {
     setOpen(true);
@@ -75,22 +68,52 @@ function SelectRoom(props: Props) {
       >
         <DialogTitle>Select Room</DialogTitle>
         <DialogContent>
-          <TableContainer>
-            <Table size="medium">
-              <TableHead>
-                <TableCell>Name</TableCell>
-                <TableCell>Access Code</TableCell>
-              </TableHead>
-              <TableBody>
-                {selectableRooms.map((v, _i) => (
-                  <TableRow>
-                    <TableCell>{v.name}</TableCell>
-                    <TableCell>{v.accessCode}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <MaterialTable
+            options={{
+              showTitle: false,
+              sorting: false,
+              filtering: false,
+            }}
+            onRowClick={(_e, row) => {
+              if (row != null && typeof row == "object") {
+                props.updateRoom(row.id);
+                handleClose();
+              }
+            }}
+            columns={columns}
+            data={(query) =>
+              new Promise((resolve, _reject) => {
+                let url =
+                  "/api/room/list/" +
+                  convention +
+                  "/" +
+                  query.pageSize +
+                  "/" +
+                  query.page;
+                let params = {};
+                if (query.search.length > 0) {
+                  //@ts-ignore
+                  params["search"] = query.search;
+                }
+                props.auth.fetch(
+                  url + "?" + new URLSearchParams(Object.entries(params)),
+                  { method: "GET" },
+                  (
+                    result: { rooms: RoomQueried[]; count: number },
+                    status: number
+                  ) => {
+                    if (status >= 400)
+                      throw new Error("Failed to get room query for table");
+                    resolve({
+                      data: result.rooms,
+                      page: query.page,
+                      totalCount: result.count,
+                    });
+                  }
+                );
+              })
+            }
+          />
         </DialogContent>
         <DialogActions className={classes.actions}>
           <Button onClick={handleClose} color="primary">

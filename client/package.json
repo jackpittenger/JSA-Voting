@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "history": "^4.10.1",
     "jwt-decode": "^2.2.0",
+    "material-table": "^1.69.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",

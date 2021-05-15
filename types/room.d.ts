@@ -1,4 +1,4 @@
-import { Params } from "./post";
+import { Params, Query } from "./post";
 import { Token } from "./jwt";
 import { Room } from "@prisma/client";
 
@@ -13,12 +13,17 @@ export interface RoomPostBody {
 
 export interface RoomListBody {
   _token: Token;
+  search: string;
 }
 
 export interface RoomListParams extends Params {
   convention: string;
   per: string;
   page: string;
+}
+
+export interface RoomListQuery extends Query {
+  search: string;
 }
 
 export interface RoomGetParams extends Params {

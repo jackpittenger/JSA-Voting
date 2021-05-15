@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 import ErrorPopup from "components/ErrorPopup";
 import ButtonTextSingleInput from "components/ButtonTextSingleInput";
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+import { Collapse, Grid, Paper, makeStyles } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 
 import type AuthService from "services/AuthService";
 
@@ -13,12 +13,22 @@ type Props = {
   createError: Function;
 };
 
+const useStyles = makeStyles({
+  roomAlert: {
+    width: "10em",
+    margin: "auto",
+  },
+});
+
 function Mod(props: Props) {
+  const classes = useStyles();
+  const [successOpenNewRoom, setSuccessOpenNewRoom] = useState(false);
   function createRoomHandler(res: { error: string }, status: number) {
     if (status >= 400) {
       return props.createError(status, res.error);
     }
-    alert("success");
+    setSuccessOpenNewRoom(true);
+    setTimeout(() => setSuccessOpenNewRoom(false), 2000);
   }
 
   return (
@@ -27,6 +37,9 @@ function Mod(props: Props) {
         <div>
           Mod
           <br />
+          <Collapse in={successOpenNewRoom}>
+            <Alert className={classes.roomAlert}>Room created!</Alert>
+          </Collapse>
           <ButtonTextSingleInput
             auth={props.auth}
             route="/api/room"

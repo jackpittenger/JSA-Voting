@@ -85,6 +85,7 @@ export default class Room {
           paramValid(req.params.per, 1, 50, "per");
           paramValid(req.params.convention, 1, 1000000, "convention");
           paramValid(req.params.page, 1, 10000, "page");
+
           const per = parseInt(req.params.per);
           const convention = parseInt(req.params.convention);
           const page = parseInt(req.params.page);
@@ -95,21 +96,35 @@ export default class Room {
             req.body._token.conventionId !== convention
           )
             throw new BadRequest("Improper convention access!");
-          const rooms = await this.prisma.room.findMany({
-            where: {
-              Convention: {
-                id: convention,
-              },
+
+          const whereQuery = {
+            Convention: {
+              id: convention,
             },
+          };
+          if (
+            typeof req.query.search == "string" &&
+            req.query.search.length > 0
+          ) {
+            paramValid(req.query.search, 0, 150, "search");
+            whereQuery["OR"] = [
+              { name: { startsWith: req.query.search } },
+              { accessCode: { startsWith: req.query.search } },
+            ];
+          }
+          const count = await this.prisma.room.count({ where: whereQuery });
+          const rooms = await this.prisma.room.findMany({
+            where: whereQuery,
             select: {
               id: true,
               name: true,
               accessCode: true,
+              concluded: true,
             },
             take: per,
             skip: per * page,
           });
-          return res.status(200).json(rooms);
+          return res.status(200).json({ rooms: rooms, count: count });
         }
       )
     );

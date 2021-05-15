@@ -34,8 +34,6 @@ function RoomDashboard(props: Props) {
   const [room, setRoom] = useState(baseRoom);
   const [delay, setDelay] = useState(0);
 
-  useEffect(() => {}, [props.auth]);
-
   useEffect(() => {
     if (props.auth.loggedIn()) {
       const io = openSoc(props.auth.getToken());
@@ -121,7 +119,10 @@ function RoomDashboard(props: Props) {
       (res: { error: string }, status: number) => {
         if (status >= 400) {
           props.createError(status, res.error);
-        } else setRoom(baseRoom);
+        } else {
+          setLoading(true);
+          setRoom(baseRoom);
+        }
       }
     );
   }
@@ -173,7 +174,10 @@ function RoomDashboard(props: Props) {
       function (res: { error: string }, status: number) {
         if (status >= 400) {
           props.createError(status, res.error);
-        } else setRoom(baseRoom);
+        } else {
+          setLoading(true);
+          setRoom(baseRoom);
+        }
       }
     );
   }
@@ -205,11 +209,9 @@ function RoomDashboard(props: Props) {
 
   return (
     <div>
-      <SelectRoom auth={props.auth} updateRoom={updateRoom}></SelectRoom>
+      <SelectRoom auth={props.auth} updateRoom={updateRoom} />
       {loading ? (
-        <div>
-          <CircularProgress />
-        </div>
+        <div></div>
       ) : (
         <div>
           <h3>{room.id}</h3>
