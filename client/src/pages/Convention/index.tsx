@@ -16,7 +16,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 
 import type AuthService from "services/AuthService";
 
-type Convention = {
+type ConventionType = {
   name: string;
   createdAt: Date;
   roomsOpen: Boolean;
@@ -79,7 +79,7 @@ function Convention(props: Props) {
             </Card>
           </Grid>
         ) : (
-          conventions.map((v: Convention, i: number) => (
+          conventions.map((v: ConventionType, i: number) => (
             <Grid item key={i}>
               <Card className={classes.card}>
                 <CardActionArea

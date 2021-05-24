@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 import type AuthService from "services/AuthService";
-import type { Room, Voter } from "types/roomDashboard";
+import type { Room } from "types/roomDashboard";
 
 const useStyles = makeStyles(() => ({
   list: {

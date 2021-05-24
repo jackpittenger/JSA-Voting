@@ -19,7 +19,7 @@ const certificate = fs.readFileSync("server.crt", "utf8");
 
 io.origins("*:*");
 app.use(cookieParser());
-//require("./middleware/socket").setup(io);
+require("./routes/middleware/socket").setup(io);
 app.use(bodyParser.json());
 
 import Account from "./routes/account";
@@ -38,18 +38,6 @@ app.use("/api/room", room.setup());
 app.use("/api/voter", voter.setup());
 
 app.use(errorHandler);
-/*
-app.get("/api/get_speakers", getSpeakers);
-app.get("/api/page/:page", page);
-app.get("/api/rooms_open", roomsOpen);
-app.get("/api/total_pages", getTotalPages);
-app.post("/api/add_speaker", addSpeaker);
-app.post("/api/speaker_vote", speakerVote);
-app.post("/api/submit_form", submitForm);
-app.post("/api/toggle_open", toggleOpen);
-app.post("/api/toggle_voting", toggleVoting);
-app.delete("/api/remove_speaker", removeSpeaker);
-*/
 if (process.env.DEPLOY === "true") {
   app.use(express.static(path.join(__dirname, "./client/build")));
   app.get("*", (_, res) => {

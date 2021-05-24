@@ -1,7 +1,61 @@
-const jwt = require("jsonwebtoken");
-//const User = require("../mongo/models/User");
-let sockets = [];
+import { verify } from "jsonwebtoken";
+import { Server, Socket, Client } from "socket.io";
 
+import type { Token } from "../../types/jwt";
+
+const roomMap = new Map();
+
+module.exports.setup = (io: Server) => {
+  const roomListener = io.of("/room");
+  setupRoomIO(roomListener);
+};
+
+function setupRoomIO(io: Server) {
+  // Verify token input
+  io.use((socket: Socket, next: Function) => {
+    console.log("IO USE");
+    try {
+      const passedToken = socket.handshake.query.token;
+      const room = socket.handshake.query.room;
+      //@ts-ignore
+      const token: Token = verify(passedToken, process.env.SECRET);
+      console.log(token);
+      console.log(room);
+      // TODO: need to verify room!
+
+      next();
+    } catch {
+      const err = new Error("Invalid token");
+      //@ts-ignore
+      err.data = { content: "Token invalid/missing" };
+      next(err);
+    }
+  });
+
+  // Add to map
+  io.use((socket: Socket, next: Function) => {
+    try {
+      const room = socket.handshake.query.room;
+      if (roomMap.has(room)) {
+        roomMap.get(room).push(socket.id);
+      } else {
+        roomMap.set(room, [socket.id]);
+      }
+    } catch {
+      const err = new Error("Internal server error");
+      //@ts-ignore
+      err.data = { content: "Internal server error" };
+      next(err);
+    }
+  });
+
+  io.on("connection", (socket: Socket) => {
+    socket.on("disconnect", () => {});
+  });
+}
+
+//let sockets = [];
+/*
 module.exports.setup = (io) =>
   io.on("connection", (client) => {
     client.on("token", (data) => {
@@ -13,14 +67,15 @@ module.exports.setup = (io) =>
           .then((usr) => sockets.push([client, usr]))
           .catch((err) => console.error(err));
    */
-      });
-    });
-    client.on(
+//    });
+// });
+/*  client.on(
       "disconnect",
       () => (sockets = sockets.filter((c) => c[0] !== client))
-    );
-  });
+    );*/
+//});
 
+/*
 module.exports.newVoter = (payload, owner) =>
   sockets
     .filter((c) => c[1].token === owner.token)
@@ -33,3 +88,4 @@ module.exports.vote = (payload, owner) => {
       v[0].emit("vote", payload);
     });
 };
+*/

@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-import openSoc from "services/api";
+import openRoomSocket from "services/api";
 
 import ErrorPopup from "components/ErrorPopup";
 import RoomTable from "components/RoomTable";
+import SelectRoom from "components/SelectRoom";
 import SpeakerList from "components/SpeakerList";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 import type AuthService from "services/AuthService";
 import type { Room, Voter } from "types/roomDashboard";
-import SelectRoom from "components/SelectRoom";
 
 type Props = {
   auth: AuthService;
@@ -35,8 +34,11 @@ function RoomDashboard(props: Props) {
   const [delay, setDelay] = useState(0);
 
   useEffect(() => {
-    if (props.auth.loggedIn()) {
-      const io = openSoc(props.auth.getToken());
+    if (props.auth.loggedIn() && room.id !== -1) {
+      // Subscribe to room updates
+      const io = openRoomSocket(props.auth.getToken(), room.id);
+      console.log(io);
+
       io.on("newuser", (data: Voter) =>
         setRoom({ ...room, Voter: [...room.Voter, data] })
       );
