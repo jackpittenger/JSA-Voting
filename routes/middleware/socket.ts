@@ -1,14 +1,14 @@
 import { verify } from "jsonwebtoken";
-import { Server, Socket, Client } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 import type { Token } from "../../types/jwt";
 
-const roomMap = new Map();
+var roomListener;
 
-module.exports.setup = (io: Server) => {
-  const roomListener = io.of("/room");
+export function setup(io: Server) {
+  roomListener = io.of("/room");
   setupRoomIO(roomListener);
-};
+}
 
 function setupRoomIO(io: Server) {
   // Verify token input
@@ -36,11 +36,14 @@ function setupRoomIO(io: Server) {
   io.use((socket: Socket, next: Function) => {
     try {
       const room = socket.handshake.query.room;
-      if (roomMap.has(room)) {
-        roomMap.get(room).push(socket.id);
-      } else {
-        roomMap.set(room, [socket.id]);
-      }
+      //    if (roomMap.has(room)) {
+      //    roomMap.get(room).push(socket.id);
+      // } else {
+      //  roomMap.set(room, [socket.id]);
+      // }
+      // console.log(roomMap);
+      socket.join(room);
+      next();
     } catch {
       const err = new Error("Internal server error");
       //@ts-ignore
@@ -50,8 +53,19 @@ function setupRoomIO(io: Server) {
   });
 
   io.on("connection", (socket: Socket) => {
-    socket.on("disconnect", () => {});
+    socket.on("disconnect", () => {
+      // const room = socket.handshake.query.room;
+      //const map = roomMap.get(room);
+      //if (map.length == 1) roomMap.delete(room);
+      //else {
+      //  map.splice(map.indexOf(socket.id), 1);
+      //}
+    });
   });
+}
+
+export function sendNewVoter(payload: any, room: number) {
+  roomListener.to(room).emit("new_voter", payload);
 }
 
 //let sockets = [];

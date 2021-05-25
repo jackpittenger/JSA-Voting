@@ -8,6 +8,7 @@ import { paramValid, paramValidEnum } from "./helpers/paramValid";
 import { passToken, roleVerify } from "./middleware/auth";
 import { errorWrapper, BadRequest } from "./middleware/errors";
 import passConventionRoom from "./middleware/passConventionRoom";
+import { sendNewVoter } from "./middleware/socket";
 
 import { Role } from "@prisma/client";
 
@@ -18,7 +19,6 @@ import type {
   VoterDeleteBody,
   VotePostBody,
   VoterPostBody,
-  VoterToken,
 } from "../types/voter";
 
 export default class Voter {
@@ -74,6 +74,7 @@ export default class Voter {
               school: true,
               Room: {
                 select: {
+                  id: true,
                   name: true,
                   accessCode: true,
                 },
@@ -85,12 +86,16 @@ export default class Voter {
               firstName: voter.firstName,
               lastName: voter.lastName,
               school: voter.school,
-              room: voter.Room,
+              room: {
+                name: voter.Room.name,
+                accessCode: voter.Room.accessCode,
+              },
             },
             process.env.SECRET,
             { expiresIn: "8h" }
           );
-          return res.status(200).json({ token: token });
+          res.status(200).json({ token: token });
+          return sendNewVoter(voter, voter.Room.id);
         }
       )
     );
