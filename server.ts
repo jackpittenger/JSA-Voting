@@ -19,8 +19,10 @@ const certificate = fs.readFileSync("server.crt", "utf8");
 
 io.origins("*:*");
 app.use(cookieParser());
-require("./routes/middleware/socket").setup(io);
 app.use(bodyParser.json());
+
+import SocketHandler from "./routes/middleware/socketHandler";
+const socketHandler = new SocketHandler(io, prisma);
 
 import Account from "./routes/account";
 import Convention from "./routes/convention";
@@ -30,7 +32,7 @@ import Voter from "./routes/voter";
 const account = new Account(prisma);
 const convention = new Convention(prisma);
 const room = new Room(prisma);
-const voter = new Voter(prisma);
+const voter = new Voter(prisma, socketHandler);
 
 app.use("/api/account", account.setup());
 app.use("/api/convention", convention.setup());

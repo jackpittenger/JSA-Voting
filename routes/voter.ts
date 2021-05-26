@@ -8,7 +8,6 @@ import { paramValid, paramValidEnum } from "./helpers/paramValid";
 import { passToken, roleVerify } from "./middleware/auth";
 import { errorWrapper, BadRequest } from "./middleware/errors";
 import passConventionRoom from "./middleware/passConventionRoom";
-import { sendNewVoter } from "./middleware/socket";
 
 import { Role } from "@prisma/client";
 
@@ -20,14 +19,17 @@ import type {
   VotePostBody,
   VoterPostBody,
 } from "../types/voter";
+import type SocketHandler from "./middleware/socketHandler";
 
 export default class Voter {
   router: Router;
   prisma: PrismaClient;
+  socketHandler: SocketHandler;
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: PrismaClient, socketHandler: SocketHandler) {
     this.router = Router();
     this.prisma = prisma;
+    this.socketHandler = socketHandler;
   }
 
   setup(): Router {
@@ -95,7 +97,7 @@ export default class Voter {
             { expiresIn: "8h" }
           );
           res.status(200).json({ token: token });
-          return sendNewVoter(voter, voter.Room.id);
+          return this.socketHandler.sendNewVoter(voter, voter.Room.id);
         }
       )
     );

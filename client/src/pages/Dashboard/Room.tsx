@@ -37,11 +37,11 @@ function RoomDashboard(props: Props) {
     if (props.auth.loggedIn() && room.id !== -1) {
       // Subscribe to room updates
       const io = openRoomSocket(props.auth.getToken(), room.id);
-      console.log(io);
 
       io.on("new_voter", (data: Voter) => {
         setRoom({ ...room, Voter: [...room.Voter, data] });
       });
+
       io.on("vote", (data: Voter) => {
         let users = room.Voter;
         let result = users.find((o, i) => {
@@ -77,19 +77,18 @@ function RoomDashboard(props: Props) {
   }, [props.auth, room]);
 
   function updateRoom(id: string) {
-    props.auth.fetch(
-      "/api/room/id/" + id,
-      {},
-      function (res: Room, status: number) {
-        if (status >= 400) {
-          //@ts-ignore
-          props.createError(status, res.error);
-        } else {
-          setRoom(res);
-          setLoading(false);
-        }
+    props.auth.fetch("/api/room/id/" + id, {}, function (
+      res: Room,
+      status: number
+    ) {
+      if (status >= 400) {
+        //@ts-ignore
+        props.createError(status, res.error);
+      } else {
+        setRoom(res);
+        setLoading(false);
       }
-    );
+    });
   }
 
   function handleByline(value: string) {
