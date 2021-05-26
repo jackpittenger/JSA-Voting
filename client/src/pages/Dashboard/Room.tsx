@@ -54,6 +54,18 @@ function RoomDashboard(props: Props) {
         });
       });
 
+      io.on("speaker_vote", (data: { id: string; speaker: string }) => {
+        setVoters((varr) => {
+          const v: number | undefined = varr.findIndex(
+            (v: Voter) => v.id === data.id
+          );
+          if (v !== -1) {
+            varr[v].speaker = data.speaker;
+          }
+          return [...varr];
+        });
+      });
+
       return () => {
         io.disconnect();
       };
@@ -186,14 +198,14 @@ function RoomDashboard(props: Props) {
     );
   }
 
-  function deleteUser(id: string) {
+  function deleteUser(voterId: string) {
     props.auth.fetch(
       "/api/voter",
       {
         method: "DELETE",
         body: JSON.stringify({
           id: id,
-          voterId: id,
+          voterId: voterId,
         }),
       },
       (res: { success: boolean; error: string }, status: number) => {
@@ -201,10 +213,11 @@ function RoomDashboard(props: Props) {
           props.createError(status, res.error);
         } else {
           if (res.success) {
-            let arr = voters.filter((val) => {
-              return val.id !== id;
+            setVoters((v) => {
+              let index: number = v.findIndex((z) => z.id === voterId);
+              v.splice(index, 1);
+              return [...v];
             });
-            setVoters(arr);
           }
         }
       }

@@ -3,6 +3,7 @@ import { Server, Socket } from "socket.io";
 
 import { verifyRoomIO } from "./auth";
 
+import type { Vote } from "@prisma/client";
 import type { Token } from "../../types/jwt";
 import type { PrismaClient } from "@prisma/client";
 
@@ -20,8 +21,12 @@ export default class SocketHandler {
     this.sendToRoom("new_voter", payload, room);
   }
 
-  sendVoteUpdate(payload: any, room: number) {
+  sendVoteUpdate(payload: { id: number; vote: Vote }, room: number) {
     this.sendToRoom("voter_voted", payload, room);
+  }
+
+  sendSpeakerUpdate(payload: { id: number; speaker: string }, room: number) {
+    this.sendToRoom("speaker_vote", payload, room);
   }
 
   private setupRoomIO(io: Server) {

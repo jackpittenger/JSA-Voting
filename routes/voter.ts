@@ -196,6 +196,10 @@ export default class Voter {
             },
           });
           res.status(200).json({ success: true });
+          this.socketHandler.sendSpeakerUpdate(
+            { id: voter.id, speaker: req.body.speaker },
+            room.id
+          );
         }
       )
     );
