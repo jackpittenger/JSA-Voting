@@ -71,9 +71,12 @@ export default class Voter {
               },
             },
             select: {
+              id: true,
               firstName: true,
               lastName: true,
               school: true,
+              vote: true,
+              speaker: true,
               Room: {
                 select: {
                   id: true,
@@ -97,7 +100,9 @@ export default class Voter {
             { expiresIn: "8h" }
           );
           res.status(200).json({ token: token });
-          return this.socketHandler.sendNewVoter(voter, voter.Room.id);
+          const roomID = voter.Room.id;
+          delete voter["Room"];
+          return this.socketHandler.sendNewVoter(voter, roomID);
         }
       )
     );
@@ -144,6 +149,10 @@ export default class Voter {
             },
           });
           res.status(200).json({ success: true });
+          this.socketHandler.sendVoteUpdate(
+            { id: voter.id, vote: req.body.vote },
+            room.id
+          );
         }
       )
     );

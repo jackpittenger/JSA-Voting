@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 import type AuthService from "services/AuthService";
-import type { Room } from "types/roomDashboard";
+import type { Voter } from "types/roomDashboard";
 
 const useStyles = makeStyles(() => ({
   list: {
@@ -25,10 +25,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = {
+  id: number;
+  speakers: string[];
+  voters: Voter[];
+  setSpeakers: Function;
   auth: AuthService;
-  room: Room;
   createError: Function;
-  setRoom: Function;
 };
 
 export default function SpeakerList(props: Props) {
@@ -40,18 +42,15 @@ export default function SpeakerList(props: Props) {
       "/api/room/speaker",
       {
         method: "POST",
-        body: JSON.stringify({ id: props.room.id, name: speaker }),
+        body: JSON.stringify({ id: props.id, name: speaker }),
       },
       (res: { error: string }, status: number) => {
         if (status >= 400) {
           props.createError(status, res.error);
         } else {
-          props.setRoom({
-            ...props.room,
-            speakers: props.room.speakers
-              ? props.room.speakers.concat(speaker)
-              : [speaker],
-          });
+          props.setSpeakers(
+            props.speakers ? props.speakers.concat(speaker) : [speaker]
+          );
           setSpeaker("");
         }
       }
@@ -63,16 +62,13 @@ export default function SpeakerList(props: Props) {
       "/api/room/speaker",
       {
         method: "DELETE",
-        body: JSON.stringify({ id: props.room.id, name: speaker }),
+        body: JSON.stringify({ id: props.id, name: speaker }),
       },
       (res: { error: string }, status: number) => {
         if (status >= 400) {
           props.createError(status, res.error);
         } else {
-          props.setRoom({
-            ...props.room,
-            speakers: props.room.speakers.filter((e) => e !== speaker),
-          });
+          props.setSpeakers(props.speakers.filter((e) => e !== speaker));
           setSpeaker("");
         }
       }
@@ -80,16 +76,16 @@ export default function SpeakerList(props: Props) {
   }
 
   function renderSpeakers() {
-    const speakerVoters = props.room.Voter.filter(
-      (e) => e.speaker != null && props.room.speakers.indexOf(e.speaker) !== -1
+    const speakerVoters = props.voters.filter(
+      (e) => e.speaker != null && props.speakers.indexOf(e.speaker) !== -1
     ).length;
-    return props.room.speakers.map((speaker, i) =>
+    return props.speakers.map((speaker, i) =>
       renderSpeaker(speakerVoters, speaker, i)
     );
   }
 
   function renderSpeaker(speakerVoters: number, speaker: string, i: number) {
-    const len = props.room.Voter.filter((e) => e.speaker === speaker).length;
+    const len = props.voters.filter((e) => e.speaker === speaker).length;
     const votes = len === 0 ? 0 : (len / speakerVoters) * 100;
     return (
       <ListItem
@@ -125,7 +121,7 @@ export default function SpeakerList(props: Props) {
         <AddCircleOutlineIcon color="primary" />
       </IconButton>
       <List className={classes.list}>
-        {props.room.speakers != null && renderSpeakers()}
+        {props.speakers != null && renderSpeakers()}
       </List>
     </div>
   );
