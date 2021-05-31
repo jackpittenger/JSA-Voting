@@ -13,7 +13,6 @@ import { Role } from "@prisma/client";
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
 import type {
-  RoomBylineUpdate,
   RoomGetBody,
   RoomGetParams,
   RoomListBody,
@@ -256,26 +255,6 @@ export default class Room {
             },
             data: {
               speakers: req.body.room.speakers,
-            },
-          });
-          return res.status(200).json({ success: true });
-        }
-      )
-    );
-
-    this.router.patch(
-      "/toggle/open",
-      roleVerify(Role.MOD),
-      passToken,
-      passConventionRoom(this.prisma, { conventionId: true, open: true }),
-      errorWrapper(
-        async (req: Request<RoomIdBody, Query, Params>, res: Response) => {
-          await this.prisma.room.update({
-            where: {
-              id: req.body._id,
-            },
-            data: {
-              open: !req.body.room.open,
             },
           });
           return res.status(200).json({ success: true });

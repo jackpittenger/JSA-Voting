@@ -74,6 +74,14 @@ function RoomDashboard(props: Props) {
         setByline(data.byline);
       });
 
+      io.on("open_updated", (data: { open: boolean }) => {
+        setOpen(data.open);
+      });
+
+      io.on("voting_updated", (data: { votingOpen: boolean }) => {
+        setVotingOpen(data.votingOpen);
+      });
+
       return () => {
         io.disconnect();
       };
@@ -114,8 +122,6 @@ function RoomDashboard(props: Props) {
     if (value.length <= 120)
       setDelay(
         window.setTimeout(() => {
-          //updateByline(value);
-          console.log(byline);
           if (typeof io !== undefined && io !== null) {
             //@ts-ignore
             io.emit("update_byline", { byline: value });
@@ -153,27 +159,13 @@ function RoomDashboard(props: Props) {
   }
 
   function toggleRoom() {
-    props.auth.fetch(
-      "/api/room/toggle/open",
-      { method: "PATCH", body: JSON.stringify({ id: id }) },
-      function (res: { error: string }, status: number) {
-        if (status >= 400) {
-          props.createError(status, res.error);
-        } else setOpen(!open);
-      }
-    );
+    //@ts-ignore
+    io.emit("toggle_room", { open: !open });
   }
 
   function toggleVoting() {
-    props.auth.fetch(
-      "/api/room/toggle/voting",
-      { method: "PATCH", body: JSON.stringify({ id: id }) },
-      function (res: { error: string }, status: number) {
-        if (status >= 400) {
-          props.createError(status, res.error);
-        } else setVotingOpen(!votingOpen);
-      }
-    );
+    //@ts-ignore
+    io.emit("toggle_voting", { votingOpen: !votingOpen });
   }
 
   function renderVotes() {

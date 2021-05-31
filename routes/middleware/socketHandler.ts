@@ -34,6 +34,14 @@ export default class SocketHandler {
     this.sendToRoom("byline_updated", payload, room);
   }
 
+  sendOpenUpdate(payload: { open: boolean }, room: number) {
+    this.sendToRoom("open_updated", payload, room);
+  }
+
+  sendVotingUpdate(payload: { votingOpen: boolean }, room: number) {
+    this.sendToRoom("voting_updated", payload, room);
+  }
+
   private setupRoomIO(io: Server) {
     // Verify token input
     io.use(async (socket: Socket, next: Function) => {
@@ -66,13 +74,29 @@ export default class SocketHandler {
     });
 
     io.on("connection", (socket: Socket) => {
-      const room = socket.handshake.query.room;
+      const room = parseInt(socket.handshake.query.room);
 
       socket.on(
         "update_byline",
         errorWrapperSocket(
           async (data: { byline: string }) =>
             await this.updateByline(data, room)
+        )
+      );
+
+      socket.on(
+        "toggle_room",
+        errorWrapperSocket(
+          async (data: { open: boolean }) =>
+            await this.updateRoomToggle(data, room)
+        )
+      );
+
+      socket.on(
+        "toggle_voting",
+        errorWrapperSocket(
+          async (data: { votingOpen: boolean }) =>
+            await this.updateVotingToggle(data, room)
         )
       );
 
@@ -84,15 +108,45 @@ export default class SocketHandler {
     this.roomListener.to(room).emit(message, payload);
   }
 
-  private async updateByline(data: { byline: string }, room: string) {
-    await this.prisma.room.update({
+  private async updateByline(data: { byline: string }, room: number) {
+    await this.prisma.room.updateMany({
       where: {
-        id: parseInt(room),
+        id: room,
+        concluded: false,
       },
       data: {
         byline: data.byline,
       },
     });
-    this.sendBylineUpdate({ byline: data.byline }, parseInt(room));
+    this.sendBylineUpdate(data, room);
+  }
+
+  private async updateRoomToggle(data: { open: boolean }, room: number) {
+    await this.prisma.room.updateMany({
+      where: {
+        id: room,
+        concluded: false,
+      },
+      data: {
+        open: data.open,
+      },
+    });
+    this.sendOpenUpdate(data, room);
+  }
+
+  private async updateVotingToggle(
+    data: { votingOpen: boolean },
+    room: number
+  ) {
+    await this.prisma.room.updateMany({
+      where: {
+        id: room,
+        concluded: false,
+      },
+      data: {
+        votingOpen: data.votingOpen,
+      },
+    });
+    this.sendVotingUpdate(data, room);
   }
 }
