@@ -56,3 +56,11 @@ export interface RoomSpeakerDeleteBody {
   room: Room;
   name: string;
 }
+
+export interface RoomBylineUpdate {
+  _token: Token;
+  _id: number;
+  id: string;
+  room: Room;
+  byline: string;
+}

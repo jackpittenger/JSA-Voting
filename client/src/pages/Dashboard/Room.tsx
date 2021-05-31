@@ -21,6 +21,7 @@ type Props = {
 function RoomDashboard(props: Props) {
   // Room
   const [id, setId] = useState(-1);
+  const [name, setName] = useState("");
   const [voters, setVoters] = useState(new Array<Voter>());
   const [accessCode, setAccessCode] = useState("");
   const [open, setOpen] = useState(false);
@@ -66,6 +67,11 @@ function RoomDashboard(props: Props) {
         });
       });
 
+      io.on("byline_updated", (data: { byline: string }) => {
+        console.log("received: " + data.byline);
+        setByline(data.byline);
+      });
+
       return () => {
         io.disconnect();
       };
@@ -73,25 +79,27 @@ function RoomDashboard(props: Props) {
   }, [props.auth, id]);
 
   function updateRoom(id: string) {
-    props.auth.fetch("/api/room/id/" + id, {}, function (
-      res: Room,
-      status: number
-    ) {
-      if (status >= 400) {
-        //@ts-ignore
-        props.createError(status, res.error);
-      } else {
-        setId(res.id);
-        setVoters(res.Voter);
-        setAccessCode(res.accessCode);
-        setOpen(res.open);
-        setVotingOpen(res.votingOpen);
-        setByline(res.byline);
-        setConventionId(res.conventionId);
-        setSpeakers(res.speakers);
-        setLoading(false);
+    props.auth.fetch(
+      "/api/room/id/" + id,
+      {},
+      function (res: Room, status: number) {
+        if (status >= 400) {
+          //@ts-ignore
+          props.createError(status, res.error);
+        } else {
+          setId(res.id);
+          setName(res.name);
+          setVoters(res.Voter);
+          setAccessCode(res.accessCode);
+          setOpen(res.open);
+          setVotingOpen(res.votingOpen);
+          setByline(res.byline);
+          setConventionId(res.conventionId);
+          setSpeakers(res.speakers);
+          setLoading(false);
+        }
       }
-    });
+    );
   }
 
   function handleByline(value: string) {
@@ -100,15 +108,15 @@ function RoomDashboard(props: Props) {
     if (value.length <= 120)
       setDelay(
         window.setTimeout(() => {
-          fetchByline(value);
+          updateByline(value);
         }, 2000)
       );
   }
 
-  function fetchByline(value: string) {
+  function updateByline(value: string) {
     props.auth.fetch(
-      "/api/room_byline",
-      { method: "PATCH", body: JSON.stringify({ byline: value }) },
+      "/api/room/byline",
+      { method: "PATCH", body: JSON.stringify({ id: id, byline: value }) },
       function (res: { error: string }, status: number) {
         if (status >= 400) {
           props.createError(status, res.error);
@@ -134,6 +142,7 @@ function RoomDashboard(props: Props) {
   function resetRoom() {
     setLoading(true);
     setId(-1);
+    setName("");
     setVoters(new Array<Voter>());
     setAccessCode("");
     setOpen(false);
@@ -231,7 +240,7 @@ function RoomDashboard(props: Props) {
         <div></div>
       ) : (
         <div>
-          <h3>{id}</h3>
+          <h3>{name}</h3>
           <div>Code: {accessCode}</div>
           <TextField
             id="byline"

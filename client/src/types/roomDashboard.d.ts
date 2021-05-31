@@ -1,5 +1,6 @@
 export type Room = {
   id: number;
+  name: string;
   Voter: Voter[];
   speakers: string[];
   accessCode: string;

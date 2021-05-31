@@ -29,6 +29,10 @@ export default class SocketHandler {
     this.sendToRoom("speaker_vote", payload, room);
   }
 
+  sendBylineUpdate(payload: { byline: string }, room: number) {
+    this.sendToRoom("byline_updated", payload, room);
+  }
+
   private setupRoomIO(io: Server) {
     // Verify token input
     io.use(async (socket: Socket, next: Function) => {

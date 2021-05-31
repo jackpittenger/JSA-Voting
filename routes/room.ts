@@ -13,6 +13,7 @@ import { Role } from "@prisma/client";
 import type { PrismaClient } from "@prisma/client";
 import type { Request, Query, Params } from "../types/post";
 import type {
+  RoomBylineUpdate,
   RoomGetBody,
   RoomGetParams,
   RoomListBody,
@@ -23,13 +24,17 @@ import type {
   RoomSpeakerDeleteBody,
 } from "../types/room";
 import type { VoterToken } from "../types/voter";
+import type SocketHandler from "./middleware/socketHandler";
 
 export default class Room {
   router: Router;
   prisma: PrismaClient;
-  constructor(prisma: PrismaClient) {
+  socketHandler: SocketHandler;
+
+  constructor(prisma: PrismaClient, socketHandler: SocketHandler) {
     this.router = Router();
     this.prisma = prisma;
+    this.socketHandler = socketHandler;
   }
 
   setup(): Router {
@@ -49,6 +54,7 @@ export default class Room {
             },
             select: {
               id: true,
+              name: true,
               accessCode: true,
               open: true,
               votingOpen: true,
@@ -194,7 +200,39 @@ export default class Room {
         }
       )
     );
-    this.router.patch("/byline", (req: Request, res: Response) => {});
+    this.router.patch(
+      "/byline",
+      roleVerify(Role.MOD),
+      passToken,
+      passConventionRoom(this.prisma, {
+        conventionId: true,
+        concluded: true,
+        byline: true,
+      }),
+      errorWrapper(
+        async (
+          req: Request<RoomBylineUpdate, Query, Params>,
+          res: Response
+        ) => {
+          paramValid(req.body.byline, 1, 120, "byline");
+          if (req.body.room.concluded)
+            throw new BadRequest("Room is already concluded!");
+          await this.prisma.room.update({
+            where: {
+              id: req.body._id,
+            },
+            data: {
+              byline: req.body.byline,
+            },
+          });
+          this.socketHandler.sendBylineUpdate(
+            { byline: req.body.byline },
+            req.body._id
+          );
+          res.status(200).json({ success: true });
+        }
+      )
+    );
     this.router.post(
       "/speaker",
       roleVerify(Role.MOD),

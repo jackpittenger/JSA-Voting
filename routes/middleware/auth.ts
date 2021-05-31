@@ -11,7 +11,7 @@ import type { Token } from "../../types/jwt";
 import type { PrismaClient } from "@prisma/client";
 
 export function roleVerify(role: Role) {
-  return function (req: Request, res: Response, next: NextFunction) {
+  return function (req: Request, _res: Response, next: NextFunction) {
     //@ts-ignore
     const decoded: Token = getToken(req);
     const drole: Role = (<any>Role)[decoded.role];

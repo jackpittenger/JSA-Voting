@@ -31,7 +31,7 @@ import Voter from "./routes/voter";
 
 const account = new Account(prisma);
 const convention = new Convention(prisma);
-const room = new Room(prisma);
+const room = new Room(prisma, socketHandler);
 const voter = new Voter(prisma, socketHandler);
 
 app.use("/api/account", account.setup());
