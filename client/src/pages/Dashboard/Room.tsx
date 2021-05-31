@@ -278,7 +278,11 @@ function RoomDashboard(props: Props) {
             concluded={concluded}
           />
           <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
-          <RoomTable Voter={voters} deleteUser={deleteUser} />
+          <RoomTable
+            Voter={voters}
+            concluded={concluded}
+            deleteUser={deleteUser}
+          />
         </div>
       )}
     </div>

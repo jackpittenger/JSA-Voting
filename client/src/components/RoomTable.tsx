@@ -84,7 +84,7 @@ function RoomTable(props: Props) {
                   </TableSortLabel>
                 </TableCell>
               ))}
-              {!props.concluded ?? <TableCell>Remove</TableCell>}
+              {!props.concluded ? <TableCell>Remove</TableCell> : null}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,7 +106,7 @@ function RoomTable(props: Props) {
                   >
                     {x.vote}
                   </TableCell>
-                  {!props.concluded ?? (
+                  {!props.concluded ? (
                     <TableCell>
                       <Button
                         onClick={() => props.deleteUser(x.id)}
@@ -115,7 +115,7 @@ function RoomTable(props: Props) {
                         Remove
                       </Button>
                     </TableCell>
-                  )}
+                  ) : null}
                 </TableRow>
               );
             })}

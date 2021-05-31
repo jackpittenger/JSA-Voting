@@ -100,13 +100,13 @@ export default function SpeakerList(props: Props) {
           <Avatar />
         </ListItemAvatar>
         <ListItemText primary={speaker} />
-        {!props.concluded ?? (
+        {!props.concluded ? (
           <ListItemSecondaryAction>
             <IconButton onClick={() => removeSpeaker(speaker)} edge="end">
               <DeleteIcon />
             </IconButton>
           </ListItemSecondaryAction>
-        )}
+        ) : null}
       </ListItem>
     );
   }
@@ -114,7 +114,7 @@ export default function SpeakerList(props: Props) {
   return (
     <div>
       <h4>Speaker list:</h4>
-      {!props.concluded ?? (
+      {!props.concluded ? (
         <div>
           <TextField
             id="speaker"
@@ -126,7 +126,7 @@ export default function SpeakerList(props: Props) {
             <AddCircleOutlineIcon color="primary" />
           </IconButton>
         </div>
-      )}
+      ) : null}
       <List className={classes.list}>
         {props.speakers != null && renderSpeakers()}
       </List>
