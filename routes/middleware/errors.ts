@@ -38,6 +38,15 @@ export function errorWrapper(fn: Function) {
   };
 }
 
+export function errorWrapperSocket(fn: Function) {
+  return function wrapped(data: {}, room: string) {
+    const fnReturn = fn(data, room);
+    return Promise.resolve(fnReturn).catch(() =>
+      console.log("error in errorWrapperSocket")
+    );
+  };
+}
+
 export function errorHandler(
   err: Error,
   _req: Request,

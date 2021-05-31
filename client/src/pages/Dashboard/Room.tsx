@@ -19,6 +19,7 @@ type Props = {
 };
 
 function RoomDashboard(props: Props) {
+  const [io, setIo] = useState<{} | null>(null);
   // Room
   const [id, setId] = useState(-1);
   const [name, setName] = useState("");
@@ -27,6 +28,7 @@ function RoomDashboard(props: Props) {
   const [open, setOpen] = useState(false);
   const [votingOpen, setVotingOpen] = useState(false);
   const [byline, setByline] = useState("");
+  const [concluded, setConcluded] = useState(false);
   // eslint-disable-next-line
   const [conventionId, setConventionId] = useState(-1);
   const [speakers, setSpeakers] = useState(new Array<string>());
@@ -35,9 +37,10 @@ function RoomDashboard(props: Props) {
   const [delay, setDelay] = useState(0);
 
   useEffect(() => {
-    if (props.auth.loggedIn() && id !== -1) {
+    if (props.auth.loggedIn() && id !== -1 && !concluded) {
       // Subscribe to room updates
       const io = openRoomSocket(props.auth.getToken(), id);
+      setIo(io);
 
       io.on("new_voter", (data: Voter) => {
         setVoters((v) => v.concat([data]));
@@ -68,15 +71,17 @@ function RoomDashboard(props: Props) {
       });
 
       io.on("byline_updated", (data: { byline: string }) => {
-        console.log("received: " + data.byline);
         setByline(data.byline);
       });
 
       return () => {
         io.disconnect();
       };
+    } else if (typeof io !== undefined && io !== null) {
+      //@ts-ignore
+      io.disconnect();
     }
-  }, [props.auth, id]);
+  }, [props.auth, id, concluded]);
 
   function updateRoom(id: string) {
     props.auth.fetch(
@@ -94,6 +99,7 @@ function RoomDashboard(props: Props) {
           setOpen(res.open);
           setVotingOpen(res.votingOpen);
           setByline(res.byline);
+          setConcluded(res.concluded);
           setConventionId(res.conventionId);
           setSpeakers(res.speakers);
           setLoading(false);
@@ -108,21 +114,14 @@ function RoomDashboard(props: Props) {
     if (value.length <= 120)
       setDelay(
         window.setTimeout(() => {
-          updateByline(value);
+          //updateByline(value);
+          console.log(byline);
+          if (typeof io !== undefined && io !== null) {
+            //@ts-ignore
+            io.emit("update_byline", { byline: value });
+          }
         }, 2000)
       );
-  }
-
-  function updateByline(value: string) {
-    props.auth.fetch(
-      "/api/room/byline",
-      { method: "PATCH", body: JSON.stringify({ id: id, byline: value }) },
-      function (res: { error: string }, status: number) {
-        if (status >= 400) {
-          props.createError(status, res.error);
-        }
-      }
-    );
   }
 
   function deleteRoom() {
@@ -148,6 +147,7 @@ function RoomDashboard(props: Props) {
     setOpen(false);
     setVotingOpen(false);
     setByline("");
+    setConcluded(false);
     setConventionId(-1);
     setSpeakers(new Array<string>());
   }
@@ -247,6 +247,7 @@ function RoomDashboard(props: Props) {
             label="Byline"
             multiline
             rowsMax={3}
+            disabled={concluded}
             value={byline}
             onChange={(e) => handleByline(e.target.value)}
             error={byline.length > 120}
@@ -255,16 +256,16 @@ function RoomDashboard(props: Props) {
           />
           <br />
           <br />
-          <Button onClick={toggleRoom} color="primary">
+          <Button onClick={toggleRoom} disabled={concluded} color="primary">
             {open === false ? "Open Room" : "Close Room"}
           </Button>
-          <Button onClick={toggleVoting} color="default">
+          <Button onClick={toggleVoting} disabled={concluded} color="default">
             {votingOpen === false ? "Open for Voting" : "Close Voting"}
           </Button>
-          <Button onClick={deleteRoom} color="secondary">
+          <Button onClick={deleteRoom} disabled={concluded} color="secondary">
             Delete Room
           </Button>
-          <Button onClick={closeRoom} color="primary">
+          <Button onClick={closeRoom} disabled={concluded} color="primary">
             Conclude
           </Button>
           <SpeakerList
@@ -274,6 +275,7 @@ function RoomDashboard(props: Props) {
             speakers={speakers}
             voters={voters}
             setSpeakers={setSpeakers}
+            concluded={concluded}
           />
           <h4 style={{ marginTop: ".5em" }}>{renderVotes()}</h4>
           <RoomTable Voter={voters} deleteUser={deleteUser} />

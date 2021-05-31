@@ -24,6 +24,7 @@ const headCells = [
 type Props = {
   Voter: Voter[];
   deleteUser: Function;
+  concluded: boolean;
 };
 
 function RoomTable(props: Props) {
@@ -83,7 +84,7 @@ function RoomTable(props: Props) {
                   </TableSortLabel>
                 </TableCell>
               ))}
-              <TableCell>Remove</TableCell>
+              {!props.concluded ?? <TableCell>Remove</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -105,14 +106,16 @@ function RoomTable(props: Props) {
                   >
                     {x.vote}
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => props.deleteUser(x.id)}
-                      color="secondary"
-                    >
-                      Remove
-                    </Button>
-                  </TableCell>
+                  {!props.concluded ?? (
+                    <TableCell>
+                      <Button
+                        onClick={() => props.deleteUser(x.id)}
+                        color="secondary"
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}

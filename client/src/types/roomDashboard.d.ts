@@ -7,6 +7,7 @@ export type Room = {
   open: boolean;
   votingOpen: boolean;
   byline: string;
+  concluded: boolean;
   conventionId: number;
 };
 

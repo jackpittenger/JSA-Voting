@@ -39,10 +39,13 @@ export async function verifyRoomIO(
       select: {
         id: true,
         conventionId: true,
+        concluded: true,
       },
     });
     // Return false if the room doesn't exist
     if (r == null || !r) return false;
+    // Return false if the room is concluded
+    if (r.concluded) return false;
     // Return true if the account is the same convention and has the role
     if (
       token.conventionId === r.conventionId &&

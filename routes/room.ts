@@ -57,6 +57,7 @@ export default class Room {
               name: true,
               accessCode: true,
               open: true,
+              concluded: true,
               votingOpen: true,
               byline: true,
               speakers: true,
@@ -197,39 +198,6 @@ export default class Room {
             },
           });
           return res.status(200).json({ success: true });
-        }
-      )
-    );
-    this.router.patch(
-      "/byline",
-      roleVerify(Role.MOD),
-      passToken,
-      passConventionRoom(this.prisma, {
-        conventionId: true,
-        concluded: true,
-        byline: true,
-      }),
-      errorWrapper(
-        async (
-          req: Request<RoomBylineUpdate, Query, Params>,
-          res: Response
-        ) => {
-          paramValid(req.body.byline, 1, 120, "byline");
-          if (req.body.room.concluded)
-            throw new BadRequest("Room is already concluded!");
-          await this.prisma.room.update({
-            where: {
-              id: req.body._id,
-            },
-            data: {
-              byline: req.body.byline,
-            },
-          });
-          this.socketHandler.sendBylineUpdate(
-            { byline: req.body.byline },
-            req.body._id
-          );
-          res.status(200).json({ success: true });
         }
       )
     );

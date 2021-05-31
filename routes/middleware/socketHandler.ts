@@ -6,6 +6,7 @@ import { verifyRoomIO } from "./auth";
 import type { Vote } from "@prisma/client";
 import type { Token } from "../../types/jwt";
 import type { PrismaClient } from "@prisma/client";
+import { errorWrapperSocket } from "./errors";
 
 export default class SocketHandler {
   roomListener: Server;
@@ -65,11 +66,33 @@ export default class SocketHandler {
     });
 
     io.on("connection", (socket: Socket) => {
+      const room = socket.handshake.query.room;
+
+      socket.on(
+        "update_byline",
+        errorWrapperSocket(
+          async (data: { byline: string }) =>
+            await this.updateByline(data, room)
+        )
+      );
+
       socket.on("disconnect", () => {});
     });
   }
 
   private sendToRoom(message: string, payload: any, room: number) {
     this.roomListener.to(room).emit(message, payload);
+  }
+
+  private async updateByline(data: { byline: string }, room: string) {
+    await this.prisma.room.update({
+      where: {
+        id: parseInt(room),
+      },
+      data: {
+        byline: data.byline,
+      },
+    });
+    this.sendBylineUpdate({ byline: data.byline }, parseInt(room));
   }
 }

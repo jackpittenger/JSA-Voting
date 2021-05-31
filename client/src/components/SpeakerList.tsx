@@ -31,6 +31,7 @@ type Props = {
   setSpeakers: Function;
   auth: AuthService;
   createError: Function;
+  concluded: boolean;
 };
 
 export default function SpeakerList(props: Props) {
@@ -99,11 +100,13 @@ export default function SpeakerList(props: Props) {
           <Avatar />
         </ListItemAvatar>
         <ListItemText primary={speaker} />
-        <ListItemSecondaryAction>
-          <IconButton onClick={() => removeSpeaker(speaker)} edge="end">
-            <DeleteIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
+        {!props.concluded ?? (
+          <ListItemSecondaryAction>
+            <IconButton onClick={() => removeSpeaker(speaker)} edge="end">
+              <DeleteIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
     );
   }
@@ -111,15 +114,19 @@ export default function SpeakerList(props: Props) {
   return (
     <div>
       <h4>Speaker list:</h4>
-      <TextField
-        id="speaker"
-        label="Speaker Name"
-        value={speaker}
-        onChange={(e) => setSpeaker(e.target.value)}
-      />
-      <IconButton onClick={addSpeaker}>
-        <AddCircleOutlineIcon color="primary" />
-      </IconButton>
+      {!props.concluded ?? (
+        <div>
+          <TextField
+            id="speaker"
+            label="Speaker Name"
+            value={speaker}
+            onChange={(e) => setSpeaker(e.target.value)}
+          />
+          <IconButton onClick={addSpeaker}>
+            <AddCircleOutlineIcon color="primary" />
+          </IconButton>
+        </div>
+      )}
       <List className={classes.list}>
         {props.speakers != null && renderSpeakers()}
       </List>
