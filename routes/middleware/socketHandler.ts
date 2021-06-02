@@ -42,6 +42,10 @@ export default class SocketHandler {
     this.sendToRoom("voting_updated", payload, room);
   }
 
+  sendVoterDeletedUpdate(payload: { id: number }, room: number) {
+    this.sendToRoom("voter_deleted", payload, room);
+  }
+
   private setupRoomIO(io: Server) {
     // Verify token input
     io.use(async (socket: Socket, next: Function) => {
@@ -100,6 +104,16 @@ export default class SocketHandler {
         )
       );
 
+      socket.on(
+        "delete_voter",
+        errorWrapperSocket(
+          this.requireNotConcluded(
+            async (data: { id: number }) => await this.deleteVoter(data, room),
+            room
+          )
+        )
+      );
+
       socket.on("disconnect", () => {});
     });
   }
@@ -148,5 +162,32 @@ export default class SocketHandler {
       },
     });
     this.sendVotingUpdate(data, room);
+  }
+
+  private async deleteVoter(data: { id: number }, room: number) {
+    await this.prisma.voter.delete({
+      where: {
+        id: data.id,
+      },
+    });
+    this.sendVoterDeletedUpdate(data, room);
+  }
+
+  private requireNotConcluded(fn: Function, roomNum: number) {
+    return async function wrapped(data: {}, room: number) {
+      const r = await this.prisma.room.findUnique({
+        where: {
+          id: roomNum,
+        },
+        select: {
+          concluded: true,
+        },
+      });
+      if (r === null || r.concluded) {
+        // Already concluded!
+        return;
+      }
+      return fn(data, room);
+    }.bind(this);
   }
 }

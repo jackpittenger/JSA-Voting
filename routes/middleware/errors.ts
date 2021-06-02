@@ -39,10 +39,10 @@ export function errorWrapper(fn: Function) {
 }
 
 export function errorWrapperSocket(fn: Function) {
-  return function wrapped(data: {}, room: string) {
+  return function wrapped(data: {}, room: number) {
     const fnReturn = fn(data, room);
-    return Promise.resolve(fnReturn).catch(() =>
-      console.log("error in errorWrapperSocket")
+    return Promise.resolve(fnReturn).catch((e) =>
+      console.log("error in errorWrapperSocket: " + e)
     );
   };
 }

@@ -203,26 +203,6 @@ export default class Voter {
         }
       )
     );
-    this.router.delete(
-      "",
-      roleVerify(Role.MOD),
-      passToken,
-      passConventionRoom(this.prisma, { conventionId: true, concluded: true }),
-      errorWrapper(
-        async (req: Request<VoterDeleteBody, Query, Params>, res: Response) => {
-          if (req.body.room.concluded)
-            throw new BadRequest(
-              "This room is concluded, can't delete voters!"
-            );
-          await this.prisma.voter.delete({
-            where: {
-              id: parseInt(req.body.voterId),
-            },
-          });
-          res.status(200).json({ success: true });
-        }
-      )
-    );
     return this.router;
   }
 }

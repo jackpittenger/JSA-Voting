@@ -82,6 +82,14 @@ function RoomDashboard(props: Props) {
         setVotingOpen(data.votingOpen);
       });
 
+      io.on("voter_deleted", (data: { id: string }) => {
+        setVoters((v) => {
+          let index: number = v.findIndex((z) => z.id === data.id);
+          v.splice(index, 1);
+          return [...v];
+        });
+      });
+
       return () => {
         io.disconnect();
       };
@@ -89,6 +97,7 @@ function RoomDashboard(props: Props) {
       //@ts-ignore
       io.disconnect();
     }
+    //eslint-disable-next-line
   }, [props.auth, id, concluded]);
 
   function updateRoom(id: string) {
@@ -200,29 +209,8 @@ function RoomDashboard(props: Props) {
   }
 
   function deleteUser(voterId: string) {
-    props.auth.fetch(
-      "/api/voter",
-      {
-        method: "DELETE",
-        body: JSON.stringify({
-          id: id,
-          voterId: voterId,
-        }),
-      },
-      (res: { success: boolean; error: string }, status: number) => {
-        if (status >= 400) {
-          props.createError(status, res.error);
-        } else {
-          if (res.success) {
-            setVoters((v) => {
-              let index: number = v.findIndex((z) => z.id === voterId);
-              v.splice(index, 1);
-              return [...v];
-            });
-          }
-        }
-      }
-    );
+    //@ts-ignore
+    io.emit("delete_voter", { id: voterId });
   }
 
   return (
